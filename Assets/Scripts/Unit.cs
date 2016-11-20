@@ -3,11 +3,13 @@ using System.Collections;
 
 public class Unit : MonoBehaviour {
 
+
 	// Visuals
 	public Sprite portrait;
 	public Sprite unit;
 
 	// Counters
+    public Class cls;
 	public int health;
 	public int level;
 	public int exp;
@@ -23,9 +25,16 @@ public class Unit : MonoBehaviour {
 	public int con;
 	public int aid;
 
+    public BoardManager board;
+
 	// Position and movement variables
-	public int posX = 0;
-	public int posY = 0;
+    public Position pos = new Position(0, 0);
+	public int posX {
+        get { return this.pos.x; }
+    };
+	public int posY {
+        get { return this.pos.y; }
+    };
 	public bool hasMoved = false;
 
 	// Use this for initialization
@@ -38,7 +47,38 @@ public class Unit : MonoBehaviour {
 	
 	}
 
-	void CalculateMovementArea(){
-		
+	List<Position> CalculateMovementArea() {
+        List<Position> visited = new List<Position>();  // Não tem Set em c# e
+                                                        // não vou implementar
+        List<Position> moveArea = new List<Position>();
+        Queue<Pair<Position, int>> q = new Queue<Pair<Position, int>>();
+        Position[] deltas = new Position[] {
+            new Position(0, 1),
+            new Position(1, 0),
+            new Position(0, -1),
+            new Position(-1, 0),
+        };
+
+        q.Enqueue(new Position(this.pos));
+        while (q.Count() > 0) {
+            Pair<Position, int> p = q.Dequeue();
+            Position cur = p.first;
+            int curMov = p.second;
+            moveArea.Add(cur);
+            foreach (Position del in deltas) {
+                Position next = cur + del;
+                if (next.IsValid(board) && !visited.Contains(next)) {
+                    Terrains t = board.titles[next.x][next.y];
+                    int cost = cls.GetMovementCost(t);
+                    if (cost <= curMov)
+                        q.Enqueue(new Pair(next, curMov - cost));
+                    visited.Add(next);
+                }
+            }
+        }
+
+        moveArea.Remove(this.pos);
+
+        return moveArea;
 	}
 }
