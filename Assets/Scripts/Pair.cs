@@ -1,5 +1,8 @@
 
 public class Pair<U, V> {
+    private U u;
+    private V v;
+
     public U first {
         get { return this.u; }
     };
