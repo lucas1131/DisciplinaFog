@@ -4,7 +4,7 @@ public class Class : ScriptableObject {
     
     public int[] moveCost;
 
-    public int MovementCost(Terrains t) {
+    public int GetMovementCost(Terrains t) {
         return moveCost[(int)t];
     }
 }
