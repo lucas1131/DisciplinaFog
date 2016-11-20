@@ -3,13 +3,13 @@ using System.Collections;
 
 public class Cursor : MonoBehaviour {
 
-	private float cursorSpd = 0.25f;
 	public float cursorSpdAlt = 0.5f;
 	public float cursorSpdDefault = 0.25f;
+	private float cursorSpd;
 	
-	private int delay = 2;
 	public int delayAlt = 0;
-	public int delayDefault = 2;
+	public int delayDefault = 1;
+	private int delay;
 
 	private int counter = 0;
 
@@ -27,6 +27,9 @@ public class Cursor : MonoBehaviour {
 	void Start () {
 		pos = GetComponent<Transform>();
 		tgtPos = new Vector3(pos.position.x, pos.position.y, 0f);
+
+		cursorSpd = cursorSpdDefault;
+		delay = delayDefault;
 	}
 	
 	// Update is called once per frame
@@ -35,6 +38,7 @@ public class Cursor : MonoBehaviour {
 		if(pos.position - tgtPos != Vector3.zero) MoveCursor();
 		else ProcessAxis();
 
+		titles.DisplayTerrainInfo(posX, posY);
 		ProcessInput();
 		counter++;
 
@@ -47,11 +51,11 @@ public class Cursor : MonoBehaviour {
 		float yAxis = Input.GetAxis("Vertical");
 
 		// Move cursor right
-		if(xAxis > 0 && posX < titles.cols) posX++;
+		if(xAxis > 0 && posX < titles.cols-1) posX++;
 		// Mover cursor left
 		else if(xAxis < 0 && posX > 0) posX--;
 		// Move cursor up
-		if(yAxis > 0 && posY < titles.rows) posY++;
+		if(yAxis > 0 && posY < titles.rows-1) posY++;
 		// Move cursor down 
 		else if(yAxis < 0 && posY > 0) posY--;
 		
@@ -64,8 +68,33 @@ public class Cursor : MonoBehaviour {
 		if(Input.GetButtonDown("Action")){
 			
 			// Get whatever it is in this position in the titles
-			titles.DisplayTerrainInfo(posX, posY);
 			focusedUnit = titles.GetUnit(posX, posY);
+			
+			// No unit in square, open menu
+			if(focusedUnit == null){
+
+				//OpenMenu();
+
+
+			/* All units should show their movement range when selected. If it
+			 *	is a Player unit, check if unit have already moved first. If it
+			 *	has, do nothing, else, select it.
+			 */
+			// Player unit
+			} else if(focusedUnit.tag.Equals("Player") && 
+						!focusedUnit.hasMoved){
+			// Select unit and show its movement
+
+			// Enemy unit
+			} else if(focusedUnit.tag.Equals("Enemy")){
+			// Select unit and show its movement
+
+			// Ally unit
+			} else if(focusedUnit.tag.Equals("Ally")){
+			// Select unit and show its movement
+
+			}
+
 			print("unit: " + focusedUnit);
 		}
 

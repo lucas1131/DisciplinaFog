@@ -1,0 +1,521 @@
+fileFormatVersion: 2
+guid: 2d02cff93af1c4daeadb1533e8655f9c
+timeCreated: 1479662673
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: EnemyPortraits_0
+    21300002: EnemyPortraits_1
+    21300004: EnemyPortraits_2
+    21300006: EnemyPortraits_3
+    21300008: EnemyPortraits_4
+    21300010: EnemyPortraits_5
+    21300012: EnemyPortraits_6
+    21300014: EnemyPortraits_7
+    21300016: EnemyPortraits_8
+    21300018: EnemyPortraits_9
+    21300020: EnemyPortraits_10
+    21300022: EnemyPortraits_11
+    21300024: EnemyPortraits_12
+    21300026: EnemyPortraits_13
+    21300028: EnemyPortraits_14
+    21300030: EnemyPortraits_15
+    21300032: EnemyPortraits_16
+    21300034: EnemyPortraits_17
+    21300036: EnemyPortraits_18
+    21300038: EnemyPortraits_19
+    21300040: EnemyPortraits_20
+    21300042: EnemyPortraits_21
+    21300044: EnemyPortraits_22
+    21300046: EnemyPortraits_23
+    21300048: EnemyPortraits_24
+    21300050: EnemyPortraits_25
+    21300052: EnemyPortraits_26
+    21300054: EnemyPortraits_27
+    21300056: EnemyPortraits_28
+    21300058: EnemyPortraits_29
+    21300060: EnemyPortraits_30
+    21300062: EnemyPortraits_31
+    21300064: EnemyPortraits_32
+  serializedVersion: 2
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    linearTexture: 0
+    correctGamma: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 0
+  cubemapConvolution: 0
+  cubemapConvolutionSteps: 7
+  cubemapConvolutionExponent: 1.5
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: 0
+    aniso: -1
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  rGBM: 0
+  compressionQuality: 50
+  allowsAlphaSplitting: 0
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 20
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  buildTargetSettings: []
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: EnemyPortraits_0
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 560
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_1
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 560
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_2
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 560
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_3
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 560
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_4
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 560
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_5
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 483
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_6
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 483
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_7
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 483
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_8
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 483
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_9
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 483
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_10
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 406
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_11
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 406
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_12
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 406
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_13
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 406
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_14
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 406
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_15
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 328
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_16
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 328
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_17
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 328
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_18
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 328
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_19
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 328
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_20
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 251
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_21
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 251
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_22
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 251
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_23
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 251
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_24
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 251
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_25
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 174
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_26
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 174
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_27
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 174
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_28
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 174
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_29
+      rect:
+        serializedVersion: 2
+        x: 353
+        y: 174
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_30
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 95
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_31
+      rect:
+        serializedVersion: 2
+        x: 95
+        y: 95
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: EnemyPortraits_32
+      rect:
+        serializedVersion: 2
+        x: 181
+        y: 95
+        width: 80
+        height: 72
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    outline: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

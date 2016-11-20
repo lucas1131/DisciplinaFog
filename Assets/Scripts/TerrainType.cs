@@ -30,6 +30,9 @@ public class TerrainType {
 
 	// Terrain name
 	public string name;
+	public static readonly int 
+		TOTAL_TERRAINS = Enum.GetNames(typeof(Terrains)).Length;
+
 	// Terrain sprite
 	// public Sprite sprite;
 
@@ -44,4 +47,7 @@ public class TerrainType {
 	public int defense;
 	// Recover percentage per turn
 	public int recover;
+	
+	// Used only for cracked walls
+	public int life;
 }
