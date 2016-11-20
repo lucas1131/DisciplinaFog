@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿/*using UnityEngine;
 using Pathfinding;
 using System.Collections;
 
@@ -65,4 +65,4 @@ public class SeekerScript : MonoBehaviour {
             }
         }
 	}
-}
+}*/
