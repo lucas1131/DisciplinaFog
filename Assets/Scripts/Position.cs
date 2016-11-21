@@ -38,16 +38,20 @@ public class Position {
     }
 
     public bool Equals(Object other) {
+        
         Position p = other as Position;
+        
         if (p == null)
             return false;
         return this.x == p.x && this.y == p.y;
     }
 
     public int GetHashCode() {
+        
         int hash = 23;
         hash = 17*hash + this.x;
         hash = 17*hash + this.y;
+        
         return hash;
     }
 

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public class Unit : MonoBehaviour {
 
-
 	// Visuals
 	public Sprite portrait;
 	public Sprite unit;
@@ -30,13 +29,15 @@ public class Unit : MonoBehaviour {
 
 	// Position and movement variables
     public Position pos = new Position(0, 0);
+	public bool hasMoved = false;
+
 	public int posX {
         get { return this.pos.x; }
     }
+
 	public int posY {
         get { return this.pos.y; }
     }
-	public bool hasMoved = false;
 
 	// Use this for initialization
 	void Start () {
@@ -49,6 +50,7 @@ public class Unit : MonoBehaviour {
 	}
 
 	List<Position> CalculateMovementArea() {
+        
         List<Position> visited = new List<Position>();  // Não tem Set em c# e
                                                         // não vou implementar
         List<Position> moveArea = new List<Position>();
@@ -62,15 +64,20 @@ public class Unit : MonoBehaviour {
 
         q.Enqueue(new Pair<Position, int>(new Position(this.pos), curMov));
         while (q.Count() > 0) {
+            
             Pair<Position, int> p = q.Dequeue();
             Position cur = p.first;
             int curMov = p.second;
             moveArea.Add(cur);
+            
             foreach (Position del in deltas) {
+                
                 Position next = cur + del;
                 if (next.IsValid(board) && !visited.Contains(next)) {
+                
                     Terrains t = board.titles[next.x][next.y];
                     int cost = cls.GetMovementCost(t);
+                
                     if (cost <= curMov)
                         q.Enqueue(new Pair<Position, int>(next, curMov - cost));
                     visited.Add(next);
