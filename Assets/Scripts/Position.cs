@@ -43,6 +43,13 @@ public class Position {
         return this.x == p.x && this.y == p.y;
     }
 
+    public int GetHashCode() {
+        int hash = 23;
+        hash = 17*hash + this.x;
+        hash = 17*hash + this.y;
+        return hash;
+    }
+
     public static bool operator ==(Position p1, Position p2) {
         return p1.x == p2.x && p1.y == p2.y;
     }

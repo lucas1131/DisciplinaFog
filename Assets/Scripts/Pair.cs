@@ -23,6 +23,13 @@ public class Pair<U, V> {
         return p.u == this.u && p.v == this.v;
     }
 
+    public int GetHashCode() {
+        int hash = 23;
+        hash = 17*hash + this.u.GetHashCode();
+        hash = 17*hash + this.v.GetHashCode();
+        return hash;
+    }
+
     public static bool operator ==(Pair<U, V> p1, Pair<U, V> p2) {
         return Object.Equals(p1.u, p2.u) && Object.Equals(p1.v, p2.v);
     }
