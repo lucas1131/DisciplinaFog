@@ -28,6 +28,6 @@ public class Pair<U, V> {
     }
 
     public static bool operator !=(Pair<U, V> p1, Pair<U, V> p2) {
-        return !(this == p2);
+        return !(p1 == p2);
     }
 }
