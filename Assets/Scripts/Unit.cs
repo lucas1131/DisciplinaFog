@@ -63,7 +63,7 @@ public class Unit : MonoBehaviour {
         };
 
         q.Enqueue(new Pair<Position, int>(new Position(this.pos), this.move));
-        while (q.Count() > 0) {
+        while (q.Count > 0) {
             
             Pair<Position, int> p = q.Dequeue();
             Position cur = p.first;
@@ -75,7 +75,7 @@ public class Unit : MonoBehaviour {
                 Position next = cur + del;
                 if (next.IsValid(board) && !visited.Contains(next)) {
                 
-                    Terrains t = board.titles[next.x][next.y];
+                    Terrains t = board.titles[next.x, next.y];
                     int cost = cls.GetMovementCost(t);
                 
                     if (cost <= curMov)
