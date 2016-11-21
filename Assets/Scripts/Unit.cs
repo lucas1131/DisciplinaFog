@@ -62,7 +62,7 @@ public class Unit : MonoBehaviour {
             new Position(-1, 0),
         };
 
-        q.Enqueue(new Pair<Position, int>(new Position(this.pos), curMov));
+        q.Enqueue(new Pair<Position, int>(new Position(this.pos), this.move));
         while (q.Count() > 0) {
             
             Pair<Position, int> p = q.Dequeue();

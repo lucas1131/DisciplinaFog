@@ -6,11 +6,11 @@ public class Position {
     private int _x;
     private int _y;
 
-    private int x {
+    public int x {
         get { return _x; }
     }
 
-    private int y {
+    public int y {
         get { return _y; }
     }
 
