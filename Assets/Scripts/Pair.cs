@@ -1,3 +1,4 @@
+using System;
 
 public class Pair<U, V> {
     private U u;
@@ -23,10 +24,10 @@ public class Pair<U, V> {
     }
 
     public static bool operator ==(Pair<U, V> p1, Pair<U, V> p2) {
-        return p1.u == p2.u && p1.v == p2.v;
+        return Object.Equals(p1.u, p2.u) && Object.Equals(p1.v, p2.v);
     }
 
     public static bool operator !=(Pair<U, V> p1, Pair<U, V> p2) {
-        return p1.u != p2.u || p1.v != p2.v;
+        return !(this == p2);
     }
 }
