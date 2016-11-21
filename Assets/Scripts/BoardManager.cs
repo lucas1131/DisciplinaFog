@@ -64,6 +64,10 @@ public class BoardManager : MonoBehaviour {
 		return null;
 	}
 
+    public Terrains GetTerrain(int x, int y) {
+        return terrainsTypes[tiles[x, y]];
+    }
+
 	void CreateTestScene(){
 
 		int counter = 0;
