@@ -15,6 +15,13 @@ public class Pair<U, V> {
         this.v = second;
     }
 
+    public bool Equals(Object other) {
+        Pair<U, V> p = other as Pair<U, V>;
+        if (p == null)
+            return false;
+        return p.u == this.u && p.v == this.v;
+    }
+
     public static bool operator ==(Pair<U, V> p1, Pair<U, V> p2) {
         return p1.u == p2.u && p1.v == p2.v;
     }
