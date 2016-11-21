@@ -18,7 +18,7 @@ public class Pair<U, V> {
         this.v = second;
     }
 
-    public bool Equals(Object other) {
+    public override bool Equals(object other) {
     
         Pair<U, V> p = other as Pair<U, V>;
     

@@ -37,7 +37,7 @@ public class Position {
         return this.IsContained(0, 0, board.rows, board.cols);
     }
 
-    public bool Equals(Object other) {
+    public override bool Equals(object other) {
         
         Position p = other as Position;
         
