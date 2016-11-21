@@ -1,7 +1,7 @@
 using UnityEngine;
-using System;
+using System.Collections;
 
-/* IMPORTANT: DONT CHANGE ENUM ORDER!! */
+/* NOTE: DONT CHANGE ENUM ORDER!! */
 public enum Terrains {
 	
 	Plains,
