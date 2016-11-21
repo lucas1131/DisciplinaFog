@@ -26,7 +26,7 @@ public class Pair<U, V> {
         return (p.u.Equals(this.u) && p.v.Equals(this.v));
     }
 
-    public int GetHashCode() {
+    public override int GetHashCode() {
         
         int hash = 23;
         hash = 17*hash + this.u.GetHashCode();

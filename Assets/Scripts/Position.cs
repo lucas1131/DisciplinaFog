@@ -46,7 +46,7 @@ public class Position {
         return this.x == p.x && this.y == p.y;
     }
 
-    public int GetHashCode() {
+    public override int GetHashCode() {
         
         int hash = 23;
         hash = 17*hash + this.x;
