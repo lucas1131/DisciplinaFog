@@ -12,7 +12,7 @@ public class BoardManager : MonoBehaviour {
 	public int size = 1;
 	
 	public TerrainType[] terrainsTypes;
-	public int[,] titles;
+	public int[,] tiles;
 
 	public int rows = 8;
 	public int cols = 8;
@@ -20,13 +20,13 @@ public class BoardManager : MonoBehaviour {
 	void Start() {
 
 		// Allocate vectors
-		titles = new int[cols, rows];
+		tiles = new int[cols, rows];
 		units = new Unit[size];
 
 		// Initialize grid
 		for (int i = 0; i < cols; i++) {
 			for (int j = 0; j < rows; j++) {
-				titles[i, j] = (int) Terrains.Plains;
+				tiles[i, j] = (int) Terrains.Plains;
 			}
 		}
 
@@ -50,12 +50,12 @@ public class BoardManager : MonoBehaviour {
 	public void DisplayTerrainInfo(int x, int y){
 
 		string tmp;
-		tmp = terrainsTypes[titles[x, y]].name;
-		tmp += "\nAvo: " + terrainsTypes[titles[x, y]].avoid;
-		tmp += "\nDef: " + terrainsTypes[titles[x, y]].defense;
-		tmp += "\nRec: " + terrainsTypes[titles[x, y]].recover;
-		if(terrainsTypes[titles[x, y]].name.Equals("Cracked Wall"))
-			tmp += "\nLife: " + terrainsTypes[titles[x, y]].life;
+		tmp = terrainsTypes[tiles[x, y]].name;
+		tmp += "\nAvo: " + terrainsTypes[tiles[x, y]].avoid;
+		tmp += "\nDef: " + terrainsTypes[tiles[x, y]].defense;
+		tmp += "\nRec: " + terrainsTypes[tiles[x, y]].recover;
+		if(terrainsTypes[tiles[x, y]].name.Equals("Cracked Wall"))
+			tmp += "\nLife: " + terrainsTypes[tiles[x, y]].life;
 
 		terrainInfo.text = tmp;
 	}
@@ -69,7 +69,7 @@ public class BoardManager : MonoBehaviour {
 		int counter = 0;
 		for (int i = 0; i < cols; i++) {
 			for (int j = 0; j < rows; j++) {
-				titles[i, j] = counter++%TerrainType.TOTAL_TERRAINS;
+				tiles[i, j] = counter++%TerrainType.TOTAL_TERRAINS;
 			}
 		}
 	}

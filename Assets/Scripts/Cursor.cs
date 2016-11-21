@@ -21,7 +21,7 @@ public class Cursor : MonoBehaviour {
 	public int posX = 0;
 	public int posY = 0;
 
-	public BoardManager titles;
+	public BoardManager tiles;
 
 	// Use this for initialization
 	void Start () {
@@ -38,11 +38,11 @@ public class Cursor : MonoBehaviour {
 		if(pos.position - tgtPos != Vector3.zero) MoveCursor();
 		else ProcessAxis();
 
-		titles.DisplayTerrainInfo(posX, posY);
+		tiles.DisplayTerrainInfo(posX, posY);
 		ProcessInput();
 		counter++;
 
-		focusedUnit = titles.GetUnit(posX, posY);
+		focusedUnit = tiles.GetUnit(posX, posY);
 	}
 
 	void ProcessAxis(){
@@ -51,11 +51,11 @@ public class Cursor : MonoBehaviour {
 		float yAxis = Input.GetAxis("Vertical");
 
 		// Move cursor right
-		if(xAxis > 0 && posX < titles.cols-1) posX++;
+		if(xAxis > 0 && posX < tiles.cols-1) posX++;
 		// Mover cursor left
 		else if(xAxis < 0 && posX > 0) posX--;
 		// Move cursor up
-		if(yAxis > 0 && posY < titles.rows-1) posY++;
+		if(yAxis > 0 && posY < tiles.rows-1) posY++;
 		// Move cursor down 
 		else if(yAxis < 0 && posY > 0) posY--;
 		
@@ -67,8 +67,8 @@ public class Cursor : MonoBehaviour {
 		// Action button
 		if(Input.GetButtonDown("Action")){
 			
-			// Get whatever it is in this position in the titles
-			focusedUnit = titles.GetUnit(posX, posY);
+			// Get whatever it is in this position in the tiles
+			focusedUnit = tiles.GetUnit(posX, posY);
 			
 			// No unit in square, open menu
 			if(focusedUnit == null){

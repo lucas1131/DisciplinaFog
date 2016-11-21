@@ -75,7 +75,7 @@ public class Unit : MonoBehaviour {
                 Position next = cur + del;
                 if (next.IsValid(board) && !visited.Contains(next)) {
                 
-                    Terrains t = board.titles[next.x, next.y];
+                    Terrains t = board.tiles[next.x, next.y];
                     int cost = cls.GetMovementCost(t);
                 
                     if (cost <= curMov)
