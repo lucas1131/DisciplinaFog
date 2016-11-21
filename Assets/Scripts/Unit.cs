@@ -31,10 +31,10 @@ public class Unit : MonoBehaviour {
     public Position pos = new Position(0, 0);
 	public int posX {
         get { return this.pos.x; }
-    };
+    }
 	public int posY {
         get { return this.pos.y; }
-    };
+    }
 	public bool hasMoved = false;
 
 	// Use this for initialization
