@@ -3,11 +3,11 @@ public class Position {
 
     private int x {
         get { return _x; }
-    };
+    }
 
     private int y {
         get { return _y; }
-    };
+    }
 
 
     public Position(int x, int y) {

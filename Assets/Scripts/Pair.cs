@@ -5,7 +5,7 @@ public class Pair<U, V> {
 
     public U first {
         get { return this.u; }
-    };
+    }
     public V second {
         get { return this.v; }
     }
