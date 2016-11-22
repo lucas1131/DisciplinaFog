@@ -7,10 +7,12 @@ public class Position {
     private int _y;
 
     public int x {
+        set { _x = value; }
         get { return _x; }
     }
 
     public int y {
+        set { _y = value; }
         get { return _y; }
     }
 

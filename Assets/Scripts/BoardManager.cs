@@ -107,8 +107,33 @@ public class BoardManager : MonoBehaviour {
 		// 	tmp += "\nLife: " + types[tiles[x, y]].life;
 	}
 
-	// TODO
 	public Unit GetUnit(int x, int y){
+
+		// Iterate through Player's units list
+		foreach(Unit u in playerUnits){
+
+			// Unit found
+			if(u.posX == x && u.posY == y)
+				return u;
+		}
+
+		// Iterate through Enemy's units list
+		foreach(Unit u in enemyUnits){
+
+			// Unit found
+			if(u.posX == x && u.posY == y)
+				return u;
+		}
+
+		// Iterate through Ally's units list
+		foreach(Unit u in allyUnits){
+
+			// Unit found
+			if(u.posX == x && u.posY == y)
+				return u;
+		}
+
+		// Not found
 		return null;
 	}
 
@@ -132,8 +157,8 @@ public class BoardManager : MonoBehaviour {
 		
 		types = new TerrainType[19];
 
-		types[i++] = new TerrainType("Plains", 1, true, 0, 0, 0, 0);
 		types[i++] = new TerrainType("Forest", 2, true, 10, 1, 0, 0);
+		types[i++] = new TerrainType("Plains", 1, true, 0, 0, 0, 0);
 		types[i++] = new TerrainType("Floor", 1, true, 0, 0, 0, 0);
 		types[i++] = new TerrainType("Pillar", 2, true, 10, 1, 0, 0);
 		types[i++] = new TerrainType("Mountain", 4, true, 30, 3, 0, 0);
