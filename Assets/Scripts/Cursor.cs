@@ -27,11 +27,11 @@ public class Cursor : MonoBehaviour {
 	public int posX = 0;
 	public int posY = 0;
 
-	public BoardManager tiles;
+	public BoardManager board;
 	public GameObject unitWindow;
 
 	// Use this for initialization
-	void Start () {
+	void Start(){
 		
 		// Prepare position variables to smoothly move the cursor
 		pos = GetComponent<Transform>();
@@ -42,28 +42,30 @@ public class Cursor : MonoBehaviour {
 		delay = delayDefault;
 
 		// Get first unit without moving the cursor
-		focusedUnit = tiles.GetUnit(posX, posY);
+		focusedUnit = board.GetUnit(posX, posY);
 		if(focusedUnit != null)
 			ChangeAnimationTo(focusedUnit, "victory");
 
-
 		// Get terrain info without moving the cursor
-		tiles.DisplayTerrainInfo(posX, posY);
+		board.DisplayTerrainInfo(posX, posY);
+
+		// First unit window update
+		UpdateUnitWindow(focusedUnit);
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update(){
 
 		if(pos.position != tgtPos) MoveCursor();
 		else ProcessAxis();
 
 		// Update terrain info only if cursor has moved
 		if(cursorMoved) 
-			tiles.DisplayTerrainInfo(posX, posY);
+			board.DisplayTerrainInfo(posX, posY);
 		ProcessInput();
 		counter++;
 
-		focusedUnit = tiles.GetUnit(posX, posY);
+		focusedUnit = board.GetUnit(posX, posY);
 	}
 
 	void ProcessAxis(){
@@ -73,7 +75,7 @@ public class Cursor : MonoBehaviour {
 		float yAxis = Input.GetAxis("Vertical");
 
 		// Move cursor right
-		if(xAxis > 0 && posX < tiles.cols-1){
+		if(xAxis > 0 && posX < board.cols-1){
 			posX++;
 			cursorMoved = true;
 		}
@@ -85,7 +87,7 @@ public class Cursor : MonoBehaviour {
 		}
 
 		// Move cursor up
-		if(yAxis > 0 && posY < tiles.rows-1){
+		if(yAxis > 0 && posY < board.rows-1){
 			posY++;
 			cursorMoved = true;
 		}
@@ -98,7 +100,7 @@ public class Cursor : MonoBehaviour {
 		
 		tgtPos = new Vector3(posX, posY, 0f);
 		
-		// Get whatever it is in this position in the tiles, but ony if cursor
+		// Get whatever it is in this position in the board, but ony if cursor
 		// cursorMoved to avoid getting it every update
 		if(cursorMoved){
 
@@ -109,35 +111,13 @@ public class Cursor : MonoBehaviour {
 					ChangeAnimationTo(focusedUnit, "idle");
 
 				// Check new tile for a unit
-				focusedUnit = tiles.GetUnit(posX, posY);
-				if(focusedUnit != null){
-					
-					// Enable and update unit window
-					/* Unit window hierarchy		Index
-					 *	UnitWindow
-					 *		|
-					 *		|-UnitLifeBar			0
-					 *		|-Portrait				1
-					 *		|-Name 					2
-					 *		\-Life 					3
-					 */
-					unitWindow.SetActive(true);
-					GameObject child = unitWindow.transform.GetChild(0);
-
-					// First child is unit life bar
-					float health = focusedUnit.curHealth/focusedUnit.maxHealth;
-					child.transform.localScale = new Vector2(health, 1f);
-
-					// Second child is portraitas
-					child = unitWindow.transform.GetChild(1);
-					child.GetComponent<Image>().sprite = ;
-
-					if(focusedUnit.faction == Unit.Faction.PLAYER)
-						ChangeAnimationTo(focusedUnit, "victory");
-				
-				// If there is no focused unit, disable unit window
-				} else unitWindow.SetActive(false);
+				focusedUnit = board.GetUnit(posX, posY);
+				if(focusedUnit != null && focusedUnit.faction == Faction.PLAYER)
+					ChangeAnimationTo(focusedUnit, "victory");
 			}
+
+			if(selectedUnit == null)
+				UpdateUnitWindow(focusedUnit);
 		}
 	}
 	
@@ -147,8 +127,17 @@ public class Cursor : MonoBehaviour {
 		if(Input.GetButtonDown("Action")){
 			
 			// If no unit has been selected, try to select a unit
-			if(selectedUnit == null)
+			if(selectedUnit == null){
+
 				SelectUnit();
+
+				// Disable terrain and unit windows
+				unitWindow.SetActive(false);
+				board.tInfo.SetActive(false);
+
+				print("[DEBUG]: movement list:");
+				print(selectedUnit.CalculateMovementArea());
+			}
 
 			// We already have a selected unit, try to act
 			else {
@@ -169,7 +158,7 @@ public class Cursor : MonoBehaviour {
 				
 				// Revert unit animation to victory only if unit is player's,
 				// else revert to idle
-				if(selectedUnit.faction == Unit.Faction.PLAYER)
+				if(selectedUnit.faction == Faction.PLAYER)
 					ChangeAnimationTo(selectedUnit, "victory");
 				else 
 					ChangeAnimationTo(selectedUnit, "idle");
@@ -182,6 +171,8 @@ public class Cursor : MonoBehaviour {
 				// Change unit status to focused only and deselect unit
 				focusedUnit = selectedUnit;
 				selectedUnit = null;
+
+				UpdateUnitWindow(focusedUnit);
 			}
 		}
 
@@ -190,7 +181,23 @@ public class Cursor : MonoBehaviour {
 
 		// Left trigger
 		if(Input.GetButtonDown("LeftTrigger")){
-			// Go to next unit
+			
+			print("[DEBUG]: LeftTrigger pressed!");
+
+			Unit u;
+			// If no unit is focused, go to first player's unit
+			if(focusedUnit == null)
+				u = board.GetNextUnit(Faction.PLAYER, 0);
+
+			// Go to next unit in focused unit's faction
+			else
+				u = board.GetNextUnit(focusedUnit.faction, focusedUnit.index);
+			
+			if(u != null){
+				posX = u.posX;
+				posY = u.posY;
+				tgtPos = new Vector3(posX, posY, 0f);
+			}
 		}
 
 		// Right trigger
@@ -286,5 +293,54 @@ public class Cursor : MonoBehaviour {
 		anim.SetBool("idle", false);
 
 		anim.SetBool(name, true);
+	}
+
+	void UpdateUnitWindow(Unit unit){
+
+		if(unit == null) {
+			unitWindow.SetActive(false); 
+			return;
+		}
+
+		// Enable and update unit window
+		/* Unit window hierarchy		Index
+		 *	UnitWindow
+		 *		|
+		 *		|-UnitLifeBar			0
+		 *		|-Portrait				1
+		 *		|-Name 					2
+		 *		\-Life 					3
+		 */
+
+		unitWindow.SetActive(true);
+		Transform child = unitWindow.transform.GetChild(0);
+
+		// First child is unit life bar
+		float health = ((float) unit.curHealth)/((float) unit.maxHealth);
+
+		child.localScale = new Vector3(health, 1f, 1f);
+
+		// Second child is portraits
+		child = unitWindow.transform.GetChild(1);
+		
+		// This child can be set active or not, so we need more work
+		// to get a reference to it, however we just want a copy of
+		// the unit's portrait, so there is no need to activate it
+
+		// Using temporary variable to add code legibility
+		GameObject go =
+			utils.FindObject(unit.gameObject, "PortraitSprite");
+		
+		child.GetComponent<Image>().sprite = 
+			go.GetComponent<SpriteRenderer>().sprite;
+
+		// Third child is name
+		child = unitWindow.transform.GetChild(2);
+		child.GetComponent<Text>().text = unit.unitName;
+
+		// Fourth child is life text
+		child = unitWindow.transform.GetChild(3);
+		child.GetComponent<Text>().text = 
+			unit.curHealth + "/" + unit.maxHealth;
 	}
 }

@@ -13,7 +13,7 @@ public class BoardManager : MonoBehaviour {
 	public Unit[] allyUnits;
 	
 	public TerrainType[] types;
-	public int[,] tiles;
+	public int[,] board;
 
 	public int rows = 10;
 	public int cols = 15;
@@ -21,12 +21,12 @@ public class BoardManager : MonoBehaviour {
 	void Start() {
 
 		// Allocate grid
-		tiles = new int[cols, rows];
+		board = new int[cols, rows];
 
 		// Initialize grid
 		for (int i = 0; i < cols; i++) {
 			for (int j = 0; j < rows; j++) {
-				tiles[i, j] = (int) Terrains.Plains;
+				board[i, j] = (int) Terrains.Plains;
 			}
 		}
 
@@ -63,21 +63,21 @@ public class BoardManager : MonoBehaviour {
 		GameObject wallHandler = tInfo.transform.GetChild(2).gameObject;
 		
 		// Always set terrain name
-		tName.text = types[tiles[x, y]].name;
+		tName.text = types[board[x, y]].name;
 
 		// Normal terrains, display name and statistics and disable wall
-		if(types[tiles[x, y]].isWalkable){
+		if(types[board[x, y]].isWalkable){
 
 			wallHandler.SetActive(false);
 			tStats.gameObject.SetActive(true);
 
-			tStats.text = "Def\t\t" + types[tiles[x, y]].defense + 
-						  "\nAvo\t\t" + types[tiles[x, y]].avoid;
+			tStats.text = "Def\t\t" + types[board[x, y]].defense + 
+						  "\nAvo\t\t" + types[board[x, y]].avoid;
 
 		} else {
 
 			// If its a cracked wall, display image and life
-			if(tiles[x, y] == (int) Terrains.CrackedWall){
+			if(board[x, y] == (int) Terrains.CrackedWall){
 
 				wallHandler.SetActive(true);
 				tStats.gameObject.SetActive(false);
@@ -86,7 +86,7 @@ public class BoardManager : MonoBehaviour {
 					wallHandler.transform.GetChild(1).gameObject;
 
 				// NOTE: This life is wrong, it must be instanciated
-				wallLife.GetComponent<Text>().text = ""+types[tiles[x, y]].life;
+				wallLife.GetComponent<Text>().text = ""+types[board[x, y]].life;
 
 			// Else its any other unwalkable terrain, just display its name
 			} else {
@@ -96,15 +96,15 @@ public class BoardManager : MonoBehaviour {
 			}
 		}
 		
-		// tName = types[tiles[x, y]].name;
+		// tName = types[board[x, y]].name;
 
 		// string tmp;
 
-		// tmp += "\nAvo: " + types[tiles[x, y]].avoid;
-		// tmp += "\nDef: " + types[tiles[x, y]].defense;
-		// tmp += "\nRec: " + types[tiles[x, y]].recover;
-		// if(types[tiles[x, y]].name.Equals("Cracked Wall"))
-		// 	tmp += "\nLife: " + types[tiles[x, y]].life;
+		// tmp += "\nAvo: " + types[board[x, y]].avoid;
+		// tmp += "\nDef: " + types[board[x, y]].defense;
+		// tmp += "\nRec: " + types[board[x, y]].recover;
+		// if(types[board[x, y]].name.Equals("Cracked Wall"))
+		// 	tmp += "\nLife: " + types[board[x, y]].life;
 	}
 
 	public Unit GetUnit(int x, int y){
@@ -138,7 +138,7 @@ public class BoardManager : MonoBehaviour {
 	}
 
 	public Terrains GetTerrain(int x, int y) {
-		return (Terrains) tiles[x, y];
+		return (Terrains) board[x, y];
 	}
 
 	// Test only
@@ -147,7 +147,7 @@ public class BoardManager : MonoBehaviour {
 		int counter = 0;
 		for (int i = 0; i < cols; i++) 
 			for (int j = 0; j < rows; j++) 
-				tiles[i, j] = counter++%TerrainType.TOTAL_TERRAINS;
+				board[i, j] = counter++%TerrainType.TOTAL_TERRAINS;
 	}
 
 	// Initialization
@@ -176,5 +176,17 @@ public class BoardManager : MonoBehaviour {
 		types[i++] = new TerrainType("Chest", 1, true, 0, 0, 0, 0);
 		types[i++] = new TerrainType("Chest", 1, true, 0, 0, 0, 0);
 		types[i++] = new TerrainType("Switch", 1, true, 0, 0, 0, 0);
+	}
+
+	public Unit GetNextUnit(Faction f, int index){
+		
+		// Get faction units list
+		Unit[] list = (f == Faction.PLAYER) ? playerUnits :
+						( (f == Faction.ENEMY) ? enemyUnits :
+													allyUnits );
+
+		// If list is empty
+		if(list.Length == 0) return null;
+		return list[(index+1)%list.Length];
 	}
 }

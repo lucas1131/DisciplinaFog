@@ -2,13 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public enum Faction {
+	PLAYER,
+	ENEMY,
+	ALLY
+}
+
 public class Unit : MonoBehaviour {
 
-	public enum Faction {
-		PLAYER,
-		ENEMY,
-		ALLY
-	}
 
 	[System.Serializable]
 	public struct Status {
@@ -27,6 +28,7 @@ public class Unit : MonoBehaviour {
 	public string unitName;
 	public Faction faction;
     public Class cls;
+    public int index = 0;
 
 	// Counters
 	public int maxHealth;
@@ -83,7 +85,7 @@ public class Unit : MonoBehaviour {
 	
 	}
 
-	List<Position> CalculateMovementArea() {
+	public List<Position> CalculateMovementArea() {
         
         List<Position> visited = new List<Position>();  // Não tem Set em c# e
                                                         // não vou implementar
@@ -103,6 +105,7 @@ public class Unit : MonoBehaviour {
             Pair<Position, int> p = q.Dequeue();
             Position cur = p.first;
             int curMov = p.second;
+            
             moveArea.Add(cur);
             
             foreach (Position del in deltas) {
