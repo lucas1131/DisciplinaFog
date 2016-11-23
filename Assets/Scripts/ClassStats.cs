@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 [CreateAssetMenu(fileName="FE Class", menuName="Scriptable/FE Class", order=1)]
@@ -17,27 +18,11 @@ public class ClassStats : ScriptableObject {
         }
     }
 
-    public Cost[] MoveCost = new Cost[] {
-        new Cost("Plains", 999),
-        new Cost("Forest", 999),
-        new Cost("Floor", 999),
-        new Cost("Pillar", 999),
-        new Cost("Mountain", 999),
-        new Cost("Peak", 999),
-        new Cost("Gate", 999),
-        new Cost("Throne", 999),
-        new Cost("Fort", 999),
-        new Cost("River", 999),
-        new Cost("Sea", 999),
-        new Cost("Desert", 999),
-        new Cost("Thicket", 999),
-        new Cost("Wall", 999),
-        new Cost("CrackedWall", 999),
-        new Cost("Door", 999),
-        new Cost("ClosedChest", 999),
-        new Cost("OpenedChest", 999),
-        new Cost("Switch", 999)
-    };
+    public Cost[] MoveCost = Array.ConvertAll<Terrains, Cost>(
+                                 Enum.GetValues(typeof(Terrains))
+                                 as Terrains[],
+                                 t => new Cost(t.ToString(), 999)
+                             );
 
     public int GetMovementCost(Terrains t) {
         int cost = MoveCost[(int)t].Value;
