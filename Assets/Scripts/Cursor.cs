@@ -137,8 +137,10 @@ public class Cursor : MonoBehaviour {
 					board.tInfo.SetActive(false);
 				}
 
-				print("[DEBUG]: movement list:");
-				print(selectedUnit.CalculateMovementArea());
+				if(selectedUnit){
+					print("[DEBUG]: movement list:");
+					print(selectedUnit.CalculateMovementArea());
+				}
 			}
 
 			// We already have a selected unit, try to act
