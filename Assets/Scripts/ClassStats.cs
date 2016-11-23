@@ -19,8 +19,7 @@ public class ClassStats : ScriptableObject {
     }
 
     public Cost[] MoveCost = Array.ConvertAll<Terrains, Cost>(
-                                 Enum.GetValues(typeof(Terrains))
-                                 as Terrains[],
+                                 Enum.GetValues(typeof(Terrains)) as Terrains[],
                                  t => new Cost(t.ToString(), 999)
                              );
 
