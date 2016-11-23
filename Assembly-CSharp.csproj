@@ -118,7 +118,6 @@
      <Compile Include="Assets\Scripts\BattleManager.cs" />
      <Compile Include="Assets\Scripts\BoardManager.cs" />
      <Compile Include="Assets\Scripts\Class.cs" />
-     <Compile Include="Assets\Scripts\ClassEditor.cs" />
      <Compile Include="Assets\Scripts\ClassRegister.cs" />
      <Compile Include="Assets\Scripts\Combat.cs" />
      <Compile Include="Assets\Scripts\Cursor.cs" />
