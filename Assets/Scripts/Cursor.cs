@@ -132,8 +132,10 @@ public class Cursor : MonoBehaviour {
 				SelectUnit();
 
 				// Disable terrain and unit windows
-				unitWindow.SetActive(false);
-				board.tInfo.SetActive(false);
+				if(selectedUnit){
+					unitWindow.SetActive(false);
+					board.tInfo.SetActive(false);
+				}
 
 				print("[DEBUG]: movement list:");
 				print(selectedUnit.CalculateMovementArea());
@@ -182,22 +184,22 @@ public class Cursor : MonoBehaviour {
 		// Left trigger
 		if(Input.GetButtonDown("LeftTrigger")){
 			
-			print("[DEBUG]: LeftTrigger pressed!");
-
-			Unit u;
 			// If no unit is focused, go to first player's unit
 			if(focusedUnit == null)
-				u = board.GetNextUnit(Faction.PLAYER, 0);
+				focusedUnit = board.GetNextUnit(Faction.PLAYER, 0);
 
 			// Go to next unit in focused unit's faction
 			else
-				u = board.GetNextUnit(focusedUnit.faction, focusedUnit.index);
+				focusedUnit = board.GetNextUnit(focusedUnit.faction,
+												focusedUnit.index);
 			
-			if(u != null){
-				posX = u.posX;
-				posY = u.posY;
+			if(focusedUnit != null){
+				posX = focusedUnit.posX;
+				posY = focusedUnit.posY;
 				tgtPos = new Vector3(posX, posY, 0f);
 			}
+
+			UpdateUnitWindow(focusedUnit);
 		}
 
 		// Right trigger
