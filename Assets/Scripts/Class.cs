@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class Class : ScriptableObject {
     
-    public int[] moveCost;
+    public ClassStats stats;
 
     public int GetMovementCost(Terrains t) {
-        return moveCost[(int)t];
+        return stats.MoveCost[(int)t];
     }
 }
