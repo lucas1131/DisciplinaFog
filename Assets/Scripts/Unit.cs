@@ -27,7 +27,7 @@ public class Unit : MonoBehaviour {
 	// Information
 	public string unitName;
 	public Faction faction;
-    public Class cls;
+    public ClassStats cls;
     public int index = 0;
 
 	// Counters
