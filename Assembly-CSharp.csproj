@@ -117,8 +117,7 @@
      <Compile Include="Assets\Scripts\AStarSeeker.cs" />
      <Compile Include="Assets\Scripts\BattleManager.cs" />
      <Compile Include="Assets\Scripts\BoardManager.cs" />
-     <Compile Include="Assets\Scripts\Class.cs" />
-     <Compile Include="Assets\Scripts\ClassRegister.cs" />
+     <Compile Include="Assets\Scripts\ClassStats.cs" />
      <Compile Include="Assets\Scripts\Combat.cs" />
      <Compile Include="Assets\Scripts\Cursor.cs" />
      <Compile Include="Assets\Scripts\EnemyAI.cs" />
@@ -127,6 +126,7 @@
      <Compile Include="Assets\Scripts\Position.cs" />
      <Compile Include="Assets\Scripts\PreBattleManager.cs" />
      <Compile Include="Assets\Scripts\TerrainType.cs" />
+     <Compile Include="Assets\Scripts\UI.cs" />
      <Compile Include="Assets\Scripts\Unit.cs" />
      <Compile Include="Assets\Scripts\WorldMap.cs" />
      <None Include="Assets\AstarPathfindingProject\Editor\EditorAssets\Materials\Navmesh.shader" />

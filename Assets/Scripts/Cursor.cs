@@ -122,15 +122,15 @@ public class Cursor : MonoBehaviour {
 					 *		\-Life 					3
 					 */
 					unitWindow.SetActive(true);
-					GameObject child = unitWindow.transform.GetChild(0);
+					Transform child = unitWindow.transform.GetChild(0);
 
 					// First child is unit life bar
 					float health = focusedUnit.curHealth/focusedUnit.maxHealth;
-					child.transform.localScale = new Vector2(health, 1f);
+					child.localScale = new Vector2(health, 1f);
 
 					// Second child is portraitas
 					child = unitWindow.transform.GetChild(1);
-					child.GetComponent<Image>().sprite = ;
+					//child.GameObject.GetComponent<Image>().sprite = ;
 
 					if(focusedUnit.faction == Unit.Faction.PLAYER)
 						ChangeAnimationTo(focusedUnit, "victory");

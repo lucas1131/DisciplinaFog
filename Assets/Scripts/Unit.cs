@@ -26,7 +26,7 @@ public class Unit : MonoBehaviour {
 	// Information
 	public string unitName;
 	public Faction faction;
-    public Class cls;
+    public ClassStats cls;
 
 	// Counters
 	public int maxHealth;
