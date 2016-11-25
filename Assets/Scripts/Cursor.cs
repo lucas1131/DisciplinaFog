@@ -138,8 +138,9 @@ public class Cursor : MonoBehaviour {
 				}
 
 				if(selectedUnit){
-					print("[DEBUG]: movement list:");
-					print(selectedUnit.CalculateMovementArea());
+					//print("[DEBUG]: movement list:");
+					//print(selectedUnit.CalculateMovementArea());
+                    selectedUnit.CalculateMovementArea();
 				}
 			}
 
