@@ -86,6 +86,7 @@ public class Unit : MonoBehaviour {
 	}
 
 	public List<Position> CalculateMovementArea() {
+     
         List<Position> visited = new List<Position>();  // Não tem Set em c# e
                                                         // não vou implementar
         List<Position> moveArea = new List<Position>();
@@ -104,17 +105,23 @@ public class Unit : MonoBehaviour {
                         this.stats.move
                     )
         );
+
         while (q.Count > 0) {
+        
             Pair<Position, int> p = q.Dequeue();
             Position cur = p.first;
             int curMov = p.second;
 
-            if (board.GetUnit(cur.x, cur.y) == null)
+            if (board.GetUnit(cur.x, cur.y) == null){
+                print("pos: " + cur);
                 moveArea.Add(cur);
+            }
 
             foreach (Position del in deltas) {
+        
                 Position next = cur + del;
                 if (next.IsValid(board) && !visited.Contains(next)) {
+        
                     Unit u = board.GetUnit(next.x, next.y);
                     Terrains t = board.GetTerrain(next.x, next.y);
                     int cost = cls.GetMovementCost(t);

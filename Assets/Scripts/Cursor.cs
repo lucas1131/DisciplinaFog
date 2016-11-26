@@ -18,7 +18,8 @@ public class Cursor : MonoBehaviour {
 	private int counter = 0;
 
 	private Transform pos;	// Actual position
-	private Vector3 tgtPos;	// Target position
+	private Vector3 tgtPos;	// Cursor target position
+	private Vector3 camTgtPos;	// Camera target position
 
 	private Unit focusedUnit;	// Cursor is hovering over this unit
 	private Unit selectedUnit;	// Player selected this unit to move/act
@@ -27,8 +28,15 @@ public class Cursor : MonoBehaviour {
 	public int posX = 0;
 	public int posY = 0;
 
+	// Camera variables
+	public int camX = 0;
+	public int camY = 0;
+	public int camWidth = 14;
+	public int camHeight = 10;
+
 	public BoardManager board;
 	public GameObject unitWindow;
+	public GameObject mainCamera;
 
 	// Use this for initialization
 	void Start(){
@@ -51,10 +59,18 @@ public class Cursor : MonoBehaviour {
 
 		// First unit window update
 		UpdateUnitWindow(focusedUnit);
+		mainCamera.transform.position = new Vector3(camX, camY, -10f);
 	}
 	
 	// Update is called once per frame
 	void Update(){
+
+		// if(posX <= 2) camX = 7;
+		// else if(posX >= board.rows-2) camX = board.rows-2;
+		// if(posY <= 2) camY = 5;
+		// else if(posX >= board.cols-2) camY = board.cols-2;
+
+		mainCamera.transform.position = new Vector3(camX, camY, -10f);
 
 		if(pos.position != tgtPos) MoveCursor();
 		else ProcessAxis();
@@ -76,24 +92,44 @@ public class Cursor : MonoBehaviour {
 
 		// Move cursor right
 		if(xAxis > 0 && posX < board.cols-1){
+			
+			// Camera Logic
+			if(posX - camX >= camWidth/2 && camX + camWidth/2 <= board.cols) 
+				camX++;
+			
 			posX++;
 			cursorMoved = true;
 		}
 
 		// Mover cursor left
 		else if(xAxis < 0 && posX > 0){
+			
+			// Camera Logic
+			if(posX - camX <= -camWidth/2 && camX - camWidth/2 >= 0) 
+				camX--;
+			
 			posX--;
 			cursorMoved = true;
 		}
 
 		// Move cursor up
 		if(yAxis > 0 && posY < board.rows-1){
+			
+			// Camera Logic
+			if(posY - camY >= camHeight/2-1 && camY + camHeight/2 <= board.rows) 
+				camY++;
+			
 			posY++;
 			cursorMoved = true;
 		}
 
 		// Move cursor down 
 		else if(yAxis < 0 && posY > 0){
+			
+			// Camera Logic
+			if(posY - camY <= -camHeight/2 && camY - camHeight/2 >= 0) 
+				camY--;
+			
 			posY--;
 			cursorMoved = true;
 		}
@@ -138,9 +174,9 @@ public class Cursor : MonoBehaviour {
 				}
 
 				if(selectedUnit){
-					//print("[DEBUG]: movement list:");
-					//print(selectedUnit.CalculateMovementArea());
-                    selectedUnit.CalculateMovementArea();
+					print("[DEBUG]: movement list:");
+					print(selectedUnit.CalculateMovementArea());
+                    //selectedUnit.CalculateMovementArea();
 				}
 			}
 
@@ -178,6 +214,7 @@ public class Cursor : MonoBehaviour {
 				selectedUnit = null;
 
 				UpdateUnitWindow(focusedUnit);
+				board.tInfo.SetActive(true);
 			}
 		}
 
@@ -239,6 +276,10 @@ public class Cursor : MonoBehaviour {
 			// Update position
 			pos.position = new Vector3(X, Y, 0f);
 		}
+	}
+
+	void CameraMove(){
+
 	}
 
 	void ChangeCursorSpeed(float speed, int delay){
