@@ -125,6 +125,7 @@
      <Compile Include="Assets\Scripts\Pair.cs" />
      <Compile Include="Assets\Scripts\Position.cs" />
      <Compile Include="Assets\Scripts\PreBattleManager.cs" />
+     <Compile Include="Assets\Scripts\PriorityQueue.cs" />
      <Compile Include="Assets\Scripts\TerrainType.cs" />
      <Compile Include="Assets\Scripts\UI.cs" />
      <Compile Include="Assets\Scripts\Unit.cs" />
