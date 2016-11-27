@@ -197,9 +197,15 @@ public class Unit : MonoBehaviour {
             if (current == target)
                 return ReconstructPath(target, cameFrom);
 
+            bool gDefined = gScore.ContainsKey(current);
             foreach (Position p in current.ValidNeighbors(board)) {
                 if (!closedSet.Contains(p)) {
-                    int g = gScore[current] + TileCost(p);
+                    int g;
+
+                    if (gDefined)
+                        g = gScore[current] + TileCost(p);
+                    else
+                        g = int.MaxValue;
 
                     if (openSet.Add(p)) {
                         cameFrom[p] = current;
