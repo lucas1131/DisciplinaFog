@@ -6,13 +6,19 @@ using System.Collections.Generic;
 
 public class BoardManager : MonoBehaviour {
 
+    [HideInInspector]
 	public GameObject tInfo;
 
 	public Unit[] playerUnits;
 	public Unit[] enemyUnits;
 	public Unit[] allyUnits;
 	
-	public TerrainType[] types;
+	public TerrainType[] types = 
+		Array.ConvertAll<Terrains, TerrainType>(
+        	Enum.GetValues(typeof(Terrains)) as Terrains[],
+            t => new TerrainType(t.ToString(), true, 0, 0, 0, 0)
+        );
+
 	public int[,] board;
 
 	public int rows = 10;
@@ -30,8 +36,10 @@ public class BoardManager : MonoBehaviour {
 			}
 		}
 
-		// Initialize types
-		InitializeTerrainTypes();
+		// Get objects references
+		tInfo = GameObject.Find("Canvas/TerrainWindow");
+
+		// Initialize test scene
 		CreateTestScene();
 	}
 	
@@ -63,7 +71,7 @@ public class BoardManager : MonoBehaviour {
 		GameObject wallHandler = tInfo.transform.GetChild(2).gameObject;
 		
 		// Always set terrain name
-		tName.text = types[board[x, y]].name;
+		tName.text = types[board[x, y]].tName;
 
 		// Normal terrains, display name and statistics and disable wall
 		if(types[board[x, y]].isWalkable){
@@ -148,34 +156,6 @@ public class BoardManager : MonoBehaviour {
 		for (int i = 0; i < cols; i++) 
 			for (int j = 0; j < rows; j++) 
 				board[i, j] = counter++%TerrainType.TOTAL_TERRAINS;
-	}
-
-	// Initialization
-	void InitializeTerrainTypes(){
-
-		int i = 0;
-		
-		types = new TerrainType[19];
-
-		types[i++] = new TerrainType("Forest", 2, true, 10, 1, 0, 0);
-		types[i++] = new TerrainType("Plains", 1, true, 0, 0, 0, 0);
-		types[i++] = new TerrainType("Floor", 1, true, 0, 0, 0, 0);
-		types[i++] = new TerrainType("Pillar", 2, true, 10, 1, 0, 0);
-		types[i++] = new TerrainType("Mountain", 4, true, 30, 3, 0, 0);
-		types[i++] = new TerrainType("Peak", 5, false, 40, 4, 0, 0);
-		types[i++] = new TerrainType("Gate", 2, true, 30, 3, 20, 0);
-		types[i++] = new TerrainType("Throne", 2, true, 30, 3, 20, 0);
-		types[i++] = new TerrainType("Fort", 2, true, 20, 2, 10, 0);
-		types[i++] = new TerrainType("River", 4, true, 0, 0, 0, 0);
-		types[i++] = new TerrainType("Sea", 5, false, 0, 0, 0, 0);
-		types[i++] = new TerrainType("Desert", 2, true, 0, 0, 0, 0);
-		types[i++] = new TerrainType("Thicket", 10, false, 0, 0, 0, 0);
-		types[i++] = new TerrainType("Wall", 10, false, 0, 0, 0, 0);
-		types[i++] = new TerrainType("Wall", 10, false, 0, 0, 0, 20);
-		types[i++] = new TerrainType("Door", 10, false, 0, 0, 0, 0);
-		types[i++] = new TerrainType("Chest", 1, true, 0, 0, 0, 0);
-		types[i++] = new TerrainType("Chest", 1, true, 0, 0, 0, 0);
-		types[i++] = new TerrainType("Switch", 1, true, 0, 0, 0, 0);
 	}
 
 	public Unit GetNextUnit(Faction f, int index){

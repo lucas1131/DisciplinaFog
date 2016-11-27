@@ -39,6 +39,7 @@ public class Unit : MonoBehaviour {
 	// Status
 	public Status stats;
 
+    [HideInInspector]
     public BoardManager board;
 
     // Children
@@ -76,6 +77,9 @@ public class Unit : MonoBehaviour {
 		this.posX = startX;
 		this.posY = startY;
 		this.transform.position = new Vector2(this.posX, this.posY);	
+
+        // Get board from hierarchy
+        board = GameObject.Find("Map").GetComponent<BoardManager>();
 
 		// TODO: read statistics from savefile
 	}
@@ -182,6 +186,7 @@ public class Unit : MonoBehaviour {
     }
 
     private List<Position> PathTo(Position target) {
+
         HashSet<Position> closedSet = new HashSet<Position>();
         HashSet<Position> openSet = new HashSet<Position>();
         PriorityQueue<Position> nextPositions = new PriorityQueue<Position>();
@@ -238,12 +243,13 @@ public class Unit : MonoBehaviour {
     }
 
     public void MoveTowards(Position target) {
+        
         List<Position> path = PathTo(target);
         int curMove = stats.move;
         int cost;
         int i = 0;
 
-        // TODO PRINT AQUI PRA TESTAR CAMINHOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        // TODO PRINT AQUI PRA TESTAR CAMINHO
 
         while (curMove >= (cost = TileCost(path[i]))) {
             curMove -= cost;

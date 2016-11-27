@@ -9,9 +9,11 @@ public class ClassStats : ScriptableObject {
 
     [System.Serializable]
     public class Cost {
+
         [HideInInspector]
         public string Name;
         public int Value;
+        
         public Cost(string s, int i) {
             Name = s;
             Value = i;

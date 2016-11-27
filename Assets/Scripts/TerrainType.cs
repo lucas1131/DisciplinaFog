@@ -5,25 +5,37 @@ using System.Collections;
 /* NOTE: DONT CHANGE ENUM ORDER!! */
 public enum Terrains {
 	
+	/* Default to 1 movement point */
 	Plains = 0,
-	Forest = 1,
-	Floor = 2,
-	Pillar = 3,
-	Mountain = 4,
-	Peak = 5,
-	Gate = 6,
-	Throne = 7,
-	Fort = 8,
-	River = 9,
-	Sea = 10,
-	Desert = 11,
-	Thicket = 12,
-	Wall = 13,
-	CrackedWall = 14,
-	Door = 15,
-	ClosedChest = 16,
-	OpenedChest = 17,
-	Switch = 18
+	Floor,
+	ClosedChest,
+	OpenedChest,
+	Switch,
+	Armory,
+	Vendor,
+	House,
+	Village,
+	
+	/* Default to 2 movement points */
+	Forest,
+	Pillar,
+	Desert,
+	Gate,
+	Throne,
+	Fort,
+
+	/* Default to 4 movement points */
+	River,
+	Mountain,
+	
+	/* Default to 999 movement points */
+	Sea,
+	Peak,
+	Thicket,
+	Wall,
+	CrackedWall,
+	Fence,
+	Door
 }
 
 [System.Serializable]
@@ -33,17 +45,10 @@ public class TerrainType {
 	public static readonly int 
 		TOTAL_TERRAINS = Enum.GetNames(typeof(Terrains)).Length;
 
-	// Terrain name
-	public string name;
+	// Terrain tName
+	public string tName;
 
-	// Terrain sprite
-	// public Sprite sprite;
-
-	// Default to 1
-	public int baseWeight = 1;
-
-	// Default to true
-	public bool isWalkable = true;
+	public bool isWalkable;
 
 	// Terrain status bonuses
 	public int avoid;
@@ -55,14 +60,18 @@ public class TerrainType {
 	// TODO: change this to something instatiable
 	public int life;
 
-	public TerrainType(string name, int weight, bool walkable, int avoid,
+	public TerrainType(string name, bool isWalkable, int avoid, 
 						int defense, int recover, int life){
-		this.name = name;
-		this.baseWeight = weight;
-		this.isWalkable = walkable;
+
 		this.avoid = avoid;
 		this.defense = defense;
 		this.recover = recover;
 		this.life = life;
+
+		if(name == "ClosedChest" || name == "OpenedChest") 
+			this.tName = "Chest";
+		else if(name == "CrackedWall")
+			this.tName = "Wall";
+		else this.tName = name;
 	}
 }

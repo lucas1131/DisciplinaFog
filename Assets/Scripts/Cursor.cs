@@ -34,9 +34,12 @@ public class Cursor : MonoBehaviour {
 	public int camWidth = 14;
 	public int camHeight = 10;
 
-	public BoardManager board;
+	[HideInInspector]
 	public GameObject unitWindow;
+	[HideInInspector]
 	public GameObject mainCamera;
+	[HideInInspector]
+	public BoardManager board;
 
 	// Use this for initialization
 	void Start(){
@@ -56,6 +59,11 @@ public class Cursor : MonoBehaviour {
 
 		// Get terrain info without moving the cursor
 		board.DisplayTerrainInfo(posX, posY);
+
+		// Get objects references
+		unitWindow = GameObject.Find("Canvas/UnitWindow");
+		mainCamera = GameObject.Find("Camera");
+		board = GameObject.Find("Map").GetComponent<BoardManager>();
 
 		// First unit window update
 		UpdateUnitWindow(focusedUnit);
