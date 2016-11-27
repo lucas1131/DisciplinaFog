@@ -86,7 +86,6 @@ public class Unit : MonoBehaviour {
 	}
 
 	public List<Position> CalculateMovementArea() {
-        
         List<Position> visited = new List<Position>();  // Não tem Set em c# e
                                                         // não vou implementar
         List<Position> moveArea = new List<Position>();
@@ -99,24 +98,28 @@ public class Unit : MonoBehaviour {
             new Position(-1, 0),
         };
 
-        q.Enqueue(new Pair<Position, int>(new Position(this.pos), this.stats.move));
+        q.Enqueue(
+                    new Pair<Position, int>(
+                        new Position(this.pos),
+                        this.stats.move
+                    )
+        );
         while (q.Count > 0) {
-            
             Pair<Position, int> p = q.Dequeue();
             Position cur = p.first;
             int curMov = p.second;
-            
-            moveArea.Add(cur);
-            
+
+            if (board.GetUnit(cur.x, cur.y) == null)
+                moveArea.Add(cur);
+
             foreach (Position del in deltas) {
-                
                 Position next = cur + del;
                 if (next.IsValid(board) && !visited.Contains(next)) {
-                
+                    Unit u = board.GetUnit(next.x, next.y);
                     Terrains t = board.GetTerrain(next.x, next.y);
                     int cost = cls.GetMovementCost(t);
                 
-                    if (cost <= curMov)
+                    if (cost <= curMov && this.CanMoveThrough(u))
                         q.Enqueue(new Pair<Position, int>(next, curMov - cost));
                     visited.Add(next);
                 }
@@ -127,4 +130,18 @@ public class Unit : MonoBehaviour {
 
         return moveArea;
 	}
+
+    public bool CanMoveThrough(Unit other) {
+        if (other == null)
+            return true;
+
+        if (this.faction == other.faction)
+            return true;
+        if (this.faction == Faction.PLAYER)
+            return other.faction == Faction.ALLY;
+        if (this.faction == Faction.ALLY)
+            return other.faction == Faction.PLAYER;
+
+        return false;
+    }
 }

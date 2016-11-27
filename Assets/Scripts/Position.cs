@@ -39,6 +39,10 @@ public class Position {
         return this.IsContained(0, 0, board.rows, board.cols);
     }
 
+    public override string ToString() {
+        return "(" + this.x + ", " + this.y + ")";
+    }
+
     public override bool Equals(object other) {
         
         Position p = other as Position;
@@ -58,6 +62,11 @@ public class Position {
     }
 
     public static bool operator == (Position p1, Position p2) {
+        if (Object.ReferenceEquals(p1, null))
+            return Object.ReferenceEquals(p2, null);
+        else if (Object.ReferenceEquals(p2, null))
+            return false;
+
         return p1.x == p2.x && p1.y == p2.y;
     }
 
