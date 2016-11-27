@@ -174,7 +174,7 @@ public class Unit : MonoBehaviour {
         return path;
     }
 
-    private List<Position> PathTo(Position target) {
+    public List<Position> PathTo(Position target) {
         HashSet<Position> closedSet = new HashSet<Position>();
         HashSet<Position> openSet = new HashSet<Position>();
         PriorityQueue<Position> nextPositions = new PriorityQueue<Position>();
@@ -199,7 +199,7 @@ public class Unit : MonoBehaviour {
 
             bool gDefined = gScore.ContainsKey(current);
             foreach (Position p in current.ValidNeighbors(board)) {
-                if (!closedSet.Contains(p)) {
+                if (!closedSet.Contains(p) && CanMoveThrough(p)) {
                     int g;
 
                     if (gDefined)
@@ -230,7 +230,11 @@ public class Unit : MonoBehaviour {
         return null;
     }
 
-    public void MoveTowards(Position target) {
+    public bool CanStandAt(Position p) {
+        return board.GetUnit(p) == null;
+    }
+
+    public List<Position> MoveTowards(Position target) {
         List<Position> path = PathTo(target);
         int curMove = stats.move;
         int cost;
@@ -243,7 +247,9 @@ public class Unit : MonoBehaviour {
             i++;
         }
 
-        if (i > 0)
-            pos = path[i-1];
+        while (i > 0 && !CanStandAt(path[i-1]))
+            i--;
+
+        return path.GetRange(0, i);
     }
 }
