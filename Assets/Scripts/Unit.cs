@@ -146,24 +146,30 @@ public class Unit : MonoBehaviour {
     }
 
     // Manhattan distance
-    private float AStarHeuristic(Position p1, Position p2) {
+    private int AStarHeuristic(Position p1, Position p2) {
         Position d = p1 - p2;
-        return Math.Abs(d.x) + Math.Abs(d.y);
+        if (d.x < 0)
+            d.x *= -1;
+        if (d.y < 0)
+            d.y *= -1;
+        return d.x + d.y;
     }
 
     public void MoveTowards(Position target) {
         HashSet<Position> closedSet = new HashSet<Position>();
-        HashSet<Position> openSet = {pos};
+        PriorityQueue<Position> openSet = new PriorityQueue<Position>();
         Dictionary<Position, Position> cameFrom =
                 new Dictionary<Position, Position>();
         Dictionary<Position, int> gScore = new Dictionary<Position, int>();
         Dictionary<Position, int> fScore = new Dictionary<Position, int>();
 
-        gScore.Put(pos, 0);
-        fScore.Put(pos, AStarHeuristic(pos, target));
+        gScore[pos] = 0;
+        fScore[pos] = AStarHeuristic(pos, target);
+        openSet.Add(pos, 0);
 
         while (openSet.Count > 0) {
             // TODO stuff
+            // TODO implement heap
         }
     }
 }
