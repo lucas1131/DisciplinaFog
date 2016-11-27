@@ -155,9 +155,29 @@ public class Unit : MonoBehaviour {
         return d.x + d.y;
     }
 
-    public void MoveTowards(Position target) {
+    private int TileCost(Position p) {
+        Terrains t = board.GetTerrain(p.x, p.y);
+        return cls.GetMovementCost(t);
+    }
+
+    private List<Position> ReconstructPath(
+            Position curr,
+            Dictionary<Position, Position> cameFrom) {
+        List<Position> path = new List<Position>();
+
+        while (cameFrom.ContainsKey(curr)) {
+            path.Add(curr);
+            curr = cameFrom[curr];
+        }
+
+        path.Reverse();
+        return path;
+    }
+
+    private List<Position> PathTo(Position target) {
         HashSet<Position> closedSet = new HashSet<Position>();
-        PriorityQueue<Position> openSet = new PriorityQueue<Position>();
+        HashSet<Position> openSet = new HashSet<Position>();
+        PriorityQueue<Position> nextPositions = new PriorityQueue<Position>();
         Dictionary<Position, Position> cameFrom =
                 new Dictionary<Position, Position>();
         Dictionary<Position, int> gScore = new Dictionary<Position, int>();
@@ -165,11 +185,59 @@ public class Unit : MonoBehaviour {
 
         gScore[pos] = 0;
         fScore[pos] = AStarHeuristic(pos, target);
-        openSet.Add(pos, 0);
+
+        openSet.Add(pos);
+        nextPositions.Add(pos, fScore[pos]);
 
         while (openSet.Count > 0) {
-            // TODO stuff
-            // TODO implement heap
+            Position current = nextPositions.Pop();
+            openSet.Remove(current);
+            closedSet.Add(pos);
+
+            if (current == target)
+                return ReconstructPath(target, cameFrom);
+
+            foreach (Position p in current.ValidNeighbors(board)) {
+                if (!closedSet.Contains(p)) {
+                    int g = gScore[current] + TileCost(p);
+
+                    if (openSet.Add(p)) {
+                        cameFrom[p] = current;
+                        gScore[p] = g;
+                        int f = g + AStarHeuristic(p, target);
+                        fScore[p] = f;
+                        nextPositions.Add(p, f);
+                    } else if (g < gScore[p]) {
+                        cameFrom[p] = current;
+                        gScore[p] = g;
+                        int f = g + AStarHeuristic(p, target);
+                        fScore[p] = f;
+                        nextPositions.Update(
+                            x => (x == p),
+                            x => f
+                        );
+                    }
+                }
+            }
         }
+
+        return null;
+    }
+
+    public void MoveTowards(Position target) {
+        List<Position> path = PathTo(target);
+        int curMove = stats.move;
+        int cost;
+        int i = 0;
+
+        // TODO PRINT AQUI PRA TESTAR CAMINHOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+        while (curMove >= (cost = TileCost(path[i]))) {
+            curMove -= cost;
+            i++;
+        }
+
+        if (i > 0)
+            pos = path[i-1];
     }
 }
