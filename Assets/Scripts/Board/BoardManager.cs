@@ -26,6 +26,15 @@ public class BoardManager : MonoBehaviour {
 
 	void Start() {
 
+		// Get objects references
+		tInfo = GameObject.Find("Canvas/TerrainWindow");
+		print("tinfo: " + tInfo);
+
+		// Find all units
+		playerUnits = GameObject.Find("PUnits").GetComponentsInChildren<Unit>();
+		enemyUnits = GameObject.Find("EUnits").GetComponentsInChildren<Unit>();
+		allyUnits = GameObject.Find("AUnits").GetComponentsInChildren<Unit>();
+
 		// Allocate grid
 		board = new int[cols, rows];
 
@@ -35,9 +44,6 @@ public class BoardManager : MonoBehaviour {
 				board[i, j] = (int) Terrains.Plains;
 			}
 		}
-
-		// Get objects references
-		tInfo = GameObject.Find("Canvas/TerrainWindow");
 
 		// Initialize test scene
 		CreateTestScene();
@@ -61,7 +67,7 @@ public class BoardManager : MonoBehaviour {
 					\-Life 		1
 		*/
 
-		// Get name Text (always used)
+		// Get name Text (always used)	
 		Text tName = 
 			tInfo.transform.GetChild(0).gameObject.GetComponent<Text>();
 		// Get statistics Text (disabled only for unwalkable terrain)

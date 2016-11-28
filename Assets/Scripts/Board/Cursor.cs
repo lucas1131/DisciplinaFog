@@ -17,9 +17,9 @@ public class Cursor : MonoBehaviour {
 	private bool cursorMoved = false;
 	private int counter = 0;
 
-	private Transform pos;	// Actual position
-	private Vector3 tgtPos;	// Cursor target position
-	private Vector3 camTgtPos;	// Camera target position
+	private Transform pos;		// Actual position
+	private Vector3 tgtPos;		// Cursor target position
+	private Vector3 tgtCamPos;	// Camera target position
 
 	private Unit focusedUnit;	// Cursor is hovering over this unit
 	private Unit selectedUnit;	// Player selected this unit to move/act
@@ -43,6 +43,11 @@ public class Cursor : MonoBehaviour {
 
 	// Use this for initialization
 	void Start(){
+
+		// Get objects references
+		unitWindow = GameObject.Find("Canvas/UnitWindow");
+		mainCamera = GameObject.Find("Camera");
+		board = GameObject.Find("Map").GetComponent<BoardManager>();
 		
 		// Prepare position variables to smoothly move the cursor
 		pos = GetComponent<Transform>();
@@ -52,6 +57,8 @@ public class Cursor : MonoBehaviour {
 		cursorSpd = cursorSpdDefault;
 		delay = delayDefault;
 
+		tgtCamPos = mainCamera.transform.position;
+
 		// Get first unit without moving the cursor
 		focusedUnit = board.GetUnit(posX, posY);
 		if(focusedUnit != null)
@@ -59,11 +66,6 @@ public class Cursor : MonoBehaviour {
 
 		// Get terrain info without moving the cursor
 		board.DisplayTerrainInfo(posX, posY);
-
-		// Get objects references
-		unitWindow = GameObject.Find("Canvas/UnitWindow");
-		mainCamera = GameObject.Find("Camera");
-		board = GameObject.Find("Map").GetComponent<BoardManager>();
 
 		// First unit window update
 		UpdateUnitWindow(focusedUnit);
@@ -73,13 +75,11 @@ public class Cursor : MonoBehaviour {
 	// Update is called once per frame
 	void Update(){
 
-		// if(posX <= 2) camX = 7;
-		// else if(posX >= board.rows-2) camX = board.rows-2;
-		// if(posY <= 2) camY = 5;
-		// else if(posX >= board.cols-2) camY = board.cols-2;
+		// Move camera if it has a new target position
+		if(mainCamera.transform.position != tgtCamPos)
+			CameraMove();
 
-		mainCamera.transform.position = new Vector3(camX, camY, -10f);
-
+		// Move cursor if it has a new target position
 		if(pos.position != tgtPos) MoveCursor();
 		else ProcessAxis();
 
@@ -143,6 +143,7 @@ public class Cursor : MonoBehaviour {
 		}
 		
 		tgtPos = new Vector3(posX, posY, 0f);
+		tgtCamPos = new Vector3(camX, camY, -10f);
 		
 		// Get whatever it is in this position in the board, but ony if cursor
 		// cursorMoved to avoid getting it every update
@@ -162,6 +163,19 @@ public class Cursor : MonoBehaviour {
 
 			if(selectedUnit == null)
 				UpdateUnitWindow(focusedUnit);
+		}
+
+		// Check if cursor is too close to UI menus to change their position
+		if(posX - camX <= -3){
+
+			Vector3 pos = new Vector2(340f, -189f);
+			board.tInfo.GetComponent<RectTransform>().localPosition = pos;
+		}
+
+		else if(posX - camX >= 3){
+
+			Vector3 pos = new Vector2(-340f, -189f);
+			board.tInfo.GetComponent<RectTransform>().localPosition = pos;
 		}
 	}
 	
@@ -189,8 +203,8 @@ public class Cursor : MonoBehaviour {
 			}
 
 			// We already have a selected unit, try to act
-			else {
-
+			else if(selectedUnit.faction == Faction.PLAYER){
+				selectedUnit.MoveTowards(new Position(posX, posY));
 			}
 		}
 
@@ -275,6 +289,7 @@ public class Cursor : MonoBehaviour {
 			// Interpolate position
 			X += (tgtPos.x - pos.position.x)*cursorSpd;
 			Y += (tgtPos.y - pos.position.y)*cursorSpd;
+
 			// Round position interpolation
 			if(Mathf.Abs(tgtPos.x - pos.position.x) < 0.1f)
 				X = tgtPos.x;
@@ -288,6 +303,28 @@ public class Cursor : MonoBehaviour {
 
 	void CameraMove(){
 
+		if(delay == 0 || counter%delay == 0){
+			
+			// Local placeholders to modify pos.position
+			float X = mainCamera.transform.position.x;
+			float Y = mainCamera.transform.position.y;
+
+			// Reset delay counter
+			counter = 0;
+
+			// Interpolate position
+			X += (tgtCamPos.x - mainCamera.transform.position.x)*cursorSpd;
+			Y += (tgtCamPos.y - mainCamera.transform.position.y)*cursorSpd;
+
+			// Round position interpolation
+			if(Mathf.Abs(tgtCamPos.x - mainCamera.transform.position.x) < 0.1f)
+				X = tgtCamPos.x;
+			if(Mathf.Abs(tgtCamPos.y - mainCamera.transform.position.y) < 0.1f)
+				Y = tgtCamPos.y;
+
+			// Update position
+			mainCamera.transform.position = new Vector3(X, Y, -10f);
+		}
 	}
 
 	void ChangeCursorSpeed(float speed, int delay){

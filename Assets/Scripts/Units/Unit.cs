@@ -70,23 +70,17 @@ public class Unit : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-		unitSprite = this.gameObject.transform.GetChild(0);
-		effectSprite = this.gameObject.transform.GetChild(1);
-		portraitSprite = this.gameObject.transform.GetChild(2);
-
-		this.posX = startX;
-		this.posY = startY;
-		this.transform.position = new Vector2(this.posX, this.posY);	
-
-        // Get board from hierarchy
+        // Get objects references from hierarchy
         board = GameObject.Find("Map").GetComponent<BoardManager>();
+        unitSprite = this.gameObject.transform.GetChild(0);
+        effectSprite = this.gameObject.transform.GetChild(1);
+        portraitSprite = this.gameObject.transform.GetChild(2);
+
+        this.posX = startX;
+        this.posY = startY;
+        this.transform.position = new Vector2(this.posX, this.posY);    
 
 		// TODO: read statistics from savefile
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
 	}
 
 	public List<Position> CalculateMovementArea() {
@@ -158,11 +152,14 @@ public class Unit : MonoBehaviour {
 
     // Manhattan distance
     private int AStarHeuristic(Position p1, Position p2) {
+        
         Position d = p1 - p2;
+        
         if (d.x < 0)
             d.x *= -1;
         if (d.y < 0)
             d.y *= -1;
+        
         return d.x + d.y;
     }
 
@@ -171,9 +168,9 @@ public class Unit : MonoBehaviour {
         return cls.GetMovementCost(t);
     }
 
-    private List<Position> ReconstructPath(
-            Position curr,
-            Dictionary<Position, Position> cameFrom) {
+    private List<Position> ReconstructPath(Position curr, 
+        Dictionary<Position, Position> cameFrom) {
+
         List<Position> path = new List<Position>();
 
         while (cameFrom.ContainsKey(curr)) {
@@ -187,21 +184,32 @@ public class Unit : MonoBehaviour {
 
     private List<Position> PathTo(Position target) {
 
+        // debug
+        int counter = 0;
+
         HashSet<Position> closedSet = new HashSet<Position>();
         HashSet<Position> openSet = new HashSet<Position>();
+        
         PriorityQueue<Position> nextPositions = new PriorityQueue<Position>();
+        
         Dictionary<Position, Position> cameFrom =
                 new Dictionary<Position, Position>();
+        
         Dictionary<Position, int> gScore = new Dictionary<Position, int>();
         Dictionary<Position, int> fScore = new Dictionary<Position, int>();
 
+        // Initialize and start
         gScore[pos] = 0;
         fScore[pos] = AStarHeuristic(pos, target);
 
         openSet.Add(pos);
         nextPositions.Add(pos, fScore[pos]);
 
-        while (openSet.Count > 0) {
+        while (openSet.Count > 0 && counter <= 100*100) {
+            
+            print("iterating");
+            counter++;
+
             Position current = nextPositions.Pop();
             openSet.Remove(current);
             closedSet.Add(pos);
@@ -210,7 +218,9 @@ public class Unit : MonoBehaviour {
                 return ReconstructPath(target, cameFrom);
 
             bool gDefined = gScore.ContainsKey(current);
+            
             foreach (Position p in current.ValidNeighbors(board)) {
+            
                 if (!closedSet.Contains(p)) {
                     int g;
 
@@ -220,16 +230,20 @@ public class Unit : MonoBehaviour {
                         g = int.MaxValue;
 
                     if (openSet.Add(p)) {
+            
                         cameFrom[p] = current;
                         gScore[p] = g;
                         int f = g + AStarHeuristic(p, target);
                         fScore[p] = f;
                         nextPositions.Add(p, f);
+            
                     } else if (g < gScore[p]) {
+            
                         cameFrom[p] = current;
                         gScore[p] = g;
                         int f = g + AStarHeuristic(p, target);
                         fScore[p] = f;
+            
                         nextPositions.Update(
                             x => (x == p),
                             x => f
@@ -250,7 +264,6 @@ public class Unit : MonoBehaviour {
         int i = 0;
 
         // TODO PRINT AQUI PRA TESTAR CAMINHO
-
         while (curMove >= (cost = TileCost(path[i]))) {
             curMove -= cost;
             i++;
