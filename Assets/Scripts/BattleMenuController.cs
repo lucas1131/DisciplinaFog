@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class BattleMenuController : MonoBehaviour {
 
@@ -20,7 +20,13 @@ public class BattleMenuController : MonoBehaviour {
     public GameObject attack;
     public GameObject item;
 
-    private ArrayList entries;
+    public GameObject currentEntry;
+
+    private List<GameObject> entries;
+    private int currentEntryIndex;
+    private int arraySize;
+
+    private int c = 0;
 
     //panel size = 20 + entries.length*50;
 	void Start () {
@@ -28,8 +34,10 @@ public class BattleMenuController : MonoBehaviour {
         //default value, no need to change
         PANEL_WIDTH = 165;
 
+        arraySize = 8;
+
         //sets up a list with all options
-        entries = new ArrayList(8);
+        entries = new List<GameObject>(arraySize);
         entries.Add(attack);
         entries.Add(rescue);
         entries.Add(item);
@@ -39,6 +47,8 @@ public class BattleMenuController : MonoBehaviour {
         entries.Add(status);
         entries.Add(end);
 
+        currentEntry = null;
+
         //updates the background panel size
         updatePanelSize();
 
@@ -46,13 +56,14 @@ public class BattleMenuController : MonoBehaviour {
         setPositions();
 
         //sets menu cursor position
-        setMenuCursorPosition();
+        setCursorPosition();
 
     }
 	
 	void Update () {
         updatePanelSize();
         setPositions();
+        setCursorPosition();
 	}
 
     void updatePanelSize() {
@@ -82,26 +93,78 @@ public class BattleMenuController : MonoBehaviour {
         }
     }
 
-    float getFirstEntryY()
+    public void next()
     {
-        float y = -10;
-        foreach (GameObject e in entries) {
-            if (e.activeSelf)
+        int i, j;
+        GameObject cur = null;
+
+        i = currentEntryIndex;
+
+        if (calculateEntriesNo() == 0) return;
+
+        //iterates through all array itens
+        for (j = 0; j < arraySize; j++)
+        {
+            //checks if is in array end
+            if (i + 1 >= arraySize) i = 0;
+            else i++;
+
+            //fetches entry in index i
+            cur = entries[i];
+
+            //if this entry is active, returns it
+            if (cur.activeSelf)
             {
-                y = e.GetComponent<RectTransform>().anchoredPosition.y;
-                break;
+                currentEntryIndex = i;
+                return;
             }
         }
-        return y;
     }
 
-    void setMenuCursorPosition() {
+    public void prev()
+    {
+        int i, j;
+        GameObject cur = null;
 
+        i = currentEntryIndex;
+
+        if (calculateEntriesNo() == 0) return;
+
+        //iterates through all array itens
+        for (j = 0; j < arraySize; j++)
+        {
+            //checks if is in array end
+            if (i - 1 < 0) i = arraySize-1;
+            else i--;
+
+            //fetches entry in index i
+            cur = entries[i];
+
+            //if this entry is active, returns it
+            if (cur.activeSelf)
+            {
+                currentEntryIndex = i;
+                return;
+            }
+        }
+    }
+
+    public GameObject getCurrentEntry()
+    {
+        return entries[currentEntryIndex];
+    }
+
+    float getCurrentEntryY()
+    {
+        return entries[currentEntryIndex].GetComponent<RectTransform>().anchoredPosition.y;
+    }
+
+    void setCursorPosition() {
         if(calculateEntriesNo() <= 0)
         {
             this.cursor.GetComponent<RectTransform>().anchoredPosition = new Vector2(INITIAL_POSX, -10);
         } else {
-            this.cursor.GetComponent<RectTransform>().anchoredPosition = new Vector2(INITIAL_POSX, getFirstEntryY());
+            this.cursor.GetComponent<RectTransform>().anchoredPosition = new Vector2(INITIAL_POSX, getCurrentEntryY());
         }
 
     }
