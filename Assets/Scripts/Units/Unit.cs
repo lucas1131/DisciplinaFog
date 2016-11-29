@@ -57,6 +57,11 @@ public class Unit : MonoBehaviour {
 	public int startX;
 	public int startY;
 
+    public Queue<Position> pathToTarget;
+    private int step;
+    public static readonly int nSteps = 8;
+    private float stepOffset = 1/Mathf.Pow(2, 1.0f/nSteps);
+
 	public int posX {
 		set { this.pos.x = value; }
 		get { return this.pos.x; }
@@ -66,6 +71,20 @@ public class Unit : MonoBehaviour {
 		set { this.pos.y = value; }
 		get { return this.pos.y; }
 	}
+
+    public float x {
+        set {
+            transform.position = new Vector2(value+0.5f, transform.position.y);
+        }
+        get { return transform.position.x-0.5f; }
+    }
+
+    public float y {
+        set {
+            transform.position = new Vector2(transform.position.x, value);
+        }
+        get { return transform.position.y; }
+    }
 
 	// Use this for initialization
 	void Start () {
@@ -184,9 +203,6 @@ public class Unit : MonoBehaviour {
 
 	private List<Position> PathTo(Position target){
 
-		// debug
-		int counter = 0;
-
 		HashSet<Position> closedSet = new HashSet<Position>();
 		HashSet<Position> openSet = new HashSet<Position>();
 		
@@ -205,7 +221,7 @@ public class Unit : MonoBehaviour {
 		openSet.Add(pos);
 		nextPositions.Add(pos, fScore[pos]);
 
-		while(openSet.Count > 0 && counter++ < 20) {
+		while(openSet.Count > 0) {
 
 			print("openSet.Count: " + openSet.Count
                     + "; closedSet.Count: " + closedSet.Count);
@@ -262,19 +278,25 @@ public class Unit : MonoBehaviour {
 		return null;
 	}
 
+    public void Update() {
+        if (pathToTarget != null) {
+            //TODO coisas
+        }
+    }
+
 	public void MoveTowards(Position target) {
 		List<Position> path = PathTo(target);
 		int curMove = stats.move;
 		int cost;
 		int i = 0;
 
+        pathToTarget = new Queue<Position>();
+        step = 0;
 		while(i < path.Count && curMove >= (cost = TileCost(path[i]))){
 			print("path["+i+"]: " + path[i]);
+            pathToTarget.Enqueue(path[i]);
 			curMove -= cost;
 			i++;
 		}
-
-		if (i > 0)
-			pos = path[i-1];
 	}
 }
