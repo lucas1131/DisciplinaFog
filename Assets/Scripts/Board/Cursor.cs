@@ -230,10 +230,10 @@ public class Cursor : MonoBehaviour {
 				if( possibleMoves.Contains(new Position(posX, posY)) )
 					path = selectedUnit.PathTo(new Position(posX, posY));
 
-					foreach(Position p in path){
-						int i = 0;
-						print("path["+ i++ +"]: " + p);
-					}
+				foreach(Position p in path){
+					int i = 0;
+					print("path["+ i++ +"]: " + p);
+				}
 
 			}
 		}
