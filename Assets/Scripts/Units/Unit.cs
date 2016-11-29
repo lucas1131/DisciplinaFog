@@ -10,7 +10,6 @@ public enum Faction {
 
 public class Unit : MonoBehaviour {
 
-
 	[System.Serializable]
 	public struct Status {
 		public int str;
@@ -206,30 +205,24 @@ public class Unit : MonoBehaviour {
 		openSet.Add(pos);
 		nextPositions.Add(pos, fScore[pos]);
 
+		while(openSet.Count > 0 && counter++ < 20) {
 
-		while(openSet.Count > 0 && counter++ < 100000){
-			print("openSet.Count: " + openSet.Count);
+			print("openSet.Count: " + openSet.Count
+                    + "; closedSet.Count: " + closedSet.Count);
 
-			print("calculating area");
-			
 			Position current = nextPositions.Pop();
 			print("current: " + current);
 			openSet.Remove(current);
-			closedSet.Add(pos);
+			closedSet.Add(current);
 
 			if (current == target)
 				return ReconstructPath(target, cameFrom);
 
 			bool gDefined = gScore.ContainsKey(current);
 
-			print("ValidNeighbors");
-			foreach (Position p in current.ValidNeighbors(board))
-				print("p" + p);
-			print("END\n\n\n");
-
 			foreach (Position p in current.ValidNeighbors(board)) {
-			
-				print("position p: " + p);
+				print("FOREACH: position " + p + ": " + (closedSet.Contains(p) ? " in closed set" : " not in closed set"));
+
 				if (!closedSet.Contains(p)) {
 					int g;
 
@@ -237,8 +230,8 @@ public class Unit : MonoBehaviour {
 						g = gScore[current] + TileCost(p);
 					else
 						g = int.MaxValue;
+					print("adding " + p + " to open set");
 
-					print("adding new p to open set");
 					if (openSet.Add(p)) {
 			
 						cameFrom[p] = current;
@@ -259,7 +252,9 @@ public class Unit : MonoBehaviour {
 							x => f
 						);
 					}
-				}
+				} else {
+                    print("Position already in closedSet");
+                }
 			}
 		}
 
@@ -268,7 +263,6 @@ public class Unit : MonoBehaviour {
 	}
 
 	public void MoveTowards(Position target) {
-		
 		List<Position> path = PathTo(target);
 		int curMove = stats.move;
 		int cost;

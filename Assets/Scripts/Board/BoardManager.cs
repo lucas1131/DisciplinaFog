@@ -151,7 +151,6 @@ public class BoardManager : MonoBehaviour {
 	}
 
 	public Terrains GetTerrain(int x, int y) {
-		print("getting terrain in ("+x+", "+y+")");
 		return (Terrains) board[x, y];
 	}
 
