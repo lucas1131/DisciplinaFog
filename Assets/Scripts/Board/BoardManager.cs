@@ -26,6 +26,20 @@ public class BoardManager : MonoBehaviour {
 
 	void Start() {
 
+		// Get objects references
+		tInfo = GameObject.Find("Canvas/TerrainWindow");
+		print("tinfo: " + tInfo);
+
+		// Find all units
+		playerUnits = GameObject.Find("PUnits").GetComponentsInChildren<Unit>();
+		enemyUnits = GameObject.Find("EUnits").GetComponentsInChildren<Unit>();
+		allyUnits = GameObject.Find("AUnits").GetComponentsInChildren<Unit>();
+
+		// Initialize units lists
+		InitUnits(playerUnits);
+		InitUnits(enemyUnits);
+		InitUnits(allyUnits);
+
 		// Allocate grid
 		board = new int[cols, rows];
 
@@ -35,9 +49,6 @@ public class BoardManager : MonoBehaviour {
 				board[i, j] = (int) Terrains.Plains;
 			}
 		}
-
-		// Get objects references
-		tInfo = GameObject.Find("Canvas/TerrainWindow");
 
 		// Initialize test scene
 		CreateTestScene();
@@ -61,7 +72,7 @@ public class BoardManager : MonoBehaviour {
 					\-Life 		1
 		*/
 
-		// Get name Text (always used)
+		// Get name Text (always used)	
 		Text tName = 
 			tInfo.transform.GetChild(0).gameObject.GetComponent<Text>();
 		// Get statistics Text (disabled only for unwalkable terrain)
@@ -103,16 +114,6 @@ public class BoardManager : MonoBehaviour {
 				tStats.gameObject.SetActive(false);
 			}
 		}
-		
-		// tName = types[board[x, y]].name;
-
-		// string tmp;
-
-		// tmp += "\nAvo: " + types[board[x, y]].avoid;
-		// tmp += "\nDef: " + types[board[x, y]].defense;
-		// tmp += "\nRec: " + types[board[x, y]].recover;
-		// if(types[board[x, y]].name.Equals("Cracked Wall"))
-		// 	tmp += "\nLife: " + types[board[x, y]].life;
 	}
 
 	public Unit GetUnit(int x, int y){
@@ -146,6 +147,7 @@ public class BoardManager : MonoBehaviour {
 	}
 
 	public Terrains GetTerrain(int x, int y) {
+		print("getting terrain in ("+x+", "+y+")");
 		return (Terrains) board[x, y];
 	}
 
@@ -156,6 +158,13 @@ public class BoardManager : MonoBehaviour {
 		for (int i = 0; i < cols; i++) 
 			for (int j = 0; j < rows; j++) 
 				board[i, j] = counter++%TerrainType.TOTAL_TERRAINS;
+	}
+
+	public void InitUnits(Unit[] units){
+
+		int counter = 0;
+		foreach (Unit u in units)
+			u.index = counter++;
 	}
 
 	public Unit GetNextUnit(Faction f, int index){
