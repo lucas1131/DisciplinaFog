@@ -46,10 +46,8 @@ public class Unit : MonoBehaviour {
 	// Children
 	[HideInInspector]
 	public Transform unitSprite;
-	[HideInInspector]
-	public Transform effectSprite;
-	[HideInInspector]
-	public Transform portraitSprite;
+	private Transform effectSprite;
+	private Transform portraitSprite;
 
 	// Position and movement variables
 	public Position pos = new Position(0, 0);
@@ -111,10 +109,8 @@ public class Unit : MonoBehaviour {
 			Position cur = p.first;
 			int curMov = p.second;
 
-			if (board.GetUnit(cur.x, cur.y) == null){
-				print("pos: " + cur);
+			if (board.GetUnit(cur.x, cur.y) == null)
 				moveArea.Add(cur);
-			}
 
 			foreach (Position del in deltas) {
 		
@@ -183,10 +179,7 @@ public class Unit : MonoBehaviour {
 		return path;
 	}
 
-	private List<Position> PathTo(Position target){
-
-		// debug
-		int counter = 0;
+	public List<Position> PathTo(Position target){
 
 		HashSet<Position> closedSet = new HashSet<Position>();
 		HashSet<Position> openSet = new HashSet<Position>();
@@ -207,15 +200,12 @@ public class Unit : MonoBehaviour {
 		nextPositions.Add(pos, fScore[pos]);
 
 
-		while(openSet.Count > 0 && counter++ < 100000){
-			print("openSet.Count: " + openSet.Count);
+		while(openSet.Count > 0){
 
-			print("calculating area");
-			
 			Position current = nextPositions.Pop();
 			print("current: " + current);
 			openSet.Remove(current);
-			closedSet.Add(pos);
+			closedSet.Add(current);
 
 			if (current == target)
 				return ReconstructPath(target, cameFrom);
@@ -224,8 +214,8 @@ public class Unit : MonoBehaviour {
 
 			print("ValidNeighbors");
 			foreach (Position p in current.ValidNeighbors(board))
-				print("p" + p);
-			print("END\n\n\n");
+				print("p " + p);
+			print("END");
 
 			foreach (Position p in current.ValidNeighbors(board)) {
 			

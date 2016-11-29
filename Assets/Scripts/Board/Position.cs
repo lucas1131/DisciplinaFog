@@ -55,9 +55,6 @@ public class Position {
             Position p = this + delta;
             if (p.IsValid(board))
                 l.Add(p);
-            else {
-                Debug.Log(p + " is not valid");
-            }
         }
 
         return l;

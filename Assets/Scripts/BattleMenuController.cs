@@ -76,7 +76,8 @@ public class BattleMenuController : MonoBehaviour {
         foreach (GameObject e in entries) {
             if (e.activeSelf) {
                 Debug.Log(e.GetComponent<RectTransform>().anchoredPosition);
-                e.GetComponent<RectTransform>().anchoredPosition = new Vector2(INITIAL_POSX,INITIAL_POSY + (SPACING*count));
+                e.GetComponent<RectTransform>().anchoredPosition = 
+                    new Vector2(INITIAL_POSX,INITIAL_POSY + (SPACING*count));
                 count++;
             }
         }

@@ -41,7 +41,12 @@ public class Cursor : MonoBehaviour {
 	public GameObject mainCamera;
 	[HideInInspector]
 	public BoardManager board;
+
+	// Movement and related variables
 	public GameObject moveTilePrefab;
+	public List<GameObject> moveTiles;
+	private List<Position> path;			// Calculated path from A*
+	private List<Position> possibleMoves;	// For CalculateMovementArea
 
 	// Use this for initialization
 	void Start(){
@@ -204,23 +209,31 @@ public class Cursor : MonoBehaviour {
 				if(selectedUnit){
 
 					// Instantiate blue squares
-					List<Position> pos = selectedUnit.CalculateMovementArea();
-					List<GameObject> moveTiles = new List<GameObject>();
+					possibleMoves = selectedUnit.CalculateMovementArea();
+					moveTiles = new List<GameObject>();
 
-					foreach(Position p in pos){
+					foreach(Position p in possibleMoves){
 						moveTiles.Add(
 							Instantiate(moveTilePrefab, 
 										new Vector3(p.x, p.y, 0f), 
 										Quaternion.identity) 
 							as GameObject
-						 );
+						);
 					}
 				}
 			}
 
 			// We already have a selected unit, try to act
 			else if(selectedUnit.faction == Faction.PLAYER){
-				selectedUnit.MoveTowards(new Position(posX, posY));
+
+				// Check path if position is inside calculated movement area
+				if( possibleMoves.Contains(new Position(posX, posY)) )
+					path = selectedUnit.PathTo(new Position(posX, posY));
+
+					foreach(Position p in path){
+						int i = 0;
+						print("path["+ i++ +"]: " + p);
+					}
 
 			}
 		}
@@ -236,6 +249,13 @@ public class Cursor : MonoBehaviour {
 			// TODO: check for menu nesting first (stack of "selections"?)
 			else {
 				
+				// Delete blue tiles if exists
+				foreach(GameObject go in moveTiles)
+					GameObject.Destroy(go);
+
+				// Move cursor back to top of unit
+				tgtPos = new Vector3(selectedUnit.posX, selectedUnit.posY, 0f);
+
 				// Revert unit animation to victory only if unit is player's,
 				// else revert to idle
 				if(selectedUnit.faction == Faction.PLAYER)

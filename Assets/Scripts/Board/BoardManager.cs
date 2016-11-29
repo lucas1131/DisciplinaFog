@@ -9,8 +9,11 @@ public class BoardManager : MonoBehaviour {
     [HideInInspector]
 	public GameObject tInfo;
 
+    [HideInInspector]
 	public Unit[] playerUnits;
+    [HideInInspector]
 	public Unit[] enemyUnits;
+    [HideInInspector]
 	public Unit[] allyUnits;
 	
 	public TerrainType[] types = 
@@ -28,7 +31,6 @@ public class BoardManager : MonoBehaviour {
 
 		// Get objects references
 		tInfo = GameObject.Find("Canvas/TerrainWindow");
-		print("tinfo: " + tInfo);
 
 		// Find all units
 		playerUnits = GameObject.Find("PUnits").GetComponentsInChildren<Unit>();
@@ -147,17 +149,15 @@ public class BoardManager : MonoBehaviour {
 	}
 
 	public Terrains GetTerrain(int x, int y) {
-		print("getting terrain in ("+x+", "+y+")");
 		return (Terrains) board[x, y];
 	}
 
 	// Test only
 	void CreateTestScene(){
 
-		int counter = 0;
 		for (int i = 0; i < cols; i++) 
 			for (int j = 0; j < rows; j++) 
-				board[i, j] = counter++%TerrainType.TOTAL_TERRAINS;
+				board[i, j] = (int) Terrains.Plains;
 	}
 
 	public void InitUnits(Unit[] units){
