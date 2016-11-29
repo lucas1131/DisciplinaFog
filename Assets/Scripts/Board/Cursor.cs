@@ -213,7 +213,7 @@ public class Cursor : MonoBehaviour {
 										new Vector3(p.x, p.y, 0f), 
 										Quaternion.identity) 
 							as GameObject
-						);
+						 );
 					}
 				}
 			}
