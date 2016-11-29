@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: d9a8d95496729489884b4f641371ec34
 timeCreated: 1479904146
+=======
+guid: fe95628345b188240845535d9b69c528
+timeCreated: 1479858856
+>>>>>>> pause-menu
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName: {}
