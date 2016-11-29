@@ -37,22 +37,27 @@ public class Position {
     }
 
     public bool IsValid(BoardManager board) {
-        return this.IsContained(0, 0, board.rows, board.cols);
+        return this.IsContained(0, 0, board.cols, board.rows);
     }
 
     public List<Position> ValidNeighbors(BoardManager board) {
+
         Position[] deltas = new Position[] {
             new Position(1, 0),
             new Position(-1, 0),
             new Position(0, 1),
             new Position(0, -1),
         };
+
         List<Position> l = new List<Position>();
 
         foreach (Position delta in deltas) {
             Position p = this + delta;
             if (p.IsValid(board))
                 l.Add(p);
+            else {
+                Debug.Log(p + " is not valid");
+            }
         }
 
         return l;

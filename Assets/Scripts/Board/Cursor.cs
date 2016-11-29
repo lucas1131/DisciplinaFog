@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Cursor : MonoBehaviour {
 
@@ -40,6 +41,7 @@ public class Cursor : MonoBehaviour {
 	public GameObject mainCamera;
 	[HideInInspector]
 	public BoardManager board;
+	public GameObject moveTilePrefab;
 
 	// Use this for initialization
 	void Start(){
@@ -170,12 +172,16 @@ public class Cursor : MonoBehaviour {
 
 			Vector3 pos = new Vector2(340f, -189f);
 			board.tInfo.GetComponent<RectTransform>().localPosition = pos;
+
+			unitWindow.transform.localPosition = new Vector3(316f, 227f, 0f);
 		}
 
 		else if(posX - camX >= 3){
 
 			Vector3 pos = new Vector2(-340f, -189f);
 			board.tInfo.GetComponent<RectTransform>().localPosition = pos;
+			
+			unitWindow.transform.localPosition = new Vector3(-301f, 227f, 0f);
 		}
 	}
 	
@@ -196,15 +202,26 @@ public class Cursor : MonoBehaviour {
 				}
 
 				if(selectedUnit){
-					print("[DEBUG]: movement list:");
-					print(selectedUnit.CalculateMovementArea());
-                    //selectedUnit.CalculateMovementArea();
+
+					// Instantiate blue squares
+					List<Position> pos = selectedUnit.CalculateMovementArea();
+					List<GameObject> moveTiles = new List<GameObject>();
+
+					foreach(Position p in pos){
+						moveTiles.Add(
+							Instantiate(moveTilePrefab, 
+										new Vector3(p.x, p.y, 0f), 
+										Quaternion.identity) 
+							as GameObject
+						);
+					}
 				}
 			}
 
 			// We already have a selected unit, try to act
 			else if(selectedUnit.faction == Faction.PLAYER){
 				selectedUnit.MoveTowards(new Position(posX, posY));
+
 			}
 		}
 
@@ -368,7 +385,6 @@ public class Cursor : MonoBehaviour {
 
 	void ChangeAnimationTo(Unit unit, string name){
 		
-		print("Changin " + unit.unitName + " animation to " + name);
 		Animator anim = unit.unitSprite.GetComponent<Animator>();
 
 		anim.SetBool("victory", false);
