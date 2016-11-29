@@ -116,6 +116,10 @@ public class BoardManager : MonoBehaviour {
 		}
 	}
 
+    public Unit GetUnit(Position p) {
+        return GetUnit(p.x, p.y);
+    }
+
 	public Unit GetUnit(int x, int y){
 
 		// Iterate through Player's units list
