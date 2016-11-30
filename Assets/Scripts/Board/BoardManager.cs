@@ -126,7 +126,6 @@ public class BoardManager : MonoBehaviour {
 
 		// Iterate through Player's units list
 		foreach(Unit u in playerUnits){
-
 			// Unit found
 			if(u.posX == x && u.posY == y)
 				return u;

@@ -251,10 +251,11 @@ public class Cursor : MonoBehaviour {
 			
 			// If no unit has been selected, try to select a unit
 			if(selectedUnit == null){
-
 				SelectUnit();
+                print(1);
 
 				if(selectedUnit){
+                    print(2);
 					
 					// Disable terrain and unit windows
 					unitWindow.SetActive(false);
@@ -273,16 +274,21 @@ public class Cursor : MonoBehaviour {
 						);
 					}
 				}
+                print(3);
 			}
 
 			// We already have a selected unit, try to act
 			else if(selectedUnit.faction == Faction.PLAYER){
 
-				this.gameObject.SetActive(false);
+                Position p = new Position(posX, posY);
 				// Check path if position is inside calculated movement area
-				if( possibleMoves.Contains(new Position(posX, posY)) )
-					selectedUnit.MoveTowards(new Position(posX, posY));
-				this.gameObject.SetActive(true);
+				if( possibleMoves.Contains(p) ) {
+                    this.gameObject.SetActive(false);
+                    DestroyMovementDisplay();
+					selectedUnit.MoveTowards(p);
+                    selectedUnit = null;
+                    this.gameObject.SetActive(true);
+                }
 
 			}
 		}
@@ -298,11 +304,7 @@ public class Cursor : MonoBehaviour {
             } else {
 				
 				// Delete blue tiles if exists
-				foreach(GameObject go in moveTiles)
-					GameObject.Destroy(go);
-                if (arrows != null)
-                    foreach(GameObject go in arrows)
-                        GameObject.Destroy(go);
+                DestroyMovementDisplay();
 
 				// Move cursor back to top of unit
 				tgtPos = new Vector3(selectedUnit.posX, selectedUnit.posY, 0f);
@@ -362,6 +364,15 @@ public class Cursor : MonoBehaviour {
 			// Show minimap
 		}
 	}
+
+    void DestroyMovementDisplay() {
+        foreach(GameObject go in moveTiles)
+            GameObject.Destroy(go);
+
+        if (arrows != null)
+            foreach(GameObject go in arrows)
+                GameObject.Destroy(go);
+    }
 
 	void MoveCursor(){
 

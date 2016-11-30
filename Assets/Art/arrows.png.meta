@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 07fc80ee06e004364bc73bbbbc1708e2
-timeCreated: 1480442988
+timeCreated: 1480518868
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -61,7 +61,7 @@ TextureImporter:
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spritePixelsToUnits: 16
+  spritePixelsToUnits: 15
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
   textureType: 8
@@ -164,7 +164,7 @@ TextureImporter:
       name: arrows_8
       rect:
         serializedVersion: 2
-        x: 5
+        x: 4
         y: 4
         width: 16
         height: 16

@@ -63,20 +63,26 @@ public class Unit : MonoBehaviour {
     private float stepOffset = 1/Mathf.Pow(2, 1.0f/nSteps);
 
 	public int posX {
-		set { this.pos.x = value; }
+		set {
+            this.pos.x = value;
+            x = value;
+        }
 		get { return this.pos.x; }
 	}
 
 	public int posY {
-		set { this.pos.y = value; }
+		set {
+            this.pos.y = value;
+            y = value;
+        }
 		get { return this.pos.y; }
 	}
 
     public float x {
         set {
-            transform.position = new Vector2(value+0.5f, transform.position.y);
+            transform.position = new Vector2(value, transform.position.y);
         }
-        get { return transform.position.x-0.5f; }
+        get { return transform.position.x; }
     }
 
     public float y {
@@ -225,7 +231,7 @@ public class Unit : MonoBehaviour {
 
 			foreach (Position p in current.ValidNeighbors(board)) {
 
-				if (!closedSet.Contains(p)) {
+				if (!closedSet.Contains(p) && CanMoveThrough(board.GetUnit(p))) {
 					int g;
 
 					if (gDefined)
@@ -275,11 +281,16 @@ public class Unit : MonoBehaviour {
         pathToTarget = new Queue<Position>();
         step = 0;
 		while(i < path.Count && curMove >= (cost = TileCost(path[i]))){
-			print("path["+i+"]: " + path[i]);
             pathToTarget.Enqueue(path[i]);
 			curMove -= cost;
 			i++;
 		}
+
+        // TODO coroutines
+        if (path.Count > 0) {
+            posX = path[i-1].x;
+            posY = path[i-1].y;
+        }
 	}
 
     public bool CanStandAt(Position p) {
