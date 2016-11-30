@@ -275,16 +275,10 @@ public class Cursor : MonoBehaviour {
 			// We already have a selected unit, try to act
 			else if(selectedUnit.faction == Faction.PLAYER){
 
-				
-
 				// Check path if position is inside calculated movement area
 				if( possibleMoves.Contains(new Position(posX, posY)) )
 					path = selectedUnit.PathTo(new Position(posX, posY));
 
-				foreach(Position p in path){
-					int i = 0;
-					print("path["+ i++ +"]: " + p);
-				}
 			}
 		}
 

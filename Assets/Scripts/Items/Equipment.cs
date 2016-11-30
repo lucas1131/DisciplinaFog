@@ -4,11 +4,34 @@ using System.Collections;
 
 public class Equipment : MonoBehaviour {
 
-	EquipmentScriptable item;
+	public string Name;
+    public Sprite sprite;
+    public int curUses;
+    public int maxUses;
+
+    public string equipType;
+    public char rank;
+
+    public string range;
+    public int weight;
+    public int might;
+    public int hit;
+    public int crit;
 
 	// Use this for initialization
-	void Start () {
-		transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = item.sprite;
-		transform.GetChild(1).GetComponent<Text>().text = item.Name;
+	public Equipment(EquipmentScriptable equipScript) {
+		this.Name = equipScript.Name;
+	    this.sprite = equipScript.sprite;
+	    this.curUses = equipScript.curUses;
+	    this.maxUses = equipScript.maxUses;
+
+	    this.equipType = equipScript.equipType;
+	    this.rank = equipScript.rank;
+
+	    this.range = equipScript.range;
+	    this.weight = equipScript.weight;
+	    this.might = equipScript.might;
+	    this.hit = equipScript.hit;
+	    this.crit = equipScript.crit;
 	}
 }
