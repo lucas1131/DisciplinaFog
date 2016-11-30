@@ -342,13 +342,11 @@ public class Cursor : MonoBehaviour {
 
 				SelectUnit();
 
-				// Disable terrain and unit windows
 				if(selectedUnit){
+					
+					// Disable terrain and unit windows
 					unitWindow.SetActive(false);
 					board.tInfo.SetActive(false);
-				}
-
-				if(selectedUnit){
 
 					// Instantiate blue squares
 					possibleMoves = selectedUnit.CalculateMovementArea();
@@ -372,10 +370,10 @@ public class Cursor : MonoBehaviour {
 				if( possibleMoves.Contains(new Position(posX, posY)) )
 					path = selectedUnit.PathTo(new Position(posX, posY));
 
-					foreach(Position p in path){
-						int i = 0;
-						print("path["+ i++ +"]: " + p);
-					}
+				foreach(Position p in path){
+					int i = 0;
+					print("path["+ i++ +"]: " + p);
+				}
 
 			}
 		}
@@ -401,7 +399,7 @@ public class Cursor : MonoBehaviour {
 				// Revert unit animation to victory only if unit is player's,
 				// else revert to idle
 				if(selectedUnit.faction == Faction.PLAYER)
-					ChangeAnimationTo(selectedUnit, "victory");
+					ChangeAnimationTo(selectedUnit, "healed");
 				else 
 					ChangeAnimationTo(selectedUnit, "idle");
 
@@ -549,6 +547,7 @@ public class Cursor : MonoBehaviour {
 		
 		Animator anim = unit.unitSprite.GetComponent<Animator>();
 
+		anim.SetBool("idle", false);
 		anim.SetBool("victory", false);
 		anim.SetBool("healed", false);
 		anim.SetBool("walkUp", false);
@@ -559,7 +558,6 @@ public class Cursor : MonoBehaviour {
 		anim.SetBool("attackDown", false);
 		anim.SetBool("attackRight", false);
 		anim.SetBool("attackLeft", false);
-		anim.SetBool("idle", false);
 
 		anim.SetBool(name, true);
 	}
