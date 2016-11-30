@@ -128,8 +128,6 @@ public class Unit : MonoBehaviour {
 			}
 		}
 
-		moveArea.Remove(this.pos);
-
 		return moveArea;
 	}
 
