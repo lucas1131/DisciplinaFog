@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class BattleMenuController : MonoBehaviour {
 
@@ -20,16 +20,39 @@ public class BattleMenuController : MonoBehaviour {
     public GameObject attack;
     public GameObject item;
 
-    private ArrayList entries;
+    public bool Attack;
+    public bool Rescue;
+    public bool Item;
+    public bool Trade;
+    public bool Wait;
+    public bool Unit;
+    public bool Status;
+    public bool End;
+
+    public GameObject gameCursor;
+    public GameObject currentEntry;
+
+    private List<GameObject> entries;
+    private int currentEntryIndex;
+    private int arraySize;
+
+    private bool AxisIsEnabled;
+    private bool ActionIsEnabled;
 
     //panel size = 20 + entries.length*50;
 	void Start () {
 
+        AxisIsEnabled = false;
+        ActionIsEnabled = false;
+
         //default value, no need to change
         PANEL_WIDTH = 165;
 
+        arraySize = 8;
+        currentEntryIndex = 0;
+
         //sets up a list with all options
-        entries = new ArrayList(8);
+        entries = new List<GameObject>(arraySize);
         entries.Add(attack);
         entries.Add(rescue);
         entries.Add(item);
@@ -39,6 +62,8 @@ public class BattleMenuController : MonoBehaviour {
         entries.Add(status);
         entries.Add(end);
 
+        currentEntry = null;
+
         //updates the background panel size
         updatePanelSize();
 
@@ -46,13 +71,15 @@ public class BattleMenuController : MonoBehaviour {
         setPositions();
 
         //sets menu cursor position
-        setMenuCursorPosition();
+        setCursorPosition();
 
     }
 	
 	void Update () {
         updatePanelSize();
         setPositions();
+        inputController();
+        setCursorPosition();
 	}
 
     void updatePanelSize() {
@@ -70,20 +97,126 @@ public class BattleMenuController : MonoBehaviour {
         return count;
     }
 
+    void inputController()
+    {
+        if(Input.GetAxisRaw("Vertical") == -1 && !AxisIsEnabled)
+        {
+            AxisIsEnabled = true;
+            next();
+        } else if(Input.GetAxisRaw("Vertical") == 1 && !AxisIsEnabled)
+        {
+            AxisIsEnabled = true;
+            prev();
+        } else if(Input.GetAxisRaw("Action") == 1 && !ActionIsEnabled)
+        {
+            ActionIsEnabled = true;
+            Debug.Log(getCurrentEntry().name);
+        }
+
+        if (Input.GetAxisRaw("Vertical") == 0)
+        {
+            AxisIsEnabled = false;
+        }
+        if (Input.GetAxisRaw("Action") == 0)
+        {
+            ActionIsEnabled = false;
+        }
+    }
+
+    /*sets positions for each non-null element in the array*/
     void setPositions() {
         int count = 0;
 
         foreach (GameObject e in entries) {
             if (e.activeSelf) {
-                Debug.Log(e.GetComponent<RectTransform>().anchoredPosition);
                 e.GetComponent<RectTransform>().anchoredPosition = 
                     new Vector2(INITIAL_POSX,INITIAL_POSY + (SPACING*count));
                 count++;
             }
         }
+    }   
+
+    public void next()
+    {
+        int i, j;
+        GameObject cur = null;
+
+        i = currentEntryIndex;
+
+        if (calculateEntriesNo() == 0) return;
+
+        //iterates through all array itens
+        for (j = 0; j < arraySize; j++)
+        {
+            //checks if is in array end
+            if (i + 1 >= arraySize) i = 0;
+            else i++;
+
+            //fetches entry in index i
+            cur = entries[i];
+
+            //if this entry is active, returns it
+            if (cur.activeSelf)
+            {
+                currentEntryIndex = i;
+                return;
+            }
+        }
     }
 
-    void setMenuCursorPosition() {
+    public void prev()
+    {
+        int i, j;
+        GameObject cur = null;
 
+        i = currentEntryIndex;
+
+        if (calculateEntriesNo() == 0) return;
+
+        //iterates through all array itens
+        for (j = 0; j < arraySize; j++)
+        {
+            //checks if is in array end
+            if (i - 1 < 0) i = arraySize-1;
+            else i--;
+
+            //fetches entry in index i
+            cur = entries[i];
+
+            //if this entry is active, returns it
+            if (cur.activeSelf)
+            {
+                currentEntryIndex = i;
+                return;
+            }
+        }
+    }
+
+    public GameObject getCurrentEntry()
+    {
+        return entries[currentEntryIndex];
+    }
+
+    float getCurrentEntryY()
+    {
+        return entries[currentEntryIndex].GetComponent<RectTransform>().anchoredPosition.y;
+    }
+
+    void setCursorPosition() {
+        if(calculateEntriesNo() <= 0)
+        {
+            this.cursor.GetComponent<RectTransform>().anchoredPosition =
+                new Vector2(INITIAL_POSX, -10);
+        } else {
+            this.cursor.GetComponent<RectTransform>().anchoredPosition =
+                new Vector2(INITIAL_POSX, getCurrentEntryY());
+        }
+    }
+
+    public void OpenMenu(bool[] entries){
+
+        int i = 0;
+        foreach(bool b in entries)
+            this.entries[i++].SetActive(b);
     }
 }

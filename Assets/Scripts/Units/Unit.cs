@@ -10,7 +10,6 @@ public enum Faction {
 
 public class Unit : MonoBehaviour {
 
-
 	[System.Serializable]
 	public struct Status {
 		public int str;
@@ -36,6 +35,7 @@ public class Unit : MonoBehaviour {
 	public int curHealth;
 	public int level;
 	public int exp;
+	public GameObject[] inventory = new GameObject[5];
 	
 	// Status
 	public Status stats;
@@ -56,15 +56,41 @@ public class Unit : MonoBehaviour {
 	public int startX;
 	public int startY;
 
+	// Gambiarras do VVillam
+    public Queue<Position> pathToTarget;
+    private int step;
+    public static readonly int nSteps = 8;
+    private float stepOffset = 1/Mathf.Pow(2, 1.0f/nSteps);
+
 	public int posX {
-		set { this.pos.x = value; }
+		set {
+            this.pos.x = value;
+            x = value;
+        }
 		get { return this.pos.x; }
 	}
 
 	public int posY {
-		set { this.pos.y = value; }
+		set {
+            this.pos.y = value;
+            y = value;
+        }
 		get { return this.pos.y; }
 	}
+
+    public float x {
+        set {
+            transform.position = new Vector2(value, transform.position.y);
+        }
+        get { return transform.position.x; }
+    }
+
+    public float y {
+        set {
+            transform.position = new Vector2(transform.position.x, value);
+        }
+        get { return transform.position.y; }
+    }
 
 	// Use this for initialization
 	void Start () {
@@ -84,10 +110,9 @@ public class Unit : MonoBehaviour {
 
 	public List<Position> CalculateMovementArea() {
 	 
-		List<Position> visited = new List<Position>();  // Não tem Set em c# e
-														// não vou implementar
+		HashSet<Position> visited = new HashSet<Position>();
 		List<Position> moveArea = new List<Position>();
-		Queue<Pair<Position, int>> q = new Queue<Pair<Position, int>>();
+		PriorityQueue<Pair<Position, int>> q = new PriorityQueue<Pair<Position, int>>();
 
 		Position[] deltas = new Position[] {
 			new Position(0, 1),
@@ -96,20 +121,16 @@ public class Unit : MonoBehaviour {
 			new Position(-1, 0),
 		};
 
-		q.Enqueue(
-					new Pair<Position, int>(
-						new Position(this.pos),
-						this.stats.move
-					)
-		);
+		q.Add(new Pair<Position, int>(pos, stats.move), -stats.move);
+        visited.Add(pos);
 
 		while (q.Count > 0) {
 		
-			Pair<Position, int> p = q.Dequeue();
+			Pair<Position, int> p = q.Pop();
 			Position cur = p.first;
 			int curMov = p.second;
 
-			if (board.GetUnit(cur.x, cur.y) == null)
+			if (CanStandAt(cur))
 				moveArea.Add(cur);
 
 			foreach (Position del in deltas) {
@@ -122,13 +143,11 @@ public class Unit : MonoBehaviour {
 					int cost = cls.GetMovementCost(t);
 				
 					if (cost <= curMov && this.CanMoveThrough(u))
-						q.Enqueue(new Pair<Position, int>(next, curMov - cost));
+						q.Add(new Pair<Position, int>(next, curMov - cost), cost - curMov);
 					visited.Add(next);
 				}
 			}
 		}
-
-		moveArea.Remove(this.pos);
 
 		return moveArea;
 	}
@@ -199,11 +218,9 @@ public class Unit : MonoBehaviour {
 		openSet.Add(pos);
 		nextPositions.Add(pos, fScore[pos]);
 
-
 		while(openSet.Count > 0){
 
 			Position current = nextPositions.Pop();
-			print("current: " + current);
 			openSet.Remove(current);
 			closedSet.Add(current);
 
@@ -212,15 +229,9 @@ public class Unit : MonoBehaviour {
 
 			bool gDefined = gScore.ContainsKey(current);
 
-			print("ValidNeighbors");
-			foreach (Position p in current.ValidNeighbors(board))
-				print("p " + p);
-			print("END");
-
 			foreach (Position p in current.ValidNeighbors(board)) {
-			
-				print("position p: " + p);
-				if (!closedSet.Contains(p)) {
+
+				if (!closedSet.Contains(p) && CanMoveThrough(board.GetUnit(p))) {
 					int g;
 
 					if (gDefined)
@@ -228,7 +239,6 @@ public class Unit : MonoBehaviour {
 					else
 						g = int.MaxValue;
 
-					print("adding new p to open set");
 					if (openSet.Add(p)) {
 			
 						cameFrom[p] = current;
@@ -249,28 +259,42 @@ public class Unit : MonoBehaviour {
 							x => f
 						);
 					}
-				}
+				} 
 			}
 		}
 
-		print("RETURNING NULL");
 		return null;
 	}
 
+    void Update() {
+        if (pathToTarget != null) {
+            //TODO coisas
+        }
+    }
+
 	public void MoveTowards(Position target) {
-		
 		List<Position> path = PathTo(target);
 		int curMove = stats.move;
 		int cost;
 		int i = 0;
 
+        pathToTarget = new Queue<Position>();
+        step = 0;
 		while(i < path.Count && curMove >= (cost = TileCost(path[i]))){
-			print("path["+i+"]: " + path[i]);
+            pathToTarget.Enqueue(path[i]);
 			curMove -= cost;
 			i++;
 		}
 
-		if (i > 0)
-			pos = path[i-1];
+        // TODO coroutines
+        if (path.Count > 0) {
+            posX = path[i-1].x;
+            posY = path[i-1].y;
+        }
 	}
+
+    public bool CanStandAt(Position p) {
+        Unit u = board.GetUnit(p);
+        return u == null || u == this;
+    }
 }

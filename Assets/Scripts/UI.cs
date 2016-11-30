@@ -3,6 +3,8 @@ using System.Collections;
 
 public class UI : MonoBehaviour {
 
+	public static bool menuIsOpen = false;
+
 	// Use this for initialization
 	void Start () {
 	
