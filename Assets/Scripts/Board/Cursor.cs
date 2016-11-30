@@ -292,16 +292,18 @@ public class Cursor : MonoBehaviour {
 		if(Input.GetButtonDown("Cancel")){
 
 			// Dont have a selected unit
-			if(selectedUnit == null)
+			if(selectedUnit == null) {
 				ChangeCursorSpeed(cursorSpdAlt, delayAlt);
-
 			// Deselect a unit
 			// TODO: check for menu nesting first (stack of "selections"?)
-			else {
+            } else {
 				
 				// Delete blue tiles if exists
 				foreach(GameObject go in moveTiles)
 					GameObject.Destroy(go);
+                if (arrows != null)
+                    foreach(GameObject go in arrows)
+                        GameObject.Destroy(go);
 
 				// Move cursor back to top of unit
 				tgtPos = new Vector3(selectedUnit.posX, selectedUnit.posY, 0f);
