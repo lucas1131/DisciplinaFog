@@ -93,8 +93,10 @@ public class Cursor : MonoBehaviour {
 		board = GameObject.Find("Map").GetComponent<BoardManager>();
 		
 		// Prepare position variables to smoothly move the cursor
+		// Also set cursor initial position to the Lord
 		pos = GetComponent<Transform>();
-		tgtPos = new Vector3(pos.position.x, pos.position.y, 0f);
+		tgtPos = new Vector3(board.playerUnits[0].x, board.playerUnits[0].y, 0f);
+		pos.position = tgtPos;
 
 		// Cursor animation speed
 		cursorSpd = cursorSpdDefault;
