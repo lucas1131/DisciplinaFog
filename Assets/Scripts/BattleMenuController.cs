@@ -213,10 +213,15 @@ public class BattleMenuController : MonoBehaviour {
         }
     }
 
-    public void OpenMenu(bool[] entries){
+    public void OpenMenu(bool[] en){
 
         int i = 0;
-        foreach(bool b in entries)
+
+        foreach(bool b in en){
+
+            print("entries: " + this.entries);
+            print("en: " + en);
             this.entries[i++].SetActive(b);
+        }
     }
 }

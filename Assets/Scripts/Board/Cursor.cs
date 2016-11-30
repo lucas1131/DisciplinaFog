@@ -97,6 +97,8 @@ public class Cursor : MonoBehaviour {
 		pos = GetComponent<Transform>();
 		tgtPos = new Vector3(board.playerUnits[0].x, board.playerUnits[0].y, 0f);
 		pos.position = tgtPos;
+		posX = (int) pos.position.x;
+		posY = (int) pos.position.y;
 
 		// Cursor animation speed
 		cursorSpd = cursorSpdDefault;
@@ -115,40 +117,46 @@ public class Cursor : MonoBehaviour {
 		// First unit window update
 		UpdateUnitWindow(focusedUnit);
 		mainCamera.transform.position = new Vector3(camX, camY, -10f);
+		ProcessAxis();
 	}
 	
 	// Update is called once per frame
 	void Update(){
 
-		// Move camera if it has a new target position
-		if(mainCamera.transform.position != tgtCamPos)
-			CameraMove();
+		// Only update cursor if battle menu is off
+		if(!battleMenu.isActiveAndEnabled){
+		
+			// Move camera if it has a new target position
+			if(mainCamera.transform.position != tgtCamPos)
+				CameraMove();
 
-		// Move cursor if it has a new target position
-		if(pos.position != tgtPos) MoveCursor();
-		else ProcessAxis();
+			// Move cursor if it has a new target position
+			if(pos.position != tgtPos)
+				MoveCursor();
+			else
+				ProcessAxis();
 
-		// Move unit if a path exists
-		// if(path != null) MoveUnit();
+			// Update terrain info only if cursor has moved
+			if(cursorMoved) {
+				board.DisplayTerrainInfo(posX, posY);
 
-		// Update terrain info only if cursor has moved
-		if(cursorMoved) {
-			board.DisplayTerrainInfo(posX, posY);
+	            if (selectedUnit != null) {
+	                if (arrows != null)
+	                    foreach (GameObject go in arrows)
+	                        GameObject.Destroy(go);
+	                arrows = new List<GameObject>();
+	                if ((posX != selectedUnit.posX || posY != selectedUnit.posY)
+	                        && possibleMoves.Contains(position)) {
+	                    List<Position> path = selectedUnit.PathTo(position);
+	                    CreateArrows(arrows, path);
+	                }
+	            }
 
-            if (selectedUnit != null) {
-                if (arrows != null)
-                    foreach (GameObject go in arrows)
-                        GameObject.Destroy(go);
-                arrows = new List<GameObject>();
-                if ((posX != selectedUnit.posX || posY != selectedUnit.posY)
-                        && possibleMoves.Contains(position)) {
-                    List<Position> path = selectedUnit.PathTo(position);
-                    CreateArrows(arrows, path);
-                }
-            }
+	            cursorMoved = false;
+	        }
+		}
 
-            cursorMoved = false;
-        }
+		// We still need to process input here
 		ProcessInput();
 		counter++;
 
@@ -250,48 +258,75 @@ public class Cursor : MonoBehaviour {
 
 		// Action button
 		if(Input.GetButtonDown("Action")){
-			
-			// If no unit has been selected, try to select a unit
-			if(selectedUnit == null){
-				SelectUnit();
-                print(1);
+	
+			// Battle menu is open
+			if(battleMenu.isActiveAndEnabled){
 
-				if(selectedUnit){
-                    print(2);
-					
-					// Disable terrain and unit windows
-					unitWindow.SetActive(false);
-					board.tInfo.SetActive(false);
+				ProcessMenu();
 
-					// Instantiate blue squares
-					possibleMoves = selectedUnit.CalculateMovementArea();
-					moveTiles = new List<GameObject>();
+			// Battle menus is NOT open
+			} else {
 
-					foreach(Position p in possibleMoves){
-						moveTiles.Add(
-							Instantiate(moveTilePrefab, 
-										new Vector3(p.x, p.y, 0f), 
-										Quaternion.identity) 
-							as GameObject
-						);
+				// If no unit has been selected, try to select a unit
+				if(selectedUnit == null){
+					SelectUnit();
+
+					if(selectedUnit){
+						
+						// Disable terrain and unit windows
+						unitWindow.SetActive(false);
+						board.tInfo.SetActive(false);
+
+						// Instantiate blue squares
+						possibleMoves = selectedUnit.CalculateMovementArea();
+						moveTiles = new List<GameObject>();
+
+						foreach(Position p in possibleMoves){
+							moveTiles.Add(
+								Instantiate(moveTilePrefab, 
+											new Vector3(p.x, p.y, 0f), 
+											Quaternion.identity) 
+								as GameObject
+							);
+						}
 					}
 				}
-                print(3);
-			}
 
-			// We already have a selected unit, try to act
-			else if(selectedUnit.faction == Faction.PLAYER){
+				// We already have a selected unit, try to act
+				else if(selectedUnit.faction == Faction.PLAYER){
 
-                Position p = new Position(posX, posY);
-				// Check path if position is inside calculated movement area
-				if( possibleMoves.Contains(p) ) {
-                    this.gameObject.SetActive(false);
-                    DestroyMovementDisplay();
-					selectedUnit.MoveTowards(p);
-                    selectedUnit = null;
-                    this.gameObject.SetActive(true);
-                }
+	                Position p = new Position(posX, posY);
+					// Check path if position is inside calculated movement area
+					if( possibleMoves.Contains(p) ) {
+	                    
+	                    this.gameObject.SetActive(false);
+	                    
+	                    DestroyMovementDisplay();
+						selectedUnit.MoveTowards(p);
 
+						
+						Unit[] adjacent = new Unit[4];
+
+						adjacent[0] = board.GetUnit(posX+1, posY);
+						adjacent[1] = board.GetUnit(posX-1, posY);
+						adjacent[2] = board.GetUnit(posX, posY+1);
+						adjacent[3] = board.GetUnit(posX, posY-1);
+
+						battleMenu.gameObject.SetActive(true);
+						battleMenu.OpenMenu( new bool[]{ 
+								false,
+								false,// CanTrade(adjacent),
+								true,
+								false,
+								false,
+								CanRescue(adjacent),
+								CanAttack(adjacent),
+								true
+							});
+	                    
+	                    this.gameObject.SetActive(true);
+	                }
+				}
 			}
 		}
 
@@ -301,9 +336,10 @@ public class Cursor : MonoBehaviour {
 			// Dont have a selected unit
 			if(selectedUnit == null) {
 				ChangeCursorSpeed(cursorSpdAlt, delayAlt);
-			// Deselect a unit
-			// TODO: check for menu nesting first (stack of "selections"?)
+            
             } else {
+				// Deselect a unit
+				// TODO: check for menu nesting first (stack of "selections"?)
 				
 				// Delete blue tiles if exists
                 DestroyMovementDisplay();
@@ -314,7 +350,7 @@ public class Cursor : MonoBehaviour {
 				// Revert unit animation to victory only if unit is player's,
 				// else revert to idle
 				if(selectedUnit.faction == Faction.PLAYER)
-					ChangeAnimationTo(selectedUnit, "healed");
+					ChangeAnimationTo(selectedUnit, "victory");
 				else 
 					ChangeAnimationTo(selectedUnit, "idle");
 
@@ -364,6 +400,36 @@ public class Cursor : MonoBehaviour {
 		// Start button
 		if(Input.GetButtonDown("Start")){
 			// Show minimap
+		}
+	}
+
+	void ProcessMenu(){
+
+		switch(battleMenu.getCurrentEntry().name){
+		case "Attack":
+			print("attacking");
+			break;
+		case "Rescue":
+
+			break;
+		case "Item":
+
+			break;
+		case "Trade":
+
+			break;
+		case "Wait":
+
+			break;
+		case "Unit":
+
+			break;
+		case "Status":
+
+			break;
+		case "End":
+
+			break;
 		}
 	}
 
@@ -428,33 +494,6 @@ public class Cursor : MonoBehaviour {
 		}
 	}
 
-	// void MoveUnit(){
-
-	// 	if(delay == 0 || counter%delay == 0){
-			
-	// 		// Local placeholders to modify pos.position
-	// 		float X = selectedUnit.transform.position.x;
-	// 		float Y = selectedUnit.transform.position.y;
-
-	// 		// Reset delay counter
-	// 		counter = 0;
-
-	// 		// Interpolate position
-	// 		path[]
-	// 		X += 0.125;
-	// 		Y += 0.125;
-
-	// 		// Round position interpolation
-	// 		if(Mathf.Abs(tgtCamPos.x - mainCamera.transform.position.x) < 0.1f)
-	// 			X = tgtCamPos.x;
-	// 		if(Mathf.Abs(tgtCamPos.y - mainCamera.transform.position.y) < 0.1f)
-	// 			Y = tgtCamPos.y;
-
-	// 		// Update position
-	// 		mainCamera.transform.position = new Vector3(X, Y, -10f);
-	// 	}
-	// }
-
 	void ChangeCursorSpeed(float speed, int delay){
 		this.delay = delay;
 		cursorSpd = speed;
@@ -495,7 +534,7 @@ public class Cursor : MonoBehaviour {
 			menus[6] = CanAttack(adjacent);
 			menus[7] = true;
 
-			battleMenu.OpenMenu(menus);
+			// battleMenu.OpenMenu(menus);
 
 
 		/* All units should show their movement range when selected. If it
@@ -536,7 +575,7 @@ public class Cursor : MonoBehaviour {
 	bool CanRescue(Unit[] adjacent){
 
 		foreach(Unit u in adjacent){
-			if(u != null && 
+			if(u != null && selectedUnit != null &&
 				(u.faction == Faction.PLAYER || u.faction == Faction.ALLY) &&
 				selectedUnit.stats.aid >= u.stats.aid)
 				return true;
