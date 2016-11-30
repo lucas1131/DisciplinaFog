@@ -106,7 +106,7 @@ public class Unit : MonoBehaviour {
 	 
 		HashSet<Position> visited = new HashSet<Position>();
 		List<Position> moveArea = new List<Position>();
-		Queue<Pair<Position, int>> q = new Queue<Pair<Position, int>>();
+		PriorityQueue<Pair<Position, int>> q = new PriorityQueue<Pair<Position, int>>();
 
 		Position[] deltas = new Position[] {
 			new Position(0, 1),
@@ -115,12 +115,12 @@ public class Unit : MonoBehaviour {
 			new Position(-1, 0),
 		};
 
-		q.Enqueue(new Pair<Position, int>(pos, stats.move));
+		q.Add(new Pair<Position, int>(pos, stats.move), -stats.move);
         visited.Add(pos);
 
 		while (q.Count > 0) {
 		
-			Pair<Position, int> p = q.Dequeue();
+			Pair<Position, int> p = q.Pop();
 			Position cur = p.first;
 			int curMov = p.second;
 
@@ -137,7 +137,7 @@ public class Unit : MonoBehaviour {
 					int cost = cls.GetMovementCost(t);
 				
 					if (cost <= curMov && this.CanMoveThrough(u))
-						q.Enqueue(new Pair<Position, int>(next, curMov - cost));
+						q.Add(new Pair<Position, int>(next, curMov - cost), cost - curMov);
 					visited.Add(next);
 				}
 			}
