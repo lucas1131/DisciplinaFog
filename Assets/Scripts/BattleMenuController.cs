@@ -20,16 +20,30 @@ public class BattleMenuController : MonoBehaviour {
     public GameObject attack;
     public GameObject item;
 
+    public bool Attack;
+    public bool Rescue;
+    public bool Item;
+    public bool Trade;
+    public bool Wait;
+    public bool Unit;
+    public bool Status;
+    public bool End;
+
+    public GameObject gameCursor;
     public GameObject currentEntry;
 
     private List<GameObject> entries;
     private int currentEntryIndex;
     private int arraySize;
 
-    private int c = 0;
+    private bool AxisIsEnabled;
+    private bool ActionIsEnabled;
 
     //panel size = 20 + entries.length*50;
 	void Start () {
+
+        AxisIsEnabled = false;
+        ActionIsEnabled = false;
 
         //default value, no need to change
         PANEL_WIDTH = 165;
@@ -63,6 +77,7 @@ public class BattleMenuController : MonoBehaviour {
 	void Update () {
         updatePanelSize();
         setPositions();
+        inputController();
         setCursorPosition();
 	}
 
@@ -81,6 +96,33 @@ public class BattleMenuController : MonoBehaviour {
         return count;
     }
 
+    void inputController()
+    {
+        if(Input.GetAxisRaw("Vertical") == -1 && !AxisIsEnabled)
+        {
+            AxisIsEnabled = true;
+            next();
+        } else if(Input.GetAxisRaw("Vertical") == 1 && !AxisIsEnabled)
+        {
+            AxisIsEnabled = true;
+            prev();
+        } else if(Input.GetAxisRaw("Action") == 1 && !ActionIsEnabled)
+        {
+            ActionIsEnabled = true;
+            Debug.Log(getCurrentEntry().name);
+        }
+
+        if (Input.GetAxisRaw("Vertical") == 0)
+        {
+            AxisIsEnabled = false;
+        }
+        if (Input.GetAxisRaw("Action") == 0)
+        {
+            ActionIsEnabled = false;
+        }
+    }
+
+    /*sets positions for each non-null element in the array*/
     void setPositions() {
         int count = 0;
 
@@ -91,7 +133,7 @@ public class BattleMenuController : MonoBehaviour {
                 count++;
             }
         }
-    }
+    }   
 
     public void next()
     {
