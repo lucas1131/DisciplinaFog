@@ -104,8 +104,7 @@ public class Unit : MonoBehaviour {
 
 	public List<Position> CalculateMovementArea() {
 	 
-		List<Position> visited = new List<Position>();  // Não tem Set em c# e
-														// não vou implementar
+		HashSet<Position> visited = new HashSet<Position>();
 		List<Position> moveArea = new List<Position>();
 		Queue<Pair<Position, int>> q = new Queue<Pair<Position, int>>();
 
@@ -116,12 +115,8 @@ public class Unit : MonoBehaviour {
 			new Position(-1, 0),
 		};
 
-		q.Enqueue(
-					new Pair<Position, int>(
-						new Position(this.pos),
-						this.stats.move
-					)
-		);
+		q.Enqueue(new Pair<Position, int>(pos, stats.move));
+        visited.Add(pos);
 
 		while (q.Count > 0) {
 		
