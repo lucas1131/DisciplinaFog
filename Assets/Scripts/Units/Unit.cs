@@ -62,6 +62,10 @@ public class Unit : MonoBehaviour {
     public static readonly int nSteps = 8;
     private float stepOffset = 1/Mathf.Pow(2, 1.0f/nSteps);
 
+    public int prevPosX;
+    public int prevPosY;
+
+
 	public int posX {
 		set {
             this.pos.x = value;
@@ -103,6 +107,8 @@ public class Unit : MonoBehaviour {
 
 		this.posX = startX;
 		this.posY = startY;
+		this.prevPosX = startX;
+		this.prevPosY = startY;
 		this.transform.position = new Vector2(this.posX, this.posY);    
 
 		// TODO: read statistics from savefile
@@ -265,12 +271,6 @@ public class Unit : MonoBehaviour {
 
 		return null;
 	}
-
-    void Update() {
-        if (pathToTarget != null) {
-            //TODO coisas
-        }
-    }
 
 	public void MoveTowards(Position target) {
 		List<Position> path = PathTo(target);

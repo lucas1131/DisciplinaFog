@@ -40,7 +40,11 @@ public class BattleMenuController : MonoBehaviour {
     private bool ActionIsEnabled;
 
     //panel size = 20 + entries.length*50;
-	void Start () {
+    void Start(){
+        OnEnable();
+    }
+
+	void OnEnable () {
 
         AxisIsEnabled = false;
         ActionIsEnabled = false;
@@ -110,14 +114,13 @@ public class BattleMenuController : MonoBehaviour {
         } else if(Input.GetAxisRaw("Action") == 1 && !ActionIsEnabled)
         {
             ActionIsEnabled = true;
-            Debug.Log(getCurrentEntry().name);
         }
 
         if (Input.GetAxisRaw("Vertical") == 0)
         {
             AxisIsEnabled = false;
         }
-        if (Input.GetAxisRaw("Action") == 0)
+        if (Input.GetButtonDown("Action"))
         {
             ActionIsEnabled = false;
         }
@@ -216,12 +219,7 @@ public class BattleMenuController : MonoBehaviour {
     public void OpenMenu(bool[] en){
 
         int i = 0;
-
-        foreach(bool b in en){
-
-            print("entries: " + this.entries);
-            print("en: " + en);
-            this.entries[i++].SetActive(b);
-        }
+        foreach(bool b in en)
+            entries[i++].SetActive(b);
     }
 }
