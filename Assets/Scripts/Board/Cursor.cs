@@ -74,6 +74,7 @@ public class Cursor : MonoBehaviour {
 	public GameObject mainCamera;
 	[HideInInspector]
 	public BoardManager board;
+	public BattleMenuController battleMenu;
 
 	// Movement and related variables
 	public GameObject moveTilePrefab;
@@ -239,99 +240,6 @@ public class Cursor : MonoBehaviour {
 			unitWindow.transform.localPosition = new Vector3(-301f, 227f, 0f);
 		}
 	}
-
-    void AddArrow(Position p, List<GameObject> arr, ArrowType type) {
-        GameObject go = Instantiate(
-            arrowPrefab,
-            new Vector3(p.x, p.y, 0f),
-            Quaternion.identity
-        ) as GameObject;
-        go.GetComponent<SpriteRenderer>().sprite = arrowSprites[(int) type];
-        arr.Add(go);
-    }
-
-    void AddArrow(Position p, List<GameObject> arr, Position p1, Position p2) {
-        AddArrow(p, arr, GetArrowType(p1, p, p2));
-    }
-
-    ArrowType GetArrowType(Position p1, Position p, Position p2) {
-        p1 = p - p1;
-        p2 = p2 - p;
-
-        if (p1.x < 0) {
-            if (p2.x < 0)
-                return ArrowType.RIGHT_LEFT;
-            else if (p2.y > 0)
-                return ArrowType.UP_RIGHT;
-            return ArrowType.DOWN_RIGHT;
-        }
-
-        if (p1.x > 0) {
-            if (p2.x > 0)
-                return ArrowType.LEFT_RIGHT;
-            else if (p2.y > 0)
-                return ArrowType.UP_LEFT;
-            return ArrowType.DOWN_LEFT;
-        }
-
-        if (p1.y > 0) {
-            if (p2.y > 0)
-                return ArrowType.DOWN_UP;
-            else if (p2.x < 0)
-                return ArrowType.DOWN_LEFT;
-            return ArrowType.DOWN_RIGHT;
-        }
-
-        // p1.y < 0
-        if (p2.y < 0)
-            return ArrowType.UP_DOWN;
-        if (p2.x > 0)
-            return ArrowType.UP_RIGHT;
-        return ArrowType.UP_LEFT;
-    }
-
-    void CreateArrows(List<GameObject> arr, List<Position> path) {
-        Position d;
-        int i = 1;
-
-        d = path[0] - selectedUnit.pos;
-        if (d.x > 0)
-            AddArrow(selectedUnit.pos, arr, ArrowType.STUMP_RIGHT);
-        else if (d.x < 0)
-            AddArrow(selectedUnit.pos, arr, ArrowType.STUMP_LEFT);
-        else if (d.y > 0)
-            AddArrow(selectedUnit.pos, arr, ArrowType.STUMP_UP);
-        else
-            AddArrow(selectedUnit.pos, arr, ArrowType.STUMP_DOWN);
-
-        if (path.Count > 1) {
-            AddArrow(path[0], arr, selectedUnit.pos, path[1]);
-
-            while (i < path.Count-1) {
-                AddArrow(path[i], arr, path[i-1], path[i+1]);
-                i++;
-            }
-
-            d = path[i] - path[i-1];
-            if (d.x > 0)
-                AddArrow(path[i], arr, ArrowType.ARROW_RIGHT);
-            else if (d.x < 0)
-                AddArrow(path[i], arr, ArrowType.ARROW_LEFT);
-            else if (d.y > 0)
-                AddArrow(path[i], arr, ArrowType.ARROW_UP);
-            else
-                AddArrow(path[i], arr, ArrowType.ARROW_DOWN);
-        } else {
-            if (d.x > 0)
-                AddArrow(path[0], arr, ArrowType.ARROW_RIGHT);
-            else if (d.x < 0)
-                AddArrow(path[0], arr, ArrowType.ARROW_LEFT);
-            else if (d.y > 0)
-                AddArrow(path[0], arr, ArrowType.ARROW_UP);
-            else
-                AddArrow(path[0], arr, ArrowType.ARROW_DOWN);
-        }
-    }
 	
 	void ProcessInput(){
 
@@ -367,6 +275,8 @@ public class Cursor : MonoBehaviour {
 			// We already have a selected unit, try to act
 			else if(selectedUnit.faction == Faction.PLAYER){
 
+				
+
 				// Check path if position is inside calculated movement area
 				if( possibleMoves.Contains(new Position(posX, posY)) )
 					path = selectedUnit.PathTo(new Position(posX, posY));
@@ -375,7 +285,6 @@ public class Cursor : MonoBehaviour {
 					int i = 0;
 					print("path["+ i++ +"]: " + p);
 				}
-
 			}
 		}
 
@@ -515,7 +424,37 @@ public class Cursor : MonoBehaviour {
 		// No unit in square, open menu
 		if(focusedUnit == null){
 			
-			UI.OpenMenu();
+			// Check if there is another unit in an adjacent cell
+			Unit[] adjacent = new Unit[4];
+
+			adjacent[0] = board.GetUnit(posX+1, posY);
+			adjacent[1] = board.GetUnit(posX-1, posY);
+			adjacent[2] = board.GetUnit(posX, posY+1);
+			adjacent[3] = board.GetUnit(posX, posY-1);
+
+			/*
+				order:
+					unit,
+			        trade,
+			        wait,
+			        status,
+			        end,
+			        rescue,
+			        attack,
+			        item
+	        */
+			bool[] menus = new bool[8];
+			
+			menus[0] = false;
+			menus[1] = CanTrade(adjacent);
+			menus[2] = true;
+			menus[3] = false;
+			menus[4] = false;
+			menus[5] = CanRescue(adjacent);
+			menus[6] = CanAttack(adjacent);
+			menus[7] = true;
+
+			battleMenu.OpenMenu(menus);
 
 
 		/* All units should show their movement range when selected. If it
@@ -542,6 +481,35 @@ public class Cursor : MonoBehaviour {
 
 			}
 		}
+	}
+
+	bool CanTrade(Unit[] adjacent){
+
+		foreach(Unit u in adjacent){
+			if(u != null && u.faction == Faction.PLAYER)
+				return true;
+		}
+		return false;
+	}
+
+	bool CanRescue(Unit[] adjacent){
+
+		foreach(Unit u in adjacent){
+			if(u != null && 
+				(u.faction == Faction.PLAYER || u.faction == Faction.ALLY) &&
+				selectedUnit.stats.aid >= u.stats.aid)
+				return true;
+		}
+		return false;
+	}
+
+	bool CanAttack(Unit[] adjacent){
+
+		foreach(Unit u in adjacent){
+			if(u != null && u.faction == Faction.ENEMY)
+				return true;
+		}
+		return false;
 	}
 
 	void ChangeAnimationTo(Unit unit, string name){
@@ -611,4 +579,97 @@ public class Cursor : MonoBehaviour {
 		child.GetComponent<Text>().text = 
 			unit.curHealth + "/" + unit.maxHealth;
 	}
+
+	void AddArrow(Position p, List<GameObject> arr, ArrowType type) {
+        GameObject go = Instantiate(
+            arrowPrefab,
+            new Vector3(p.x, p.y, 0f),
+            Quaternion.identity
+        ) as GameObject;
+        go.GetComponent<SpriteRenderer>().sprite = arrowSprites[(int) type];
+        arr.Add(go);
+    }
+
+    void AddArrow(Position p, List<GameObject> arr, Position p1, Position p2) {
+        AddArrow(p, arr, GetArrowType(p1, p, p2));
+    }
+
+    ArrowType GetArrowType(Position p1, Position p, Position p2) {
+        p1 = p - p1;
+        p2 = p2 - p;
+
+        if (p1.x < 0) {
+            if (p2.x < 0)
+                return ArrowType.RIGHT_LEFT;
+            else if (p2.y > 0)
+                return ArrowType.UP_RIGHT;
+            return ArrowType.DOWN_RIGHT;
+        }
+
+        if (p1.x > 0) {
+            if (p2.x > 0)
+                return ArrowType.LEFT_RIGHT;
+            else if (p2.y > 0)
+                return ArrowType.UP_LEFT;
+            return ArrowType.DOWN_LEFT;
+        }
+
+        if (p1.y > 0) {
+            if (p2.y > 0)
+                return ArrowType.DOWN_UP;
+            else if (p2.x < 0)
+                return ArrowType.DOWN_LEFT;
+            return ArrowType.DOWN_RIGHT;
+        }
+
+        // p1.y < 0
+        if (p2.y < 0)
+            return ArrowType.UP_DOWN;
+        if (p2.x > 0)
+            return ArrowType.UP_RIGHT;
+        return ArrowType.UP_LEFT;
+    }
+
+    void CreateArrows(List<GameObject> arr, List<Position> path) {
+        Position d;
+        int i = 1;
+
+        d = path[0] - selectedUnit.pos;
+        if (d.x > 0)
+            AddArrow(selectedUnit.pos, arr, ArrowType.STUMP_RIGHT);
+        else if (d.x < 0)
+            AddArrow(selectedUnit.pos, arr, ArrowType.STUMP_LEFT);
+        else if (d.y > 0)
+            AddArrow(selectedUnit.pos, arr, ArrowType.STUMP_UP);
+        else
+            AddArrow(selectedUnit.pos, arr, ArrowType.STUMP_DOWN);
+
+        if (path.Count > 1) {
+            AddArrow(path[0], arr, selectedUnit.pos, path[1]);
+
+            while (i < path.Count-1) {
+                AddArrow(path[i], arr, path[i-1], path[i+1]);
+                i++;
+            }
+
+            d = path[i] - path[i-1];
+            if (d.x > 0)
+                AddArrow(path[i], arr, ArrowType.ARROW_RIGHT);
+            else if (d.x < 0)
+                AddArrow(path[i], arr, ArrowType.ARROW_LEFT);
+            else if (d.y > 0)
+                AddArrow(path[i], arr, ArrowType.ARROW_UP);
+            else
+                AddArrow(path[i], arr, ArrowType.ARROW_DOWN);
+        } else {
+            if (d.x > 0)
+                AddArrow(path[0], arr, ArrowType.ARROW_RIGHT);
+            else if (d.x < 0)
+                AddArrow(path[0], arr, ArrowType.ARROW_LEFT);
+            else if (d.y > 0)
+                AddArrow(path[0], arr, ArrowType.ARROW_UP);
+            else
+                AddArrow(path[0], arr, ArrowType.ARROW_DOWN);
+        }
+    }
 }

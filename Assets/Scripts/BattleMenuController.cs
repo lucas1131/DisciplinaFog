@@ -49,6 +49,7 @@ public class BattleMenuController : MonoBehaviour {
         PANEL_WIDTH = 165;
 
         arraySize = 8;
+        currentEntryIndex = 0;
 
         //sets up a list with all options
         entries = new List<GameObject>(arraySize);
@@ -204,10 +205,18 @@ public class BattleMenuController : MonoBehaviour {
     void setCursorPosition() {
         if(calculateEntriesNo() <= 0)
         {
-            this.cursor.GetComponent<RectTransform>().anchoredPosition = new Vector2(INITIAL_POSX, -10);
+            this.cursor.GetComponent<RectTransform>().anchoredPosition =
+                new Vector2(INITIAL_POSX, -10);
         } else {
-            this.cursor.GetComponent<RectTransform>().anchoredPosition = new Vector2(INITIAL_POSX, getCurrentEntryY());
+            this.cursor.GetComponent<RectTransform>().anchoredPosition =
+                new Vector2(INITIAL_POSX, getCurrentEntryY());
         }
+    }
 
+    public void OpenMenu(bool[] entries){
+
+        int i = 0;
+        foreach(bool b in entries)
+            this.entries[i++].SetActive(b);
     }
 }
