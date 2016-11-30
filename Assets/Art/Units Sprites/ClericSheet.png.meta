@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 7b041cf6dfc3e1d4a9ba4d256096f52b
-timeCreated: 1480113516
+timeCreated: 1480442831
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -165,9 +165,9 @@ TextureImporter:
       name: victory(1)
       rect:
         serializedVersion: 2
-        x: 140
+        x: 141
         y: 67
-        width: 19
+        width: 21
         height: 22
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -232,7 +232,7 @@ TextureImporter:
         serializedVersion: 2
         x: 141
         y: 35
-        width: 19
+        width: 21
         height: 28
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -297,7 +297,7 @@ TextureImporter:
         serializedVersion: 2
         x: 141
         y: 3
-        width: 19
+        width: 21
         height: 30
       alignment: 7
       pivot: {x: 0.5, y: 0}
