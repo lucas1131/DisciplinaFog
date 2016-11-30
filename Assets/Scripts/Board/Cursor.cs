@@ -302,7 +302,6 @@ public class Cursor : MonoBehaviour {
 			// Deselect a unit
 			// TODO: check for menu nesting first (stack of "selections"?)
             } else {
-				
 				// Delete blue tiles if exists
                 DestroyMovementDisplay();
 
@@ -315,6 +314,13 @@ public class Cursor : MonoBehaviour {
 					ChangeAnimationTo(selectedUnit, "healed");
 				else 
 					ChangeAnimationTo(selectedUnit, "idle");
+
+                // TODO AQUI
+                //if (battleMenu.isActiveAndEnabled && selectedUnit != null) {
+                //    print("oi");
+                //    selectedUnit.posX = selectedUnit.prevPos.x;
+                //    selectedUnit.posY = selectedUnit.prevPos.y;
+                //}
 
 				// Move cursor to top of unit
 				posX = selectedUnit.posX;
