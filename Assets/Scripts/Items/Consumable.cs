@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
-public class Consumable : MonoBehaviour {
+public abstract class Consumable : MonoBehaviour {
 
     public string Name;
     public string description;
@@ -9,5 +9,5 @@ public class Consumable : MonoBehaviour {
     public int maxUses;
     public Sprite sprite;
 
-    public abstract void OnUse();
+    public abstract void OnUse(Unit u);
 }

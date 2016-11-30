@@ -294,16 +294,18 @@ public class Cursor : MonoBehaviour {
         Position d;
         int i = 1;
 
+        d = path[0] - selectedUnit.pos;
+        if (d.x > 0)
+            AddArrow(selectedUnit.pos, arr, ArrowType.STUMP_RIGHT);
+        else if (d.x < 0)
+            AddArrow(selectedUnit.pos, arr, ArrowType.STUMP_LEFT);
+        else if (d.y > 0)
+            AddArrow(selectedUnit.pos, arr, ArrowType.STUMP_UP);
+        else
+            AddArrow(selectedUnit.pos, arr, ArrowType.STUMP_DOWN);
+
         if (path.Count > 1) {
-            d = path[1] - path[0];
-            if (d.x > 0)
-                AddArrow(path[0], arr, ArrowType.STUMP_RIGHT);
-            else if (d.x < 0)
-                AddArrow(path[0], arr, ArrowType.STUMP_LEFT);
-            else if (d.y > 0)
-                AddArrow(path[0], arr, ArrowType.STUMP_UP);
-            else
-                AddArrow(path[0], arr, ArrowType.STUMP_DOWN);
+            AddArrow(path[0], arr, selectedUnit.pos, path[1]);
 
             while (i < path.Count-1) {
                 AddArrow(path[i], arr, path[i-1], path[i+1]);
@@ -320,7 +322,6 @@ public class Cursor : MonoBehaviour {
             else
                 AddArrow(path[i], arr, ArrowType.ARROW_DOWN);
         } else {
-            d = path[0] - selectedUnit.pos;
             if (d.x > 0)
                 AddArrow(path[0], arr, ArrowType.ARROW_RIGHT);
             else if (d.x < 0)

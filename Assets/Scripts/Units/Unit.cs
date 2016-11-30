@@ -127,7 +127,7 @@ public class Unit : MonoBehaviour {
 			Position cur = p.first;
 			int curMov = p.second;
 
-			if (board.GetUnit(cur.x, cur.y) == null)
+			if (CanStandAt(cur))
 				moveArea.Add(cur);
 
 			foreach (Position del in deltas) {
@@ -284,4 +284,9 @@ public class Unit : MonoBehaviour {
 			i++;
 		}
 	}
+
+    public bool CanStandAt(Position p) {
+        Unit u = board.GetUnit(p);
+        return u == null || u == this;
+    }
 }
