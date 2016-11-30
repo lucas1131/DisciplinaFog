@@ -35,6 +35,7 @@ public class Unit : MonoBehaviour {
 	public int curHealth;
 	public int level;
 	public int exp;
+	public GameObject[] inventory = new GameObject[5];
 	
 	// Status
 	public Status stats;
@@ -55,6 +56,7 @@ public class Unit : MonoBehaviour {
 	public int startX;
 	public int startY;
 
+	// Gambiarras do VVillam
     public Queue<Position> pathToTarget;
     private int step;
     public static readonly int nSteps = 8;
