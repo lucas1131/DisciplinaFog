@@ -56,7 +56,10 @@
      <Compile Include="Assets\Scripts\Combat.cs" />
      <Compile Include="Assets\Scripts\Items\Consumable.cs" />
      <Compile Include="Assets\Scripts\Items\Consumable\Vulnerary.cs" />
+     <Compile Include="Assets\Scripts\Items\Equipment.cs" />
      <Compile Include="Assets\Scripts\Items\EquipmentScriptable.cs" />
+     <Compile Include="Assets\Scripts\Items\Misc.cs" />
+     <Compile Include="Assets\Scripts\Items\Misc\Lockpick.cs" />
      <Compile Include="Assets\Scripts\MainMenu.cs" />
      <Compile Include="Assets\Scripts\UI.cs" />
      <Compile Include="Assets\Scripts\Units\ClassStats.cs" />
