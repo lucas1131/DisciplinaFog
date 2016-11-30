@@ -385,7 +385,7 @@ public class Cursor : MonoBehaviour {
 		} else {
 			
 			selectedUnit = focusedUnit;
-			ChangeAnimationTo(selectedUnit, "walkRight");
+			ChangeAnimationTo(selectedUnit, "walkDown");
 
 			if(focusedUnit.tag.Equals("Player") && 
 					!focusedUnit.hasMoved){
