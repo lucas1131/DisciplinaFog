@@ -462,17 +462,26 @@ public class Cursor : MonoBehaviour {
 			break;
 		case "Wait":
 			
+			// Update windows info
 			UpdateUnitWindow(selectedUnit);
 			board.tInfo.SetActive(true);
 
+			// Set unit action as done, so it cannot move again
 			selectedUnit.hasMoved = true;
-			ChangeAnimationTo(selectedUnit, "idle");
-			possibleMoves = null;
-			battleMenu.gameObject.SetActive(false);
-			selectedUnit = null;
-			Update();
 
+			// Revert animation back to idle
+			ChangeAnimationTo(selectedUnit, "idle");
+			
+			// Stop spawning arrows
+			possibleMoves = null;
+
+			// RIP battle menu
+			battleMenu.gameObject.SetActive(false);
+				
+			// Deselect unit
+			selectedUnit = null;
 			break;
+
 		case "Unit":
 
 			break;
@@ -480,7 +489,7 @@ public class Cursor : MonoBehaviour {
 
 			break;
 		case "End":
-			print("ending");
+			
 
 			break;
 		}

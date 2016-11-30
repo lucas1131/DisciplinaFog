@@ -6,8 +6,16 @@ using System.Collections.Generic;
 
 public class BoardManager : MonoBehaviour {
 
+	public enum Turn {
+		Player,
+		Enemy,
+		Ally
+	}
+
     [HideInInspector]
 	public GameObject tInfo;
+	[HideInInspector]
+	public Turn turn = Turn.Player;
 
     [HideInInspector]
 	public Unit[] playerUnits;
