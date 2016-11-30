@@ -371,7 +371,7 @@ public class Cursor : MonoBehaviour {
 
 		// No unit in square, open menu
 		if(focusedUnit == null){
-
+			
 			UI.OpenMenu();
 
 

@@ -1,7 +1,7 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 
-public abstract class Consumable : MonoBehaviour {
+public class Lockpick : MonoBehaviour {
 
     public string Name;
     public string description;
@@ -9,5 +9,7 @@ public abstract class Consumable : MonoBehaviour {
     public int curUses;
     public int maxUses;
 
-    public abstract void OnUse(Unit self);
+    public void OnUse(GameObject go){
+    	
+    }
 }
