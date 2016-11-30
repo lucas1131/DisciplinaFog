@@ -126,6 +126,9 @@ public class Cursor : MonoBehaviour {
 		if(pos.position != tgtPos) MoveCursor();
 		else ProcessAxis();
 
+		// Move unit if a path exists
+		// if(path != null) MoveUnit();
+
 		// Update terrain info only if cursor has moved
 		if(cursorMoved) {
 			board.DisplayTerrainInfo(posX, posY);
@@ -275,9 +278,11 @@ public class Cursor : MonoBehaviour {
 			// We already have a selected unit, try to act
 			else if(selectedUnit.faction == Faction.PLAYER){
 
+				this.gameObject.SetActive(false);
 				// Check path if position is inside calculated movement area
 				if( possibleMoves.Contains(new Position(posX, posY)) )
-					path = selectedUnit.PathTo(new Position(posX, posY));
+					selectedUnit.MoveTowards(new Position(posX, posY));
+				this.gameObject.SetActive(true);
 
 			}
 		}
@@ -409,6 +414,33 @@ public class Cursor : MonoBehaviour {
 			mainCamera.transform.position = new Vector3(X, Y, -10f);
 		}
 	}
+
+	// void MoveUnit(){
+
+	// 	if(delay == 0 || counter%delay == 0){
+			
+	// 		// Local placeholders to modify pos.position
+	// 		float X = selectedUnit.transform.position.x;
+	// 		float Y = selectedUnit.transform.position.y;
+
+	// 		// Reset delay counter
+	// 		counter = 0;
+
+	// 		// Interpolate position
+	// 		path[]
+	// 		X += 0.125;
+	// 		Y += 0.125;
+
+	// 		// Round position interpolation
+	// 		if(Mathf.Abs(tgtCamPos.x - mainCamera.transform.position.x) < 0.1f)
+	// 			X = tgtCamPos.x;
+	// 		if(Mathf.Abs(tgtCamPos.y - mainCamera.transform.position.y) < 0.1f)
+	// 			Y = tgtCamPos.y;
+
+	// 		// Update position
+	// 		mainCamera.transform.position = new Vector3(X, Y, -10f);
+	// 	}
+	// }
 
 	void ChangeCursorSpeed(float speed, int delay){
 		this.delay = delay;

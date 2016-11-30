@@ -162,10 +162,6 @@ public class BoardManager : MonoBehaviour {
 		for (int i = 0; i < cols; i++) 
 			for (int j = 0; j < rows; j++) 
 				board[i, j] = (int) Terrains.Plains;
-
-		// board[0, 2] = (int) Terrains.Forest;
-		board[1, 1] = (int) Terrains.Forest;
-		// board[2, 0] = (int) Terrains.Forest;
 	}
 
 	public void InitUnits(Unit[] units){
