@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public abstract class Misc : MonoBehaviour {
+public abstract class Misc : Item {
 
     public string Name;
     public string description;

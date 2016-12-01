@@ -35,7 +35,8 @@ public class Unit : MonoBehaviour {
 	public int curHealth;
 	public int level;
 	public int exp;
-	public GameObject[] inventory = new GameObject[5];
+	public Item[] inventory = new Item[5];
+	public int equipedItem;
 	
 	// Status
 	public Status stats;
@@ -111,6 +112,15 @@ public class Unit : MonoBehaviour {
 		this.prevPosX = startX;
 		this.prevPosY = startY;
 		this.transform.position = new Vector2(this.posX, this.posY);    
+
+		// Find first equipment in inventory to equip it
+		int counter = 0;
+		equipedItem = -1;	// no item equiped
+		foreach(Item i in inventory){
+			if(i != null && i.isWeapon)
+				equipedItem = counter;
+			counter++;
+		}
 
 		// TODO: read statistics from savefile
 	}

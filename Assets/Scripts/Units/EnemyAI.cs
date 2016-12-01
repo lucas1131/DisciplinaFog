@@ -19,6 +19,7 @@ public static class EnemyAI : object {
 			foreach(Unit u in playerUnits)
 				u.hasMoved = false;
 			cursor.gameObject.SetActive(true);
+			board.tInfo.SetActive(true);
 			board.turn = BoardManager.Turn.Player;			
 		}
 	}

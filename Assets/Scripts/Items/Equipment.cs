@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-public class Equipment : MonoBehaviour {
+public class Equipment : Item {
 
 	public string Name;
     public Sprite sprite;
@@ -33,5 +33,6 @@ public class Equipment : MonoBehaviour {
 	    this.might = equipScript.might;
 	    this.hit = equipScript.hit;
 	    this.crit = equipScript.crit;
+	    this.isWeapon = true;
 	}
 }

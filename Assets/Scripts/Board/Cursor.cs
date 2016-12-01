@@ -335,15 +335,15 @@ public class Cursor : MonoBehaviour {
 
 						battleMenu.gameObject.SetActive(true);
 						battleMenu.OpenMenu( new bool[]{ 
-								CanAttack(adjacent),	// attack
-								CanRescue(adjacent),	// rescue
-								true,					// item
-								CanTrade(adjacent),		// trade
-								true,					// wait
-								false,					// unit
-								false,					// status
-								false					// end
-							});
+							((selectedUnit.equipedItem >= 0) && CanAttack(adjacent)),	// attack
+							CanRescue(adjacent),	// rescue
+							true,					// item
+							CanTrade(adjacent),		// trade
+							true,					// wait
+							false,					// unit
+							false,					// status
+							false					// end
+						});
 	                }
 				}
 			}
@@ -356,6 +356,11 @@ public class Cursor : MonoBehaviour {
 			if(battleMenu.isActiveAndEnabled){
 				
 				battleMenu.gameObject.SetActive(false);
+
+				if(selectedUnit != null){
+					selectedUnit.posX = selectedUnit.prevPosX;
+					selectedUnit.posY = selectedUnit.prevPosY;
+				}
 			}
 
 			// Dont have a selected unit
@@ -439,10 +444,25 @@ public class Cursor : MonoBehaviour {
 
 	void ProcessMenu(){
 
+		Unit[] adjacent = new Unit[4];
+		Unit aux;
+
+		adjacent[0] = board.GetUnit(posX+1, posY);
+		adjacent[1] = board.GetUnit(posX-1, posY);
+		adjacent[2] = board.GetUnit(posX, posY+1);
+		adjacent[3] = board.GetUnit(posX, posY-1);
+
 		switch(battleMenu.getCurrentEntry().name){
 		case "Attack":
-			print("attacking");
+			
+			foreach(Unit u in adjacent){
+				if( (aux = board.GetUnit(u.pos + adjacent[0].pos)).faction == Faction.ENEMY ){
+					posX =  aux.posX;
+					posY =  aux.posY;
+				}
+			}
 			break;
+
 		case "Rescue":
 
 			break;
@@ -563,14 +583,6 @@ public class Cursor : MonoBehaviour {
 
 		// No unit in square, open menu
 		if(focusedUnit == null){
-			
-			// Check if there is another unit in an adjacent cell
-			Unit[] adjacent = new Unit[4];
-
-			adjacent[0] = board.GetUnit(posX+1, posY);
-			adjacent[1] = board.GetUnit(posX-1, posY);
-			adjacent[2] = board.GetUnit(posX, posY+1);
-			adjacent[3] = board.GetUnit(posX, posY-1);
 
 			battleMenu.gameObject.SetActive(true);
 			battleMenu.OpenMenu( new bool[]{ 
@@ -620,9 +632,9 @@ public class Cursor : MonoBehaviour {
 	bool CanAttack(Unit[] adjacent){
 
 		// Search for equipments in unit's inventory
-		// foreach(Item i in selectedUnit.inventory){
+		foreach(Item i in selectedUnit.inventory){
 			
-		// }
+		}
 
 		// Search for enemies 
 		foreach(Unit u in adjacent){

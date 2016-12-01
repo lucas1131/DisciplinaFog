@@ -169,6 +169,50 @@ public class BoardManager : MonoBehaviour {
 		for (int i = 0; i < cols; i++) 
 			for (int j = 0; j < rows; j++) 
 				board[i, j] = (int) Terrains.Plains;
+
+		board[0, 0] = (int) Terrains.River;
+		board[0, 1] = (int) Terrains.River;
+		board[0, 2] = (int) Terrains.River;
+		
+		board[2, 0] = (int) Terrains.Forest;
+		
+		board[9, 0] = (int) Terrains.River;
+		board[10, 0] = (int) Terrains.River;
+		board[11, 0] = (int) Terrains.River;
+		board[12, 0] = (int) Terrains.River;
+		board[12, 1] = (int) Terrains.River;
+		
+		board[0, 9] = (int) Terrains.Mountain;
+		board[1, 9] = (int) Terrains.Mountain;
+
+		board[2, 9] = (int) Terrains.Wall;
+		board[3, 9] = (int) Terrains.Wall;
+		board[4, 9] = (int) Terrains.Wall;
+		board[2, 8] = (int) Terrains.Wall;
+		board[3, 8] = (int) Terrains.Wall;
+		board[4, 8] = (int) Terrains.Wall;
+		board[2, 7] = (int) Terrains.Wall;
+		board[4, 7] = (int) Terrains.Wall;
+
+		board[7, 9] = (int) Terrains.Forest;
+		
+		board[13, 2] = (int) Terrains.Forest;
+		board[13, 1] = (int) Terrains.Forest;
+		
+		board[9, 9] = (int) Terrains.Mountain;
+		board[10, 9] = (int) Terrains.Mountain;
+		board[11, 8] = (int) Terrains.Mountain;
+		board[12, 8] = (int) Terrains.Mountain;
+		board[13, 7] = (int) Terrains.Mountain;
+		board[14, 7] = (int) Terrains.Mountain;
+		
+		board[14, 9] = (int) Terrains.Peak;
+		board[13, 9] = (int) Terrains.Peak;
+		board[12, 9] = (int) Terrains.Peak;
+		board[11, 9] = (int) Terrains.Peak;
+		board[14, 8] = (int) Terrains.Peak;
+		board[13, 8] = (int) Terrains.Peak;
+
 	}
 
 	public void InitUnits(Unit[] units){
