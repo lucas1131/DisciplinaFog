@@ -356,34 +356,15 @@ public class Cursor : MonoBehaviour {
 			if(battleMenu.isActiveAndEnabled){
 				
 				battleMenu.gameObject.SetActive(false);
+			}
 
-				// If there was a selected unit, revert its animation back to idle
-				ChangeAnimationTo(selectedUnit, "idle");
-				ChangeAnimationTo(focusedUnit, "victory");
-				possibleMoves = null;
+			// Dont have a selected unit
+			if(selectedUnit == null) {
+				ChangeCursorSpeed(cursorSpdAlt, delayAlt);
 
-				if(selectedUnit != null){
-
-					selectedUnit.hasMoved = false;
-
-					selectedUnit.posX = selectedUnit.prevPosX;
-					selectedUnit.posY = selectedUnit.prevPosY;
-
-					posX = selectedUnit.posX;
-					posY = selectedUnit.posY;
-					tgtPos = new Vector3(posX, posY, 0f);
-
-					focusedUnit = selectedUnit;
-					selectedUnit = null;
-
-					UpdateUnitWindow(focusedUnit);
-					board.tInfo.SetActive(true);
-					// board.DisplayTerrainInfo(posX, posY);
-				}
-
-			// Update();
-
-			} else {
+			// Deselect a unit
+			// TODO: check for menu nesting first (stack of "selections"?)
+            } else {
 
 				// Dont have a selected unit
 				if(selectedUnit == null) {
@@ -639,9 +620,9 @@ public class Cursor : MonoBehaviour {
 	bool CanAttack(Unit[] adjacent){
 
 		// Search for equipments in unit's inventory
-		foreach(Item i in selectedUnit.inventory){
+		// foreach(Item i in selectedUnit.inventory){
 			
-		}
+		// }
 
 		// Search for enemies 
 		foreach(Unit u in adjacent){

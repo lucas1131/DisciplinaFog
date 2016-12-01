@@ -51,6 +51,7 @@ public class Unit : MonoBehaviour {
 
 	// Position and movement variables
 	public Position pos = new Position(0, 0);
+    public Position prevPos;
 	[HideInInspector]
 	public bool hasMoved = false;
 	public int startX;
@@ -287,6 +288,8 @@ public class Unit : MonoBehaviour {
 		}
 
         // TODO coroutines
+
+        prevPos = pos;
         if (path.Count > 0) {
             posX = path[i-1].x;
             posY = path[i-1].y;
