@@ -127,6 +127,17 @@ public class Cursor : MonoBehaviour {
 	// Update is called once per frame
 	void Update(){
 
+		if(board.turn == BoardManager.Turn.Player)
+			UpdatePlayer();
+		else if(board.turn == BoardManager.Turn.Enemy)
+			EnemyAI.UpdateEnemy(board, this, board.playerUnits, 
+				board.enemyUnits, board.allyUnits);
+		// else if(board.turn == BoardManager.Turn.Ally)
+		// 	AllyAI.UpdateAlly();
+	}
+
+	void UpdatePlayer(){
+
 		// Only update cursor if battle menu is off
 		if(!battleMenu.isActiveAndEnabled){
 		
@@ -490,7 +501,13 @@ public class Cursor : MonoBehaviour {
 			break;
 		case "End":
 			
+			// Deactivate info windows
+			unitWindow.SetActive(false);
+			board.tInfo.SetActive(false);
 
+			// RIP battle menu
+			battleMenu.gameObject.SetActive(false);
+			board.turn = BoardManager.Turn.Enemy;				
 			break;
 		}
 	}
@@ -596,20 +613,6 @@ public class Cursor : MonoBehaviour {
 			
 			selectedUnit = focusedUnit;
 			ChangeAnimationTo(selectedUnit, "walkDown");
-
-			if(focusedUnit.tag.Equals("Player") && 
-					!focusedUnit.hasMoved){
-			// Select unit and show its movement
-
-			// Enemy unit
-			} else if(focusedUnit.tag.Equals("Enemy")){
-			// Select unit and show its movement
-
-			// Ally unit
-			} else if(focusedUnit.tag.Equals("Ally")){
-			// Select unit and show its movement
-
-			}
 		}
 	}
 
@@ -635,6 +638,12 @@ public class Cursor : MonoBehaviour {
 
 	bool CanAttack(Unit[] adjacent){
 
+		// Search for equipments in unit's inventory
+		foreach(Item i in selectedUnit.inventory){
+			
+		}
+
+		// Search for enemies 
 		foreach(Unit u in adjacent){
 			if(u != null && u.faction == Faction.ENEMY)
 				return true;
@@ -642,7 +651,7 @@ public class Cursor : MonoBehaviour {
 		return false;
 	}
 
-	void ChangeAnimationTo(Unit unit, string name){
+	public static void ChangeAnimationTo(Unit unit, string name){
 
 		if(unit == null) return;
 		
