@@ -11,6 +11,9 @@ public enum Faction {
 
 public class Unit : MonoBehaviour {
 
+    public GameObject UnitSprite;
+    public GameObject EffectSprite;
+
     [System.Serializable]
     public struct Status {
         public int str;
@@ -345,23 +348,82 @@ public class Unit : MonoBehaviour {
 			i++;
 		}
 
-        
+        StartCoroutine(MoveFromTo(path,Time.fixedDeltaTime*10));
+    }
 
-        prevPos = pos;
-        if (path.Count > 0) {
-            foreach(Position p in path)
+    IEnumerator MoveFromTo(List<Position> path, float step)
+    {
+        int i = 0;
+        Global.animationHappening = true;
+
+        Position prev = new Position(posX,posY);
+
+        foreach(Position p in path)
+        {
+            setMoveAnimation(prev, p);
+            i++;
+            Vector2 target = new Vector2(p.x, p.y);
+            while (Vector2.Distance(target, transform.position) >= 0.05f)
             {
-                posX = p.x;
-                posY = p.y;
-                StartCoroutine(testCoroutine());
+                transform.position = Vector2.MoveTowards(transform.position, target, step);
+                yield return null; // Leave the routine and return here in the next frame
             }
         }
-	}
 
-    private IEnumerator testCoroutine(Position dest)
+        setAllPropFalse();
+
+        Global.animationHappening = false;
+
+        posX = path[i - 1].x;
+        posY = path[i - 1].y;
+
+    }
+
+    private void setMoveAnimation(Position prev, Position dest)
     {
-        while(posX != dest.x && posY != dest.y)
-        yield return new WaitForSeconds(1f);
+        Position up = new Position(0, 1);
+        Position down = new Position(0, -1);
+        Position left = new Position(-1, 0);
+        Position right = new Position(1, 0);
+
+        //dest-prev
+        int i = 0;
+
+        if(prev.x == dest.x)
+        //mov vertical
+        {
+            if (dest.y - prev.y > 0)
+            //vertical pra cima
+            {
+                unitSprite.GetComponent<Animator>().SetBool("walkUp", true);
+            }
+            else
+            //vertical pra baixo
+            {
+                unitSprite.GetComponent<Animator>().SetBool("walkDown", true);
+            }
+        } else 
+        //movimento horizontal
+        {
+            if (dest.x - prev.x > 0)
+            //horizontal pra direita
+            { 
+                unitSprite.GetComponent<Animator>().SetBool("walkRight", true);
+            }
+            else
+            //horizontal pra esquerda
+            {
+                unitSprite.GetComponent<Animator>().SetBool("walkLeft", true);
+            }
+        }
+    }
+
+    private void setAllPropFalse()
+    {
+        unitSprite.GetComponent<Animator>().SetBool("walkUp", false);
+        unitSprite.GetComponent<Animator>().SetBool("walkLeft", false);
+        unitSprite.GetComponent<Animator>().SetBool("walkRight", false);
+        unitSprite.GetComponent<Animator>().SetBool("walkDown", false);
     }
 
     public bool CanStandAt(Position p) {
