@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -10,79 +11,79 @@ public enum Faction {
 
 public class Unit : MonoBehaviour {
 
-	[System.Serializable]
-	public struct Status {
-		public int str;
-		public int skill;
-		public int spd;
-		public int luck;
-		public int def;
-		public int res;
-		public int move;
-		public int con;
-		public int aid;
-	}
+    [System.Serializable]
+    public struct Status {
+        public int str;
+        public int skill;
+        public int spd;
+        public int luck;
+        public int def;
+        public int res;
+        public int move;
+        public int con;
+        public int aid;
+    }
 
-	// Information
-	public string unitName;
-	public Faction faction;
-	public ClassStats cls;
-	[HideInInspector]
-	public int index = 0;
+    // Information
+    public string unitName;
+    public Faction faction;
+    public ClassStats cls;
+    [HideInInspector]
+    public int index = 0;
 
-	// Counters
-	public int maxHealth;
-	public int curHealth;
-	public int level;
-	public int exp;
-	public Item[] inventory = new Item[5];
-	public int equipedItem;
-	
-	// Status
-	public Status stats;
+    // Counters
+    public int maxHealth;
+    public int curHealth;
+    public int level;
+    public int exp;
+    public Item[] inventory = new Item[5];
+    public int equipedItem;
 
-	[HideInInspector]
-	public BoardManager board;
+    // Status
+    public Status stats;
 
-	// Children
-	[HideInInspector]
-	public Transform unitSprite;
-	private Transform effectSprite;
-	private Transform portraitSprite;
+    [HideInInspector]
+    public BoardManager board;
 
-	// Position and movement variables
-	public Position pos = new Position(0, 0);
+    // Children
+    [HideInInspector]
+    public Transform unitSprite;
+    private Transform effectSprite;
+    private Transform portraitSprite;
+
+    // Position and movement variables
+    public Position pos = new Position(0, 0);
     public Position prevPos;
-	[HideInInspector]
-	public bool hasMoved = false;
-	public int startX;
-	public int startY;
+    [HideInInspector]
+    public bool hasMoved = false;
+    public int startX;
+    public int startY;
 
-	// Gambiarras do VVillam
+    // Gambiarras do VVillam
     public Queue<Position> pathToTarget;
     private int step;
     public static readonly int nSteps = 8;
-    private float stepOffset = 1/Mathf.Pow(2, 1.0f/nSteps);
+    private float stepOffset = 1 / Mathf.Pow(2, 1.0f / nSteps);
 
     public int prevPosX;
     public int prevPosY;
 
 
-	public int posX {
-		set {
+    public int posX {
+        set {
             this.pos.x = value;
             x = value;
         }
-		get { return this.pos.x; }
-	}
+        get { return this.pos.x; }
+    }
 
-	public int posY {
-		set {
+    public int posY {
+        set {
             this.pos.y = value;
             y = value;
         }
-		get { return this.pos.y; }
-	}
+        get { return this.pos.y; }
+    }
 
     public float x {
         set {
@@ -98,76 +99,123 @@ public class Unit : MonoBehaviour {
         get { return transform.position.y; }
     }
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start() {
 
-		// Get objects references from hierarchy
-		board = GameObject.Find("Map").GetComponent<BoardManager>();
-		unitSprite = this.gameObject.transform.GetChild(0);
-		effectSprite = this.gameObject.transform.GetChild(1);
-		portraitSprite = this.gameObject.transform.GetChild(2);
+        // Get objects references from hierarchy
+        board = GameObject.Find("Map").GetComponent<BoardManager>();
+        unitSprite = this.gameObject.transform.GetChild(0);
+        effectSprite = this.gameObject.transform.GetChild(1);
+        portraitSprite = this.gameObject.transform.GetChild(2);
 
-		this.posX = startX;
-		this.posY = startY;
-		this.prevPosX = startX;
-		this.prevPosY = startY;
-		this.transform.position = new Vector2(this.posX, this.posY);    
+        this.posX = startX;
+        this.posY = startY;
+        this.prevPosX = startX;
+        this.prevPosY = startY;
+        this.transform.position = new Vector2(this.posX, this.posY);
 
-		// Find first equipment in inventory to equip it
-		int counter = 0;
-		equipedItem = -1;	// no item equiped
-		foreach(Item i in inventory){
-			if(i != null && i.isWeapon)
-				equipedItem = counter;
-			counter++;
-		}
+        // Find first equipment in inventory to equip it
+        int counter = 0;
+        equipedItem = -1;   // no item equiped
+        foreach (Item i in inventory) {
+            if (i != null && i.isWeapon)
+                equipedItem = counter;
+            counter++;
+        }
 
-		// TODO: read statistics from savefile
-	}
+        // TODO: read statistics from savefile
+    }
 
-	public List<Position> CalculateMovementArea() {
-	 
-		HashSet<Position> visited = new HashSet<Position>();
-		List<Position> moveArea = new List<Position>();
-		PriorityQueue<Pair<Position, int>> q = new PriorityQueue<Pair<Position, int>>();
+    public List<Position> CalculateMovementArea() {
 
-		Position[] deltas = new Position[] {
-			new Position(0, 1),
-			new Position(1, 0),
-			new Position(0, -1),
-			new Position(-1, 0),
-		};
+        HashSet<Position> visited = new HashSet<Position>();
+        List<Position> moveArea = new List<Position>();
+        PriorityQueue<Pair<Position, int>> q = new PriorityQueue<Pair<Position, int>>();
 
-		q.Add(new Pair<Position, int>(pos, stats.move), -stats.move);
+        Position[] deltas = new Position[] {
+            new Position(0, 1),
+            new Position(1, 0),
+            new Position(0, -1),
+            new Position(-1, 0),
+        };
+
+        q.Add(new Pair<Position, int>(pos, stats.move), -stats.move);
         visited.Add(pos);
 
-		while (q.Count > 0) {
-		
-			Pair<Position, int> p = q.Pop();
-			Position cur = p.first;
-			int curMov = p.second;
+        while (q.Count > 0) {
 
-			if (CanStandAt(cur))
-				moveArea.Add(cur);
+            Pair<Position, int> p = q.Pop();
+            Position cur = p.first;
+            int curMov = p.second;
 
-			foreach (Position del in deltas) {
-		
-				Position next = cur + del;
-				if (next.IsValid(board) && !visited.Contains(next)) {
-		
-					Unit u = board.GetUnit(next.x, next.y);
-					Terrains t = board.GetTerrain(next.x, next.y);
-					int cost = cls.GetMovementCost(t);
-				
-					if (cost <= curMov && this.CanMoveThrough(u))
-						q.Add(new Pair<Position, int>(next, curMov - cost), cost - curMov);
-					visited.Add(next);
-				}
-			}
-		}
+            if (CanStandAt(cur))
+                moveArea.Add(cur);
 
-		return moveArea;
-	}
+            foreach (Position del in deltas) {
+
+                Position next = cur + del;
+                if (next.IsValid(board) && !visited.Contains(next)) {
+
+                    Unit u = board.GetUnit(next.x, next.y);
+                    Terrains t = board.GetTerrain(next.x, next.y);
+                    int cost = cls.GetMovementCost(t);
+
+                    if (cost <= curMov && this.CanMoveThrough(u))
+                        q.Add(new Pair<Position, int>(next, curMov - cost), cost - curMov);
+                    visited.Add(next);
+                }
+            }
+        }
+
+        return moveArea;
+    }
+
+    public List<Position> CalculateAttackArea() {
+        List<Position> area = new List<Position>();
+        HashSet<Position> visited = new HashSet<Position>();
+        Queue<Pair<Position, int>> q = new Queue<Pair<Position, int>>();
+        Position[] deltas = new Position[] {
+            new Position(0, 1),
+            new Position(1, 0),
+            new Position(0, -1),
+            new Position(-1, 0),
+        };
+
+        string range = (inventory[equipedItem] as Equipment).range;
+        int[] dists = Array.ConvertAll<string, int>(range.Split('-'), s => Convert.ToInt32(s));
+        int minDist, maxDist;
+        if (dists.Length > 1) {
+            minDist = dists[0];
+            maxDist = dists[1];
+        } else {
+            minDist = 1;
+            maxDist = dists[0];
+        }
+
+        q.Enqueue(new Pair<Position, int>(pos, 0));
+
+        while (q.Count > 0) {
+            Pair<Position, int> p = q.Dequeue();
+            Position cur = p.first;
+            int curDist = p.second;
+
+            if (curDist >= minDist)
+                area.Add(cur);
+
+            visited.Add(cur);
+
+            if (curDist < maxDist) {
+                foreach (Position del in deltas) {
+                    Position next = cur + del;
+                    if (next.IsValid(board) && !visited.Contains(next)) {
+                        q.Enqueue(new Pair<Position, int>(next, curDist + 1));
+                    }
+                }
+            }
+        }
+
+        return area;
+    }
 
 	public bool CanMoveThrough(Unit other) {
 		if (other == null)
