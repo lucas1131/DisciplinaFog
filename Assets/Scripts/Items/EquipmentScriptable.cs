@@ -12,7 +12,8 @@ public class EquipmentScriptable : ScriptableObject {
     public string equipType;
     public char rank;
 
-    public string range;
+    public int rangeMin;
+    public int rangeMax;
     public int weight;
     public int might;
     public int hit;

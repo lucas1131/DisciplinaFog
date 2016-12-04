@@ -18,11 +18,7 @@ public class BoardManager : MonoBehaviour {
 	public Turn turn = Turn.Player;
 
     [HideInInspector]
-	public Unit[] playerUnits;
-    [HideInInspector]
-	public Unit[] enemyUnits;
-    [HideInInspector]
-	public Unit[] allyUnits;
+	public Unit[] playerUnits, enemyUnits, allyUnits;
 	
 	public TerrainType[] types = 
 		Array.ConvertAll<Terrains, TerrainType>(
@@ -62,10 +58,6 @@ public class BoardManager : MonoBehaviour {
 
 		// Initialize test scene
 		CreateTestScene();
-	}
-	
-	void Update() {
-	
 	}
 
 	public void DisplayTerrainInfo(int x, int y){

@@ -12,11 +12,17 @@ public class Equipment : Item {
     public string equipType;
     public char rank;
 
-    public string range;
+    public int rangeMin;
+    public int rangeMax;
     public int weight;
     public int might;
     public int hit;
     public int crit;
+
+    public bool beastBonus = false;
+    public bool flierBonus = false;
+    public bool armoredBonus = false;
+    public bool dragonBonus = false;
 
 	// Use this for initialization
 	public Equipment(EquipmentScriptable equipScript) {
@@ -28,7 +34,8 @@ public class Equipment : Item {
 	    this.equipType = equipScript.equipType;
 	    this.rank = equipScript.rank;
 
-	    this.range = equipScript.range;
+	    this.rangeMin = equipScript.rangeMin;
+	    this.rangeMax = equipScript.rangeMax;
 	    this.weight = equipScript.weight;
 	    this.might = equipScript.might;
 	    this.hit = equipScript.hit;

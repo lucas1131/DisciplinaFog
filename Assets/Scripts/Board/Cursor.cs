@@ -112,7 +112,7 @@ public class Cursor : MonoBehaviour {
 			!focusedUnit.hasMoved && 
 			focusedUnit.faction == Faction.PLAYER){
 
-			ChangeAnimationTo(focusedUnit, "victory");
+			focusedUnit.ChangeAnimationTo("victory");
 		}
 
 		// Get terrain info without moving the cursor
@@ -240,7 +240,7 @@ public class Cursor : MonoBehaviour {
 			// but only if player hasn't select a unit
 			if(selectedUnit == null){
 				if(focusedUnit != null)
-					ChangeAnimationTo(focusedUnit, "idle");
+					focusedUnit.ChangeAnimationTo("idle");
 
 				// Check new tile for a unit
 				focusedUnit = board.GetUnit(posX, posY);
@@ -248,7 +248,7 @@ public class Cursor : MonoBehaviour {
 					!focusedUnit.hasMoved && 
 					focusedUnit.faction == Faction.PLAYER){
 
-					ChangeAnimationTo(focusedUnit, "victory");
+					focusedUnit.ChangeAnimationTo("victory");
 				}
 			}
 
@@ -276,171 +276,176 @@ public class Cursor : MonoBehaviour {
 	
 	void ProcessInput(){
 
-		// Action button
-		if(Input.GetButtonDown("Action")){
-	
-			// Battle menu is open
-			if(battleMenu.isActiveAndEnabled){
+        if (!Global.animationHappening){
 
-				ProcessMenu();
+            // Action button
+            if (Input.GetButtonDown("Action")){
 
-			// Battle menus is NOT open
-			} else {
+                // Battle menu is open
+                if (battleMenu.isActiveAndEnabled){
 
-				// If no unit has been selected, try to select a unit
-				if(selectedUnit == null || !focusedUnit.hasMoved){
-					
-					SelectUnit();
+                    ProcessMenu();
 
-					if(selectedUnit){
-						
-						// Disable terrain and unit windows
-						unitWindow.SetActive(false);
-						board.tInfo.SetActive(false);
+                    // Battle menus is NOT open
+                } else {
 
-						// Instantiate blue squares
-						possibleMoves = selectedUnit.CalculateMovementArea();
-						moveTiles = new List<GameObject>();
+                    // If no unit has been selected, try to select a unit
+                    if (selectedUnit == null){
+                        SelectUnit();
 
-						foreach(Position p in possibleMoves){
-							moveTiles.Add(
-								Instantiate(moveTilePrefab, 
-											new Vector3(p.x, p.y, 0f), 
-											Quaternion.identity) 
-								as GameObject
-							);
-						}
-					}
-				}
+                        if (selectedUnit){
 
-				// We already have a selected unit, try to act
-				else if(selectedUnit.faction == Faction.PLAYER){
+                            // Disable terrain and unit windows
+                            unitWindow.SetActive(false);
+                            board.tInfo.SetActive(false);
 
-	                Position p = new Position(posX, posY);
-					// Check path if position is inside calculated movement area
-					if( possibleMoves != null && possibleMoves.Contains(p) ) {
-	                    
-	                    // this.gameObject.SetActive(false);	
-	                    
-	                    DestroyMovementDisplay();
-	                    selectedUnit.prevPosX = selectedUnit.posX;
-	                    selectedUnit.prevPosY = selectedUnit.posY;
-						selectedUnit.MoveTowards(p);
-						
-						Unit[] adjacent = new Unit[4];
+                            // Instantiate blue squares
+                            possibleMoves = selectedUnit.CalculateMovementArea();
+                            moveTiles = new List<GameObject>();
 
-						adjacent[0] = board.GetUnit(posX+1, posY);
-						adjacent[1] = board.GetUnit(posX-1, posY);
-						adjacent[2] = board.GetUnit(posX, posY+1);
-						adjacent[3] = board.GetUnit(posX, posY-1);
+                            foreach (Position p in possibleMoves){
+                                moveTiles.Add(
+                                    Instantiate(moveTilePrefab,
+                                                new Vector3(p.x, p.y, 0f),
+                                                Quaternion.identity)
+                                    as GameObject
+                                );
+                            }
+                        }
+                    }
 
-						battleMenu.gameObject.SetActive(true);
-						battleMenu.OpenMenu( new bool[]{ 
-							((selectedUnit.equipedItem >= 0) && CanAttack(adjacent)),	// attack
-							CanRescue(adjacent),	// rescue
-							true,					// item
-							CanTrade(adjacent),		// trade
-							true,					// wait
-							false,					// unit
-							false,					// status
-							false					// end
-						});
-	                }
-				}
-			}
-		}
+                    // We already have a selected unit, try to act
+                    else if (selectedUnit.faction == Faction.PLAYER){
 
-		// Cancel button
-		if(Input.GetButtonDown("Cancel")){
+                        Position p = new Position(posX, posY);
+                        // Check path if position is inside calculated movement area
+                        if (possibleMoves != null && possibleMoves.Contains(p)){
 
-			// Deactivate menu
-			if(battleMenu.isActiveAndEnabled){
-				
-				battleMenu.gameObject.SetActive(false);
+                            // this.gameObject.SetActive(false);	
 
-				if(selectedUnit != null){
-					selectedUnit.posX = selectedUnit.prevPosX;
-					selectedUnit.posY = selectedUnit.prevPosY;
-				}
-			}
+                            DestroyMovementDisplay();
+                            selectedUnit.prevPosX = selectedUnit.posX;
+                            selectedUnit.prevPosY = selectedUnit.posY;
+                            selectedUnit.MoveTowards(p);
 
-			// Dont have a selected unit
-			if(selectedUnit == null) {
-				ChangeCursorSpeed(cursorSpdAlt, delayAlt);
+                            Unit[] adjacent = new Unit[4];
 
-			// Deselect a unit
-			// TODO: check for menu nesting first (stack of "selections"?)
-            } else {
+                            adjacent[0] = board.GetUnit(posX + 1, posY);
+                            adjacent[1] = board.GetUnit(posX - 1, posY);
+                            adjacent[2] = board.GetUnit(posX, posY + 1);
+                            adjacent[3] = board.GetUnit(posX, posY - 1);
 
-				// Dont have a selected unit
-				if(selectedUnit == null) {
-					ChangeCursorSpeed(cursorSpdAlt, delayAlt);
-	            
-	            } else {
-					// Deselect a unit
-					// TODO: check for menu nesting first (stack of "selections"?)
-					
-					// Delete blue tiles if exists
-	                DestroyMovementDisplay();
+                            battleMenu.gameObject.SetActive(true);
+                            battleMenu.OpenMenu(new bool[] 
+                            {
+	                            ((selectedUnit.equipedItem >= 0) && CanAttack(adjacent)),	// attack
+								CanRescue(adjacent),	// rescue
+								true,					// item
+								CanTrade(adjacent),		// trade
+								true,					// wait
+								false,					// unit
+								false,					// status
+								false					// end
+							});
+                        }
+                    }
+                }
+            }
 
-					// Move cursor back to top of unit
-					tgtPos = new Vector3(selectedUnit.posX, selectedUnit.posY, 0f);
+            // Cancel button
+            if (Input.GetButtonDown("Cancel")){
 
-					// Revert unit animation to victory only if unit is player's,
-					// else revert to idle
-					if(selectedUnit.faction == Faction.PLAYER)
-						ChangeAnimationTo(selectedUnit, "victory");
-					else 
-						ChangeAnimationTo(selectedUnit, "idle");
+                // Deactivate menu
+                if (battleMenu.isActiveAndEnabled){
 
-					// Move cursor to top of unit
-					posX = selectedUnit.posX;
-					posY = selectedUnit.posY;
-					tgtPos = new Vector3(posX, posY, 0f);
+                    battleMenu.gameObject.SetActive(false);
 
-					// Change unit status to focused only and deselect unit
-					focusedUnit = selectedUnit;
-					selectedUnit = null;
+                    if (selectedUnit != null){
+                        selectedUnit.posX = selectedUnit.prevPosX;
+                        selectedUnit.posY = selectedUnit.prevPosY;
+                    }
+                }
 
-					UpdateUnitWindow(focusedUnit);
-					board.tInfo.SetActive(true);
-				}
-			}
-		}
+                // Dont have a selected unit
+                if (selectedUnit == null){
+                    ChangeCursorSpeed(cursorSpdAlt, delayAlt);
 
-		if(Input.GetButtonUp("Cancel"))
-			ChangeCursorSpeed(cursorSpdDefault, delayDefault);
+                    // Deselect a unit
+                    // TODO: check for menu nesting first (stack of "selections"?)
+                }
+                else{
 
-		// Left trigger
-		if(Input.GetButtonDown("LeftTrigger")){
-			
-			// If no unit is focused, go to first player's unit
-			if(focusedUnit == null)
-				focusedUnit = board.GetNextUnit(Faction.PLAYER, 0);
+                    // Dont have a selected unit
+                    if (selectedUnit == null){
+                        ChangeCursorSpeed(cursorSpdAlt, delayAlt);
 
-			// Go to next unit in focused unit's faction
-			else
-				focusedUnit = board.GetNextUnit(focusedUnit.faction,
-												focusedUnit.index);
-			
-			if(focusedUnit != null){
-				posX = focusedUnit.posX;
-				posY = focusedUnit.posY;
-				tgtPos = new Vector3(posX, posY, 0f);
-			}
+                    }
+                    else{
+                        // Deselect a unit
+                        // TODO: check for menu nesting first (stack of "selections"?)
 
-			UpdateUnitWindow(focusedUnit);
-		}
+                        // Delete blue tiles if exists
+                        DestroyMovementDisplay();
 
-		// Right trigger
-		if(Input.GetButtonDown("RightTrigger")){
-			// Open unit menu
-		}
+                        // Move cursor back to top of unit
+                        tgtPos = new Vector3(selectedUnit.posX, selectedUnit.posY, 0f);
 
-		// Start button
-		if(Input.GetButtonDown("Start")){
-			// Show minimap
-		}
+                        // Revert unit animation to victory only if unit is player's,
+                        // else revert to idle
+                        if (selectedUnit.faction == Faction.PLAYER)
+                            selectedUnit.ChangeAnimationTo("victory");
+                        else
+                            selectedUnit.ChangeAnimationTo("idle");
+
+                        // Move cursor to top of unit
+                        posX = selectedUnit.posX;
+                        posY = selectedUnit.posY;
+                        tgtPos = new Vector3(posX, posY, 0f);
+
+                        // Change unit status to focused only and deselect unit
+                        focusedUnit = selectedUnit;
+                        selectedUnit = null;
+
+                        UpdateUnitWindow(focusedUnit);
+                        board.tInfo.SetActive(true);
+                    }
+                }
+            }
+
+            if (Input.GetButtonUp("Cancel"))
+                ChangeCursorSpeed(cursorSpdDefault, delayDefault);
+
+            // Left trigger
+            if (Input.GetButtonDown("LeftTrigger")){
+
+                // If no unit is focused, go to first player's unit
+                if (focusedUnit == null)
+                    focusedUnit = board.GetNextUnit(Faction.PLAYER, 0);
+
+                // Go to next unit in focused unit's faction
+                else
+                    focusedUnit = board.GetNextUnit(focusedUnit.faction,
+                                                    focusedUnit.index);
+
+                if (focusedUnit != null){
+                    posX = focusedUnit.posX;
+                    posY = focusedUnit.posY;
+                    tgtPos = new Vector3(posX, posY, 0f);
+                }
+
+                UpdateUnitWindow(focusedUnit);
+            }
+
+            // Right trigger
+            if (Input.GetButtonDown("RightTrigger")){
+                // Open unit menu
+            }
+
+            // Start button
+            if (Input.GetButtonDown("Start")){
+                // Show minimap
+            }
+        }
 	}
 
 	void ProcessMenu(){
@@ -483,7 +488,7 @@ public class Cursor : MonoBehaviour {
 			selectedUnit.hasMoved = true;
 
 			// Revert animation back to idle
-			ChangeAnimationTo(selectedUnit, "idle");
+			selectedUnit.ChangeAnimationTo("idle");
 			
 			// Stop spawning arrows
 			possibleMoves = null;
@@ -607,7 +612,7 @@ public class Cursor : MonoBehaviour {
 		} else {
 			
 			selectedUnit = focusedUnit;
-			ChangeAnimationTo(selectedUnit, "walkDown");
+			selectedUnit.ChangeAnimationTo("walkDown");
 		}
 	}
 
@@ -645,27 +650,6 @@ public class Cursor : MonoBehaviour {
 				return true;
 		}
 		return false;
-	}
-
-	public static void ChangeAnimationTo(Unit unit, string name){
-
-		if(unit == null) return;
-		
-		Animator anim = unit.unitSprite.GetComponent<Animator>();
-
-		anim.SetBool("idle", false);
-		anim.SetBool("victory", false);
-		anim.SetBool("healed", false);
-		anim.SetBool("walkUp", false);
-		anim.SetBool("walkDown", false);
-		anim.SetBool("walkRight", false);
-		anim.SetBool("walkLeft", false);
-		anim.SetBool("attackUp", false);
-		anim.SetBool("attackDown", false);
-		anim.SetBool("attackRight", false);
-		anim.SetBool("attackLeft", false);
-
-		anim.SetBool(name, true);
 	}
 
 	void UpdateUnitWindow(Unit unit){

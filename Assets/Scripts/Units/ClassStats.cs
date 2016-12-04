@@ -7,6 +7,11 @@ public class ClassStats : ScriptableObject {
 
     public string Name;
 
+    public bool isBeast = false;
+    public bool isFlier = false;
+    public bool isArmored = false;
+    public bool isDragon = false;
+    
     [System.Serializable]
     public class Cost {
 
