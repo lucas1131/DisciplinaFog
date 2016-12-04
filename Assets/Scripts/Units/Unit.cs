@@ -345,14 +345,24 @@ public class Unit : MonoBehaviour {
 			i++;
 		}
 
-        // TODO coroutines
+        
 
         prevPos = pos;
         if (path.Count > 0) {
-            posX = path[i-1].x;
-            posY = path[i-1].y;
+            foreach(Position p in path)
+            {
+                posX = p.x;
+                posY = p.y;
+                StartCoroutine(testCoroutine());
+            }
         }
 	}
+
+    private IEnumerator testCoroutine(Position dest)
+    {
+        while(posX != dest.x && posY != dest.y)
+        yield return new WaitForSeconds(1f);
+    }
 
     public bool CanStandAt(Position p) {
         Unit u = board.GetUnit(p);
