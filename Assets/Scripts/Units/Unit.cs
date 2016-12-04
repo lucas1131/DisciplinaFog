@@ -11,6 +11,8 @@ public enum Faction {
 
 public class Unit : MonoBehaviour {
 
+    public static bool animationHappening = false;
+
     public GameObject UnitSprite;
     public GameObject EffectSprite;
 

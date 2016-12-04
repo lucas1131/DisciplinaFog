@@ -138,17 +138,18 @@ public class Cursor : MonoBehaviour {
 
 	void UpdatePlayer(){
 
+		// Move camera if it has a new target position
+		if(mainCamera.transform.position != tgtCamPos)
+			CameraMove();
+
+		// Move cursor if it has a new target position
+		if(pos.position != tgtPos)
+			MoveCursor();
+
 		// Only update cursor if battle menu is off
 		if(!battleMenu.isActiveAndEnabled){
 		
-			// Move camera if it has a new target position
-			if(mainCamera.transform.position != tgtCamPos)
-				CameraMove();
-
-			// Move cursor if it has a new target position
-			if(pos.position != tgtPos)
-				MoveCursor();
-			else
+			if(pos.position == tgtPos)
 				ProcessAxis();
 
 			// Update terrain info only if cursor has moved
@@ -276,7 +277,7 @@ public class Cursor : MonoBehaviour {
 	
 	void ProcessInput(){
 
-        if (!Global.animationHappening){
+        if (!Unit.animationHappening){
 
             // Action button
             if (Input.GetButtonDown("Action")){
@@ -588,8 +589,8 @@ public class Cursor : MonoBehaviour {
 
 	void SelectUnit(){
 
-		// No unit in square, open menu
-		if(focusedUnit == null){
+		// No unit in square or unit has already moved, open menu
+		if(focusedUnit == null || focusedUnit.hasMoved){
 
 			battleMenu.gameObject.SetActive(true);
 			battleMenu.OpenMenu( new bool[]{ 
