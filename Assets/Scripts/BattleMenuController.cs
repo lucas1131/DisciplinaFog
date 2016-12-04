@@ -53,7 +53,6 @@ public class BattleMenuController : MonoBehaviour {
         PANEL_WIDTH = 165;
 
         arraySize = 8;
-        currentEntryIndex = 0;
 
         //sets up a list with all options
         entries = new List<GameObject>(arraySize);
@@ -76,6 +75,10 @@ public class BattleMenuController : MonoBehaviour {
 
         //sets menu cursor position
         setCursorPosition();
+
+
+        currentEntryIndex = 0;
+        next();
 
     }
 	
