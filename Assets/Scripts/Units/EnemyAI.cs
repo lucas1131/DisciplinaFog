@@ -8,22 +8,23 @@ public static class EnemyAI : object {
 
 		cursor.gameObject.SetActive(false);
 
-		// MoveUnits & attack
-
-		if(allyUnits.Length > 0){
-			board.turn = BoardManager.Turn.Ally;
-			// AllyAI.UpdateAlly();
-		} else {
+		/* MoveUnits & attack */
 			
-			// Set all player units to move again
-			foreach(Unit u in playerUnits){
-				u.hasMoved = false;
-				u.UpdateColor();
-			}
+		// Set all player units to move again
+		foreach(Unit u in playerUnits){
+			u.hasMoved = false;
+			u.UpdateColor();
+		}
 
-			cursor.gameObject.SetActive(true);
-			board.tInfo.SetActive(true);
-			board.turn = BoardManager.Turn.Player;			
+		cursor.gameObject.SetActive(true);
+		board.tInfo.SetActive(true);
+
+		if(board.allyUnits.Length > 0){
+			BoardManager.turn = BoardManager.Turn.Ally;
+			PhaseAnimator.PlayAnimation = true;
+		} else {
+			BoardManager.turn = BoardManager.Turn.Player;
+			PhaseAnimator.PlayAnimation = true;
 		}
 	}
 }

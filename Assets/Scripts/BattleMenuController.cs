@@ -79,7 +79,6 @@ public class BattleMenuController : MonoBehaviour {
 
         currentEntryIndex = 0;
         next();
-
     }
 	
 	void Update () {
@@ -104,27 +103,21 @@ public class BattleMenuController : MonoBehaviour {
         return count;
     }
 
-    void inputController()
-    {
-        if(Input.GetAxisRaw("Vertical") == -1 && !AxisIsEnabled)
-        {
+    void inputController(){
+        if(Input.GetAxisRaw("Vertical") == -1 && !AxisIsEnabled){
             AxisIsEnabled = true;
             next();
-        } else if(Input.GetAxisRaw("Vertical") == 1 && !AxisIsEnabled)
-        {
+        } else if(Input.GetAxisRaw("Vertical") == 1 && !AxisIsEnabled){
             AxisIsEnabled = true;
             prev();
-        } else if(Input.GetAxisRaw("Action") == 1 && !ActionIsEnabled)
-        {
+        } else if(Input.GetAxisRaw("Action") == 1 && !ActionIsEnabled){
             ActionIsEnabled = true;
         }
 
-        if (Input.GetAxisRaw("Vertical") == 0)
-        {
+        if (Input.GetAxisRaw("Vertical") == 0){
             AxisIsEnabled = false;
         }
-        if (Input.GetButtonDown("Action"))
-        {
+        if (Input.GetButtonDown("Action")){
             ActionIsEnabled = false;
         }
     }
@@ -133,7 +126,7 @@ public class BattleMenuController : MonoBehaviour {
     void setPositions() {
         int count = 0;
 
-        foreach (GameObject e in entries) {
+        foreach (GameObject e in entries){
             if (e.activeSelf) {
                 e.GetComponent<RectTransform>().anchoredPosition = 
                     new Vector2(INITIAL_POSX,INITIAL_POSY + (SPACING*count));
@@ -142,8 +135,7 @@ public class BattleMenuController : MonoBehaviour {
         }
     }   
 
-    public void next()
-    {
+    public void next(){
         int i, j;
         GameObject cur = null;
 
@@ -152,8 +144,7 @@ public class BattleMenuController : MonoBehaviour {
         if (calculateEntriesNo() == 0) return;
 
         //iterates through all array itens
-        for (j = 0; j < arraySize; j++)
-        {
+        for (j = 0; j < arraySize; j++){
             //checks if is in array end
             if (i + 1 >= arraySize) i = 0;
             else i++;
@@ -162,16 +153,14 @@ public class BattleMenuController : MonoBehaviour {
             cur = entries[i];
 
             //if this entry is active, returns it
-            if (cur.activeSelf)
-            {
+            if (cur.activeSelf){
                 currentEntryIndex = i;
                 return;
             }
         }
     }
 
-    public void prev()
-    {
+    public void prev(){
         int i, j;
         GameObject cur = null;
 
@@ -180,8 +169,7 @@ public class BattleMenuController : MonoBehaviour {
         if (calculateEntriesNo() == 0) return;
 
         //iterates through all array itens
-        for (j = 0; j < arraySize; j++)
-        {
+        for (j = 0; j < arraySize; j++){
             //checks if is in array end
             if (i - 1 < 0) i = arraySize-1;
             else i--;
@@ -190,27 +178,23 @@ public class BattleMenuController : MonoBehaviour {
             cur = entries[i];
 
             //if this entry is active, returns it
-            if (cur.activeSelf)
-            {
+            if (cur.activeSelf){
                 currentEntryIndex = i;
                 return;
             }
         }
     }
 
-    public GameObject getCurrentEntry()
-    {
+    public GameObject getCurrentEntry(){
         return entries[currentEntryIndex];
     }
 
-    float getCurrentEntryY()
-    {
+    float getCurrentEntryY(){
         return entries[currentEntryIndex].GetComponent<RectTransform>().anchoredPosition.y;
     }
 
     void setCursorPosition() {
-        if(calculateEntriesNo() <= 0)
-        {
+        if(calculateEntriesNo() <= 0){
             this.cursor.GetComponent<RectTransform>().anchoredPosition =
                 new Vector2(INITIAL_POSX, -10);
         } else {

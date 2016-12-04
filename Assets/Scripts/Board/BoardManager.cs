@@ -15,7 +15,7 @@ public class BoardManager : MonoBehaviour {
     [HideInInspector]
 	public GameObject tInfo;
 	[HideInInspector]
-	public Turn turn = Turn.Player;
+	public static Turn turn = Turn.Player;
 
     [HideInInspector]
 	public Unit[] playerUnits, enemyUnits, allyUnits;
