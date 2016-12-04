@@ -42,6 +42,12 @@ public class Unit : MonoBehaviour {
     // Status
     public Status stats;
 
+    // Combat status
+    public float hitBonus = 0;
+    public float mtBonus = 0;
+    public int effectiveness = 1;
+    public bool doubleHit = false;
+
     [HideInInspector]
     public BoardManager board;
 
@@ -171,9 +177,13 @@ public class Unit : MonoBehaviour {
     }
 
     public List<Position> CalculateAttackArea() {
+        
+        if(equipedItem < 0) return null;
+
         List<Position> area = new List<Position>();
         HashSet<Position> visited = new HashSet<Position>();
         Queue<Pair<Position, int>> q = new Queue<Pair<Position, int>>();
+        
         Position[] deltas = new Position[] {
             new Position(0, 1),
             new Position(1, 0),
@@ -181,8 +191,8 @@ public class Unit : MonoBehaviour {
             new Position(-1, 0),
         };
 
-        string range = (inventory[equipedItem] as Equipment).range;
-        int[] dists = Array.ConvertAll<string, int>(range.Split(' '), s => Convert.ToInt32(s));
+        Equipment e = (inventory[equipedItem] as Equipment);
+        int[] dists = new int[] { e.rangeMin, e.rangeMax };
         int minDist, maxDist;
         if (dists.Length > 1) {
             minDist = dists[0];
