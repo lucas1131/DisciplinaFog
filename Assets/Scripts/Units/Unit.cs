@@ -62,6 +62,10 @@ public class Unit : MonoBehaviour {
     private Transform effectSprite;
     private Transform portraitSprite;
 
+    // Color indicators for unit action
+    private Color gray = new Color(0.55f, 0.55f, 0.55f);
+    private Color normal = new Color(1f, 1f, 1f);
+
     // Position and movement variables
     public Position pos = new Position(0, 0);
     public Position prevPos;
@@ -118,7 +122,7 @@ public class Unit : MonoBehaviour {
         unitSprite = this.gameObject.transform.GetChild(0);
         effectSprite = this.gameObject.transform.GetChild(1);
         portraitSprite = this.gameObject.transform.GetChild(2);
-
+        
         this.posX = startX;
         this.posY = startY;
         this.prevPosX = startX;
@@ -363,36 +367,35 @@ public class Unit : MonoBehaviour {
         StartCoroutine(MoveFromTo(path,Time.fixedDeltaTime*10));
     }
 
-    IEnumerator MoveFromTo(List<Position> path, float step)
-    {
+    IEnumerator MoveFromTo(List<Position> path, float step){
+        
         int i = 0;
-        Global.animationHappening = true;
+        
+        animationHappening = true;
 
-        Position prev = new Position(posX,posY);
+        Position prev = pos;//new Position(posX,posY);
 
-        foreach(Position p in path)
-        {
+        foreach(Position p in path){
+            
             setMoveAnimation(prev, p);
             i++;
             Vector2 target = new Vector2(p.x, p.y);
-            while (Vector2.Distance(target, transform.position) >= 0.05f)
-            {
+            
+            while (Vector2.Distance(target, transform.position) >= 0.05f){
                 transform.position = Vector2.MoveTowards(transform.position, target, step);
                 yield return null; // Leave the routine and return here in the next frame
             }
+            prev = p;
         }
 
-        setAllPropFalse();
-
-        Global.animationHappening = false;
+        animationHappening = false;
 
         posX = path[i - 1].x;
         posY = path[i - 1].y;
-
     }
 
-    private void setMoveAnimation(Position prev, Position dest)
-    {
+    private void setMoveAnimation(Position prev, Position dest){
+  
         Position up = new Position(0, 1);
         Position down = new Position(0, -1);
         Position left = new Position(-1, 0);
@@ -401,41 +404,26 @@ public class Unit : MonoBehaviour {
         //dest-prev
         int i = 0;
 
-        if(prev.x == dest.x)
-        //mov vertical
-        {
-            if (dest.y - prev.y > 0)
+        //move vertical 
+        if(prev.x == dest.x){
             //vertical pra cima
-            {
-                unitSprite.GetComponent<Animator>().SetBool("walkUp", true);
-            }
-            else
+            if (dest.y - prev.y > 0)
+                ChangeAnimationTo("walkUp");
             //vertical pra baixo
-            {
-                unitSprite.GetComponent<Animator>().SetBool("walkDown", true);
-            }
-        } else 
-        //movimento horizontal
-        {
-            if (dest.x - prev.x > 0)
-            //horizontal pra direita
-            { 
-                unitSprite.GetComponent<Animator>().SetBool("walkRight", true);
-            }
             else
+                ChangeAnimationTo("walkDown");
+        
+        //movimento horizontal 
+        } else {
+            //horizontal pra direita
+            if (dest.x - prev.x > 0)
+                ChangeAnimationTo("walkRight");
             //horizontal pra esquerda
-            {
-                unitSprite.GetComponent<Animator>().SetBool("walkLeft", true);
+            else{
+            	print("PORRA");
+                ChangeAnimationTo("walkLeft");
             }
         }
-    }
-
-    private void setAllPropFalse()
-    {
-        unitSprite.GetComponent<Animator>().SetBool("walkUp", false);
-        unitSprite.GetComponent<Animator>().SetBool("walkLeft", false);
-        unitSprite.GetComponent<Animator>().SetBool("walkRight", false);
-        unitSprite.GetComponent<Animator>().SetBool("walkDown", false);
     }
 
     public bool CanStandAt(Position p) {
@@ -444,7 +432,7 @@ public class Unit : MonoBehaviour {
     }
 
     public void ChangeAnimationTo(string name){
-
+    	print("changing animation to: " + name);
         Animator anim = this.unitSprite.GetComponent<Animator>();
 
         anim.SetBool("idle", false);
@@ -460,5 +448,13 @@ public class Unit : MonoBehaviour {
         anim.SetBool("attackLeft", false);
 
         anim.SetBool(name, true);
+    }
+
+    public void UpdateColor(){
+
+        if(hasMoved)
+            unitSprite.GetComponent<SpriteRenderer>().color = gray;
+        else 
+            unitSprite.GetComponent<SpriteRenderer>().color = normal;
     }
 }

@@ -16,8 +16,11 @@ public static class EnemyAI : object {
 		} else {
 			
 			// Set all player units to move again
-			foreach(Unit u in playerUnits)
+			foreach(Unit u in playerUnits){
 				u.hasMoved = false;
+				u.UpdateColor();
+			}
+
 			cursor.gameObject.SetActive(true);
 			board.tInfo.SetActive(true);
 			board.turn = BoardManager.Turn.Player;			

@@ -2,10 +2,11 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+[System.Serializable]
 public class Position {
 
-    private int _x;
-    private int _y;
+    [SerializeField]
+    private int _x, _y;
 
     public int x {
         set { _x = value; }

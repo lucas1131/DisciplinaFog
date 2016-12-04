@@ -156,19 +156,20 @@ public class Cursor : MonoBehaviour {
 			if(cursorMoved) {
 				board.DisplayTerrainInfo(posX, posY);
 
-	            if (selectedUnit != null) {
-	                if (arrows != null)
-	                    foreach (GameObject go in arrows)
+	            if (selectedUnit != null && selectedUnit.faction == Faction.PLAYER) {
+	                
+	                if(arrows != null)
+	                    foreach(GameObject go in arrows)
 	                        GameObject.Destroy(go);
 	                arrows = new List<GameObject>();
-	                if ((posX != selectedUnit.posX || posY != selectedUnit.posY)
+	                
+	                if((posX != selectedUnit.posX || posY != selectedUnit.posY)
 	                        && possibleMoves != null 
 	                        && possibleMoves.Contains(position)) {
 	                    List<Position> path = selectedUnit.PathTo(position);
 	                    CreateArrows(arrows, path);
 	                }
 	            }
-
 	            cursorMoved = false;
 	        }
 		}
@@ -499,6 +500,7 @@ public class Cursor : MonoBehaviour {
 				
 			// Deselect unit
 			focusedUnit = selectedUnit;
+			selectedUnit.UpdateColor();
 			selectedUnit = null;
 			break;
 
