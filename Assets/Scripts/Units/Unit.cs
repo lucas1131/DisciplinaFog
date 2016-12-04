@@ -182,7 +182,7 @@ public class Unit : MonoBehaviour {
         };
 
         string range = (inventory[equipedItem] as Equipment).range;
-        int[] dists = Array.ConvertAll<string, int>(range.Split('-'), s => Convert.ToInt32(s));
+        int[] dists = Array.ConvertAll<string, int>(range.Split(' '), s => Convert.ToInt32(s));
         int minDist, maxDist;
         if (dists.Length > 1) {
             minDist = dists[0];
