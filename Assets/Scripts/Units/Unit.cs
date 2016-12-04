@@ -283,28 +283,28 @@ public class Unit : MonoBehaviour {
 		return null;
 	}
 
-	public void MoveTowards(Position target) {
-		List<Position> path = PathTo(target);
-		int curMove = stats.move;
-		int cost;
-		int i = 0;
+    public void MoveTowards(Position target)
+    {
+        List<Position> path = PathTo(target);
+        int curMove = stats.move;
+        int cost;
+        int i = 0;
 
         pathToTarget = new Queue<Position>();
         step = 0;
-		while(i < path.Count && curMove >= (cost = TileCost(path[i]))){
+        while (i < path.Count && curMove >= (cost = TileCost(path[i])))
+        {
             pathToTarget.Enqueue(path[i]);
-			curMove -= cost;
-			i++;
-		}
+            curMove -= cost;
+            i++;
+        }
+        
 
-        // TODO coroutines
-
-        prevPos = pos;
         if (path.Count > 0) {
             posX = path[i-1].x;
             posY = path[i-1].y;
         }
-	}
+    }
 
     public bool CanStandAt(Position p) {
         Unit u = board.GetUnit(p);
