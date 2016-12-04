@@ -288,7 +288,8 @@ public class Cursor : MonoBehaviour {
 			} else {
 
 				// If no unit has been selected, try to select a unit
-				if(selectedUnit == null){
+				if(selectedUnit == null || !focusedUnit.hasMoved){
+					
 					SelectUnit();
 
 					if(selectedUnit){
@@ -491,6 +492,7 @@ public class Cursor : MonoBehaviour {
 			battleMenu.gameObject.SetActive(false);
 				
 			// Deselect unit
+			focusedUnit = selectedUnit;
 			selectedUnit = null;
 			break;
 
@@ -602,7 +604,7 @@ public class Cursor : MonoBehaviour {
 		 *	has, do nothing, else, select it.
 		 */
 		// Player unit
-		} else if(!focusedUnit.hasMoved){
+		} else {
 			
 			selectedUnit = focusedUnit;
 			ChangeAnimationTo(selectedUnit, "walkDown");
@@ -612,7 +614,7 @@ public class Cursor : MonoBehaviour {
 	bool CanTrade(Unit[] adjacent){
 
 		foreach(Unit u in adjacent){
-			if(u != null && u.faction == Faction.PLAYER)
+			if(u != null && u.faction == Faction.PLAYER && u != selectedUnit)
 				return true;
 		}
 		return false;
@@ -623,7 +625,8 @@ public class Cursor : MonoBehaviour {
 		foreach(Unit u in adjacent){
 			if(u != null && selectedUnit != null &&
 				(u.faction == Faction.PLAYER || u.faction == Faction.ALLY) &&
-				selectedUnit.stats.aid >= u.stats.aid)
+				selectedUnit.stats.aid >= u.stats.aid &&
+				u != selectedUnit)
 				return true;
 		}
 		return false;
