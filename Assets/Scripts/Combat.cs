@@ -28,19 +28,19 @@ public class Combat : MonoBehaviour {
 		defCritRate = CriticalChance(defender, atacker);
 
 		// Atacker atack!
-		if(Random.Range(0f, 1f) <= atkHitRate)
+		if(Random.Range(0f, 100f) <= atkHitRate)
 			defender.curHealth -= (int) atkDmg;
 
 		// Defender counteratack!
-		if(Random.Range(0f, 1f) <= defHitRate)
+		if(Random.Range(0f, 100f) <= defHitRate)
 			atacker.curHealth -= (int) defDmg;
 
 		// Atacker atack double!
-		if(atacker.doubleHit && Random.Range(0f, 1f) <= atkHitRate)
+		if(atacker.doubleHit && Random.Range(0f, 100f) <= atkHitRate)
 			defender.curHealth -= (int) atkDmg;
 
 		// Defender atack double!
-		if(defender.doubleHit && Random.Range(0f, 1f) <= defHitRate)
+		if(defender.doubleHit && Random.Range(0f, 100f) <= defHitRate)
 			atacker.curHealth -= (int) defDmg;
 
 		// Print statistics
