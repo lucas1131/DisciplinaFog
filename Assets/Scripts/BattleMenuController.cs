@@ -77,7 +77,7 @@ public class BattleMenuController : MonoBehaviour {
         setCursorPosition();
 
 
-        currentEntryIndex = 0;
+        currentEntryIndex = -1;
         next();
     }
 	
@@ -208,7 +208,7 @@ public class BattleMenuController : MonoBehaviour {
         int i = 0;
         foreach(bool b in en)
             entries[i++].SetActive(b);
-        currentEntryIndex = 0;
+        currentEntryIndex = -1;
         next();
     }
 }
