@@ -114,13 +114,13 @@ public class Cursor : MonoBehaviour {
 
 		if(BoardManager.turn == BoardManager.Turn.Player)
 			UpdatePlayer();
-		
-		else if(BoardManager.turn == BoardManager.Turn.Enemy)
-			EnemyAI.UpdateEnemy(board, this, board.playerUnits, 
-				board.enemyUnits, board.allyUnits);
+		else BoardManager.turn = BoardManager.Turn.Player;
+		// else if(BoardManager.turn == BoardManager.Turn.Enemy)
+		// 	EnemyAI.UpdateEnemy(board, this, board.playerUnits, 
+		// 		board.enemyUnits, board.allyUnits);
 
-		else if(BoardManager.turn == BoardManager.Turn.Ally)
-			AllyAI.UpdateAlly();
+		// else if(BoardManager.turn == BoardManager.Turn.Ally)
+		// 	AllyAI.UpdateAlly();
 	}
 
 	void UpdatePlayer(){
@@ -402,8 +402,6 @@ public class Cursor : MonoBehaviour {
 				if (selectedUnit != null){
 					selectedUnit.posX = selectedUnit.prevPosX;
 					selectedUnit.posY = selectedUnit.prevPosY;
-					UpdateUnitWindow(selectedUnit);
-					selectedUnit = null;
 				}
 
 				// Deactivate menu

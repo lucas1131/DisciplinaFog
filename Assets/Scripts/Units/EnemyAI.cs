@@ -3,7 +3,7 @@ using System.Collections;
 
 public static class EnemyAI : object {
 
-	public static void UpdateEnemy(BoardManager board, Cursor cursor,
+	public static IEnumerator UpdateEnemy(BoardManager board, Cursor cursor,
 		Unit[] playerUnits, Unit[] enemyUnits, Unit[] allyUnits){
 
 		cursor.gameObject.SetActive(false);
@@ -20,10 +20,15 @@ public static class EnemyAI : object {
 			BoardManager.turn = BoardManager.Turn.Ally;
 			PhaseAnimator.PlayAnimation = true;
 		} else {
+
 			BoardManager.turn = BoardManager.Turn.Player;
 			PhaseAnimator.PlayAnimation = true;
+
+			// Activate Cursor object
 			cursor.gameObject.SetActive(true);
-			board.tInfo.SetActive(true);
+
+			yield return new WaitForSeconds(1f);
+			PhaseAnimator.PlayAnimation = true;
 		}
 	}
 }
