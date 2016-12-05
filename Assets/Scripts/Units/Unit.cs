@@ -190,7 +190,7 @@ public class Unit : MonoBehaviour {
 
     public List<Position> CalculateAttackArea() {
         
-        if(equipedItem < 0) return null;
+        if(equipedItem < 0) return new List<Position>();
 
         List<Position> area = new List<Position>();
         HashSet<Position> visited = new HashSet<Position>();
