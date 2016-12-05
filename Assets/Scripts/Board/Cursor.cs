@@ -272,7 +272,7 @@ public class Cursor : MonoBehaviour {
 
 					ProcessMenu();
 
-					// Battle menus is NOT open
+				// Battle menu is NOT open
 				} else {
 
 					// If no unit has been selected, try to select a unit
@@ -635,6 +635,7 @@ public class Cursor : MonoBehaviour {
 
 		// Search for enemies 
 		foreach(Unit u in adjacent){
+			print("unit u: " + u);
 			if(u != null && u.faction == Faction.ENEMY)
 				return true;
 		}

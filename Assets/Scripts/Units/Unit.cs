@@ -420,7 +420,6 @@ public class Unit : MonoBehaviour {
                 ChangeAnimationTo("walkRight");
             //horizontal pra esquerda
             else{
-            	print("PORRA");
                 ChangeAnimationTo("walkLeft");
             }
         }
@@ -432,7 +431,7 @@ public class Unit : MonoBehaviour {
     }
 
     public void ChangeAnimationTo(string name){
-    	print("changing animation to: " + name);
+
         Animator anim = this.unitSprite.GetComponent<Animator>();
 
         anim.SetBool("idle", false);
