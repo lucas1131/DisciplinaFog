@@ -142,7 +142,8 @@ public class Cursor : MonoBehaviour {
 				atkindex = ((uint) atkindex+1u)%( (uint) possibleAtks.Count);
 				position = possibleAtks[(int)atkindex].pos;
 				tgtPos = possibleAtks[(int)atkindex].transform.position;
-				cursorMoved = true;
+				focusedUnit = board.GetUnit(position);
+				// cursorMoved = true;
 			}
 			if(pos.position == tgtPos &&
 				(Input.GetAxis("Horizontal") < 0 ||
@@ -151,7 +152,8 @@ public class Cursor : MonoBehaviour {
 				atkindex = ((uint) atkindex-1u)%( (uint) possibleAtks.Count);
 				position = possibleAtks[(int)atkindex].pos;
 				tgtPos = possibleAtks[(int)atkindex].transform.position;
-				cursorMoved = true;
+				focusedUnit = board.GetUnit(position);
+				// cursorMoved = true;
 			}
 		}
 
@@ -297,32 +299,32 @@ public class Cursor : MonoBehaviour {
 				// If we are atacking
 				if(atkCase){
 
-					// Combat.Battle(selectedUnit, board.GetUnit(position), board);
+					Combat.Battle(selectedUnit, board.GetUnit(position), board);
 
 					// Set unit action as done, so it cannot move again
-					// selectedUnit.hasMoved = true;
+					selectedUnit.hasMoved = true;
 
 					// Revert animation back to idle
-					// selectedUnit.ChangeAnimationTo("idle");
+					selectedUnit.ChangeAnimationTo("idle");
 
 					// Move cursor back to player's unit
-					// position = selectedUnit.pos;
-					// tgtPos = selectedUnit.pos.ToVector2();
+					position = selectedUnit.pos;
+					tgtPos = selectedUnit.pos.ToVector2();
 					
 					// Stop spawning arrows
-					// possibleMoves = null;
+					possibleMoves = null;
 						
 					// Deselect unit
-					// focusedUnit = selectedUnit;
-					// selectedUnit.UpdateColor();
-					// selectedUnit = null;
+					focusedUnit = selectedUnit;
+					selectedUnit.UpdateColor();
+					selectedUnit = null;
 					
 					// Desativate atack
-					// atkCase = false;
+					atkCase = false;
 
 					// Update Unit and Terrain windows
-					// UpdateUnitWindow(focusedUnit);
-					// board.tInfo.SetActive(true);
+					UpdateUnitWindow(focusedUnit);
+					board.tInfo.SetActive(true);
 
 				// Battle menu is open
 				} else if(battleMenu.isActiveAndEnabled){
@@ -402,6 +404,8 @@ public class Cursor : MonoBehaviour {
 				if (selectedUnit != null){
 					selectedUnit.posX = selectedUnit.prevPosX;
 					selectedUnit.posY = selectedUnit.prevPosY;
+					UpdateUnitWindow(selectedUnit);
+					selectedUnit = null;
 				}
 
 				// Deactivate menu
@@ -413,6 +417,7 @@ public class Cursor : MonoBehaviour {
 					ChangeCursorSpeed(cursorSpdAlt, delayAlt);
 
 				atkCase = false;
+				possibleAtks = null;
 
 				// Deselect a unit
 				// TODO: check for menu nesting first (stack of "selections"?)
