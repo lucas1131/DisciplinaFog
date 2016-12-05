@@ -5,6 +5,55 @@ public class Combat : MonoBehaviour {
 
 	public static void Battle(Unit atacker, Unit defender, BoardManager board){
 
+		// Random r = new Random();
+
+		float atkDmg;
+		float atkHitRate;
+		float atkCritRate;
+
+		float defDmg;
+		float defHitRate;
+		float defCritRate;
+
+		DoubleHit(atacker, defender);
+		CalculateEffectiveness(atacker, defender);
+		CalculateTriangleBonus(atacker, defender);
+
+		atkDmg = Damage(atacker, defender, board);
+		atkHitRate = Accuracy(atacker, defender, board);
+		atkCritRate = CriticalChance(atacker, defender);
+
+		defDmg = Damage(defender, atacker, board);
+		defHitRate = Accuracy(defender, atacker, board);
+		defCritRate = CriticalChance(defender, atacker);
+
+		// Atacker atack!
+		if(Random.Range(0f, 1f) <= atkHitRate)
+			defender.curHealth -= (int) atkDmg;
+
+		// Defender counteratack!
+		if(Random.Range(0f, 1f) <= defHitRate)
+			atacker.curHealth -= (int) defDmg;
+
+		// Atacker atack double!
+		if(atacker.doubleHit && Random.Range(0f, 1f) <= atkHitRate)
+			defender.curHealth -= (int) atkDmg;
+
+		// Defender atack double!
+		if(defender.doubleHit && Random.Range(0f, 1f) <= defHitRate)
+			atacker.curHealth -= (int) defDmg;
+
+		// Print statistics
+		// BUG: it appears that the bonuses are not being applied
+		// maybe some reference type problem? passing parameter to a function
+		// creates a local variable?
+		print("atkDmg: " + atkDmg);
+		print("atkHitRate: " + atkHitRate);
+		print("atkCritRate: " + atkCritRate);
+
+		print("defDmg: " + defDmg);
+		print("defHitRate: " + defHitRate);
+		print("defCritRate: " + defCritRate);
 	}
 
 	public static float AtkSpeed(Unit u){
@@ -16,15 +65,9 @@ public class Combat : MonoBehaviour {
 		else return 0f;
 	}
 
-	public static void DoubleHit(Unit atacker, Unit defender){
-
-		if(atacker.stats.spd >= defender.stats.spd+4)
-			atacker.doubleHit = true;
-		if(atacker.stats.spd+4 <= defender.stats.spd)
-			defender.doubleHit = true;
-	}
-
+	
 	public static float HitRate(Unit u){
+		if(u.equipedItem < 0) return 0;
 		return (u.inventory[u.equipedItem] as Equipment).hit + u.stats.skill*2 + u.stats.luck/2;
 	}
 
@@ -37,6 +80,7 @@ public class Combat : MonoBehaviour {
 	}
 
 	public static float AttackPower(Unit u, bool isMagical){
+		if(u.equipedItem < 0) return 0;
 		if(isMagical)
 			return u.stats.mag + ((u.inventory[u.equipedItem] as Equipment).might + u.mtBonus)*u.effectiveness;
 		else
@@ -51,11 +95,16 @@ public class Combat : MonoBehaviour {
 	}
 	
 	public static float Damage(Unit atacker, Unit defender, BoardManager board){
+
+		if(atacker.equipedItem < 0) return 0;
 		
 		bool isMagical;
 		float dmg;
 		Equipment atkE;
+		print("[DEBUG]: atacker: " + atacker);
+		// print("atacker.inventory["+atacker.equipedItem+"]: " + (atacker.inventory[atacker.equipedItem] as Equipment));
 		atkE = (atacker.inventory[atacker.equipedItem] as Equipment);
+		print("equiptype: " + atkE.equipType);
 
 		isMagical = atkE.equipType == "Anima" || 
 					atkE.equipType == "Light" ||
@@ -71,6 +120,8 @@ public class Combat : MonoBehaviour {
 
 	public static float CriticalRate(Unit u){
 
+		if(u.equipedItem < 0) return 0;
+
 		int bonus = 0;
 		Equipment e = (u.inventory[u.equipedItem] as Equipment);
 
@@ -85,11 +136,24 @@ public class Combat : MonoBehaviour {
 	}
 
 	public static float CriticalChance(Unit atacker, Unit defender){
+		if(atacker.equipedItem < 0) return 0;
 		float chance = CriticalRate(atacker) - CriticalEvade(defender);
 		return ( (chance < 0) ? 0 : chance);
 	}
 	
-	public static void CalculateTriangleBonus(Unit u1, Unit u2){ 
+	public static void DoubleHit(Unit u1, Unit u2){
+
+		// Reset bonuses
+		u1.doubleHit = false;
+		u2.doubleHit = false;
+
+		if(u1.stats.spd >= u2.stats.spd+4)
+			u1.doubleHit = true;
+		else if(u1.stats.spd+4 <= u2.stats.spd)
+			u2.doubleHit = true;
+	}
+
+	public static void CalculateTriangleBonus(Unit u1, Unit u2){
 
 		Equipment e1, e2;
 
@@ -111,51 +175,110 @@ public class Combat : MonoBehaviour {
 		// Calculate bonuses
 		if(e1.equipType == "Sword"){
 			if(e2.equipType == "Lance"){
+				
 				u2.hitBonus = 15;
 				u2.mtBonus = 1;
+
+				u1.hitBonus = -15;
+				u1.mtBonus = -1;
+
 			} else if(e2.equipType == "Axe"){
+				
 				u1.hitBonus = 15;
 				u1.mtBonus = 1;
+
+				u2.hitBonus = -15;
+				u2.mtBonus = -1;
 			}
 		} else if(e1.equipType == "Lance"){
 			if(e2.equipType == "Axe"){
+				
+				
 				u2.hitBonus = 15;
 				u2.mtBonus = 1;
+
+				u1.hitBonus = -15;
+				u1.mtBonus = -1;
+
 			} else if(e2.equipType == "Sword"){
+				
 				u1.hitBonus = 15;
 				u1.mtBonus = 1;
+
+				u2.hitBonus = -15;
+				u2.mtBonus = -1;
 			}
 		} else if(e1.equipType == "Axe"){
 			if(e2.equipType == "Sword"){
+				
+				
 				u2.hitBonus = 15;
 				u2.mtBonus = 1;
+
+				u1.hitBonus = -15;
+				u1.mtBonus = -1;
+
 			} else if(e2.equipType == "Lance"){
+				
 				u1.hitBonus = 15;
 				u1.mtBonus = 1;
+
+				u2.hitBonus = -15;
+				u2.mtBonus = -1;
 			}
 		} else if(e1.equipType == "Anima"){
 			if(e2.equipType == "Dark"){
+				
+				
 				u2.hitBonus = 15;
 				u2.mtBonus = 1;
+
+				u1.hitBonus = -15;
+				u1.mtBonus = -1;
+
 			} else if(e2.equipType == "Light"){
+				
 				u1.hitBonus = 15;
 				u1.mtBonus = 1;
+
+				u2.hitBonus = -15;
+				u2.mtBonus = -1;
 			}
 		} else if(e1.equipType == "Dark"){
 			if(e2.equipType == "Light"){
+				
+				
 				u2.hitBonus = 15;
 				u2.mtBonus = 1;
+
+				u1.hitBonus = -15;
+				u1.mtBonus = -1;
+
 			} else if(e2.equipType == "Anima"){
+				
 				u1.hitBonus = 15;
 				u1.mtBonus = 1;
+
+				u2.hitBonus = -15;
+				u2.mtBonus = -1;
 			}
 		} else if(e1.equipType == "Light"){
 			if(e2.equipType == "Anima"){
+				
+				
 				u2.hitBonus = 15;
 				u2.mtBonus = 1;
+
+				u1.hitBonus = -15;
+				u1.mtBonus = -1;
+
 			} else if(e2.equipType == "Dark"){
+				
 				u1.hitBonus = 15;
 				u1.mtBonus = 1;
+
+				u2.hitBonus = -15;
+				u2.mtBonus = -1;
 			}
 		}
 	}

@@ -62,7 +62,9 @@ public class Cursor : MonoBehaviour {
 	private List<Position> possibleMoves;	// For CalculateMovementArea
 
 	// ns mais oq eu to faseno
+	private List<Unit> possibleAtks;
 	private bool atkCase = false;
+	private uint atkindex = 0;
 
 	// Use this for initialization
 	void Start(){
@@ -131,11 +133,30 @@ public class Cursor : MonoBehaviour {
 		if(pos.position != tgtPos)
 			MoveCursor();
 
-		// If we are in atack cas
+		// If we are in atack case
+		if(atkCase){
+			if(pos.position == tgtPos &&
+				(Input.GetAxis("Horizontal") > 0 ||
+				Input.GetAxis("Vertical") > 0) ){
+				
+				atkindex = ((uint) atkindex+1u)%( (uint) possibleAtks.Count);
+				position = possibleAtks[(int)atkindex].pos;
+				tgtPos = possibleAtks[(int)atkindex].transform.position;
+				cursorMoved = true;
+			}
+			if(pos.position == tgtPos &&
+				(Input.GetAxis("Horizontal") < 0 ||
+				Input.GetAxis("Vertical") < 0) ){
+				
+				atkindex = ((uint) atkindex-1u)%( (uint) possibleAtks.Count);
+				position = possibleAtks[(int)atkindex].pos;
+				tgtPos = possibleAtks[(int)atkindex].transform.position;
+				cursorMoved = true;
+			}
+		}
 
 		// Only update cursor if battle menu is off
 		if(!battleMenu.isActiveAndEnabled){
-		
 			if(pos.position == tgtPos)
 				ProcessAxis();
 
@@ -156,7 +177,8 @@ public class Cursor : MonoBehaviour {
 						List<Position> path = selectedUnit.PathTo(position);
 						
 						md.u = selectedUnit;
-						md.CreateArrows(md.arrows, path);
+						if(selectedUnit.faction == Faction.PLAYER && path != null)
+							md.CreateArrows(md.arrows, path);
 					}
 				}
 				cursorMoved = false;
@@ -272,9 +294,38 @@ public class Cursor : MonoBehaviour {
 			// Action button
 			if (Input.GetButtonDown("Action")){
 
-				// Battle menu is open
-				if (battleMenu.isActiveAndEnabled){
+				// If we are atacking
+				if(atkCase){
 
+					// Combat.Battle(selectedUnit, board.GetUnit(position), board);
+
+					// Set unit action as done, so it cannot move again
+					// selectedUnit.hasMoved = true;
+
+					// Revert animation back to idle
+					// selectedUnit.ChangeAnimationTo("idle");
+
+					// Move cursor back to player's unit
+					// position = selectedUnit.pos;
+					// tgtPos = selectedUnit.pos.ToVector2();
+					
+					// Stop spawning arrows
+					// possibleMoves = null;
+						
+					// Deselect unit
+					// focusedUnit = selectedUnit;
+					// selectedUnit.UpdateColor();
+					// selectedUnit = null;
+					
+					// Desativate atack
+					// atkCase = false;
+
+					// Update Unit and Terrain windows
+					// UpdateUnitWindow(focusedUnit);
+					// board.tInfo.SetActive(true);
+
+				// Battle menu is open
+				} else if(battleMenu.isActiveAndEnabled){
 					ProcessMenu();
 
 				// Battle menu is NOT open
@@ -303,10 +354,8 @@ public class Cursor : MonoBehaviour {
 								);
 							}
 						}
-					}
-
-					// We already have a selected unit, try to act
-					else if (selectedUnit.faction == Faction.PLAYER){
+					/* We already have a selected unit, try to act */
+					} else if (selectedUnit.faction == Faction.PLAYER){
 
 						Position p = new Position(posX, posY);
 						// Check path if position is inside calculated movement area
@@ -349,23 +398,24 @@ public class Cursor : MonoBehaviour {
 			// Cancel button
 			if (Input.GetButtonDown("Cancel")){
 
-				// Deactivate menu
-				if (battleMenu.isActiveAndEnabled){
-
-					battleMenu.gameObject.SetActive(false);
-
-					if (selectedUnit != null){
-						selectedUnit.posX = selectedUnit.prevPosX;
-						selectedUnit.posY = selectedUnit.prevPosY;
-					}
+				// If we selected a unit, return it to original position
+				if (selectedUnit != null){
+					selectedUnit.posX = selectedUnit.prevPosX;
+					selectedUnit.posY = selectedUnit.prevPosY;
 				}
+
+				// Deactivate menu
+				if (battleMenu.isActiveAndEnabled)
+					battleMenu.gameObject.SetActive(false);
 
 				// Dont have a selected unit
 				if (selectedUnit == null){
 					ChangeCursorSpeed(cursorSpdAlt, delayAlt);
 
-					// Deselect a unit
-					// TODO: check for menu nesting first (stack of "selections"?)
+				atkCase = false;
+
+				// Deselect a unit
+				// TODO: check for menu nesting first (stack of "selections"?)
 				} else {
 
 					// Dont have a selected unit
@@ -415,8 +465,7 @@ public class Cursor : MonoBehaviour {
 					focusedUnit = board.GetNextUnit(Faction.PLAYER, 0);
 
 				// Go to next unit in focused unit's faction
-				else
-					focusedUnit = board.GetNextUnit(focusedUnit.faction,
+				else focusedUnit = board.GetNextUnit(focusedUnit.faction,
 													focusedUnit.index);
 
 				if (focusedUnit != null){
@@ -424,7 +473,6 @@ public class Cursor : MonoBehaviour {
 					posY = focusedUnit.posY;
 					tgtPos = new Vector3(posX, posY, 0f);
 				}
-
 				UpdateUnitWindow(focusedUnit);
 			}
 
@@ -442,7 +490,7 @@ public class Cursor : MonoBehaviour {
 
 	void ProcessMenu(){
 
-		List<Unit> possibleAtks = new List<Unit>();
+		possibleAtks = new List<Unit>();
 		Unit[] adjacent = new Unit[4];
 		int i = 0;
 
@@ -473,6 +521,7 @@ public class Cursor : MonoBehaviour {
 			atkCase = true;
 			battleMenu.gameObject.SetActive(false);
 			
+			// Move cursor between possible atks
 			if(possibleAtks[0] != null){
 				position = possibleAtks[0].pos;
 				tgtPos = possibleAtks[0].transform.position;
@@ -652,14 +701,8 @@ public class Cursor : MonoBehaviour {
 
 	bool CanAttack(Unit[] adjacent){
 
-		// Search for equipments in unit's inventory
-		foreach(Item i in selectedUnit.inventory){
-			
-		}
-
 		// Search for enemies 
 		foreach(Unit u in adjacent){
-			print("unit u: " + u);
 			if(u != null && u.faction == Faction.ENEMY)
 				return true;
 		}

@@ -61,6 +61,10 @@ public class Position {
         return l;
     }
 
+    public Vector2 ToVector2() {
+        return new Vector2(this.x, this.y);
+    }
+
     public override string ToString() {
         return "(" + this.x + ", " + this.y + ")";
     }

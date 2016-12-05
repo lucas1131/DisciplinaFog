@@ -16,8 +16,6 @@ public static class EnemyAI : object {
 			u.UpdateColor();
 		}
 
-		cursor.gameObject.SetActive(true);
-		board.tInfo.SetActive(true);
 
 		if(board.allyUnits.Length > 0){
 			BoardManager.turn = BoardManager.Turn.Ally;
@@ -25,6 +23,8 @@ public static class EnemyAI : object {
 		} else {
 			BoardManager.turn = BoardManager.Turn.Player;
 			PhaseAnimator.PlayAnimation = true;
+			cursor.gameObject.SetActive(true);
+			board.tInfo.SetActive(true);
 		}
 	}
 }

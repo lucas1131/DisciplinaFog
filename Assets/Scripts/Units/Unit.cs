@@ -139,6 +139,8 @@ public class Unit : MonoBehaviour {
             counter++;
         }
 
+        UpdateInventory();
+
         // TODO: read statistics from savefile
     }
 
@@ -448,6 +450,18 @@ public class Unit : MonoBehaviour {
         anim.SetBool("attackLeft", false);
 
         anim.SetBool(name, true);
+    }
+
+    public void UpdateInventory(){
+        
+        int counter = 0;
+
+        foreach(Item i in inventory){
+            if(i != null && i.isWeapon) break;
+            counter++;
+        }
+
+        equipedItem = ( (counter >= 5) ? -1 : counter);
     }
 
     public void UpdateColor(){
