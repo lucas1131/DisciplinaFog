@@ -35,15 +35,14 @@ public class Combat : MonoBehaviour {
 	}
 
 	public static float Accuracy(Unit attacker, Unit defender, BoardManager board){
-		
 		return HitRate(attacker) - Evade(defender, board) + attacker.hitBonus;
 	}
 
 	public static float AttackPower(Unit u){
-
 		return u.stats.str + ((u.inventory[u.equipedItem] as Equipment).might + u.mtBonus)*u.effectiveness;
 	}
 	
+
 	
 	private static void CalculateTriangleBonus(Unit u1, Unit u2){ 
 
@@ -142,6 +141,18 @@ public class Combat : MonoBehaviour {
 		if(u1.cls.isBeast && e2.beastBonus)
 			u2.effectiveness = 2;
 		if(u2.cls.isBeast && e1.beastBonus)
+			u1.effectiveness = 2;
+
+		// Check against armored
+		if(u1.cls.isArmored && e2.armoredBonus)
+			u2.effectiveness = 2;
+		if(u2.cls.isArmored && e1.armoredBonus)
+			u1.effectiveness = 2;
+
+		// Check against dragon
+		if(u1.cls.isDragon && e2.dragonBonus)
+			u2.effectiveness = 2;
+		if(u2.cls.isDragon && e1.dragonBonus)
 			u1.effectiveness = 2;
 	}
 }

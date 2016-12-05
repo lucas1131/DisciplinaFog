@@ -41,5 +41,10 @@ public class Equipment : Item {
 	    this.hit = equipScript.hit;
 	    this.crit = equipScript.crit;
 	    this.isWeapon = true;
+
+    	this.beastBonus = equipScript.beastBonus;
+    	this.flierBonus = equipScript.flierBonus;
+    	this.armoredBonus = equipScript.armoredBonus;
+    	this.dragonBonus = equipScript.dragonBonus;
 	}
 }

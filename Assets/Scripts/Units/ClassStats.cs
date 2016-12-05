@@ -7,6 +7,8 @@ public class ClassStats : ScriptableObject {
 
     public string Name;
 
+    // public 
+
     public bool isBeast = false;
     public bool isFlier = false;
     public bool isArmored = false;

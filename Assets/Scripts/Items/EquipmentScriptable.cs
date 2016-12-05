@@ -18,4 +18,9 @@ public class EquipmentScriptable : ScriptableObject {
     public int might;
     public int hit;
     public int crit;
+    
+    public bool beastBonus = false;
+    public bool flierBonus = false;
+    public bool armoredBonus = false;
+    public bool dragonBonus = false;
 }
