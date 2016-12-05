@@ -7,7 +7,12 @@ public class ClassStats : ScriptableObject {
 
     public string Name;
 
-    // public 
+    public int strGrowth;
+    public int skillGrowth;
+    public int spdGrowth;
+    public int luckGrowth;
+    public int defGrowth;
+    public int resGrowth;
 
     public bool isBeast = false;
     public bool isFlier = false;

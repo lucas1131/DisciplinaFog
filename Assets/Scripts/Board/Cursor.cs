@@ -61,6 +61,9 @@ public class Cursor : MonoBehaviour {
 	private List<Position> path;			// Calculated path from A*
 	private List<Position> possibleMoves;	// For CalculateMovementArea
 
+	// ns mais oq eu to faseno
+	private bool atkCase = false;
+
 	// Use this for initialization
 	void Start(){
 
@@ -127,6 +130,8 @@ public class Cursor : MonoBehaviour {
 		// Move cursor if it has a new target position
 		if(pos.position != tgtPos)
 			MoveCursor();
+
+		// If we are in atack cas
 
 		// Only update cursor if battle menu is off
 		if(!battleMenu.isActiveAndEnabled){
@@ -314,8 +319,8 @@ public class Cursor : MonoBehaviour {
 							selectedUnit.prevPosY = selectedUnit.posY;
 							selectedUnit.MoveTowards(p);
 
-							// Used to check for trade/rescue/attack options
-							// This ignores weapons with attack range different
+							// Used to check for trade/rescue/atack options
+							// This ignores weapons with atack range different
 							// than 1
 							Unit[] adjacent = new Unit[4];
 
@@ -326,7 +331,7 @@ public class Cursor : MonoBehaviour {
 
 							StartCoroutine(WaitToOpenMenu(new bool[] {
 								((selectedUnit.equipedItem >= 0) &&
-								CanAttack(adjacent)),	// attack
+								CanAttack(adjacent)),	// atack
 
 								CanRescue(adjacent),	// rescue
 								true,					// item
@@ -437,23 +442,42 @@ public class Cursor : MonoBehaviour {
 
 	void ProcessMenu(){
 
+		List<Unit> possibleAtks = new List<Unit>();
 		Unit[] adjacent = new Unit[4];
-		Unit aux;
+		int i = 0;
 
-		adjacent[0] = board.GetUnit(posX+1, posY);
-		adjacent[1] = board.GetUnit(posX-1, posY);
-		adjacent[2] = board.GetUnit(posX, posY+1);
-		adjacent[3] = board.GetUnit(posX, posY-1);
+		Position[] deltas = new Position[] {
+			new Position(posX+1, posY),
+			new Position(posX-1, posY),
+			new Position(posX, posY+1),
+			new Position(posX, posY-1)
+		};
+
+		adjacent[i] = board.GetUnit(deltas[i++]);
+		adjacent[i] = board.GetUnit(deltas[i++]);
+		adjacent[i] = board.GetUnit(deltas[i++]);
+		adjacent[i] = board.GetUnit(deltas[i++]);
+
+		i = 0;
 
 		switch(battleMenu.getCurrentEntry().name){
 		case "Attack":
 			
 			foreach(Unit u in adjacent){
-				if( (aux = board.GetUnit(u.pos + adjacent[0].pos)).faction == Faction.ENEMY ){
-					posX = aux.posX;
-					posY = aux.posY;
-				}
+				
+				if(u == null) continue;
+				if(u.faction == Faction.ENEMY)
+					possibleAtks.Add(u);
 			}
+
+			atkCase = true;
+			battleMenu.gameObject.SetActive(false);
+			
+			if(possibleAtks[0] != null){
+				position = possibleAtks[0].pos;
+				tgtPos = possibleAtks[0].transform.position;
+			}
+
 			break;
 
 		case "Rescue":
@@ -582,7 +606,7 @@ public class Cursor : MonoBehaviour {
 
 			battleMenu.gameObject.SetActive(true);
 			battleMenu.OpenMenu( new bool[]{ 
-				false,					// attack
+				false,					// atack
 				false,					// rescue
 				false,					// item
 				false,					// trade

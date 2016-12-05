@@ -3,9 +3,7 @@ using System.Collections;
 
 public class Combat : MonoBehaviour {
 
-	public static void Battle(Unit attacker, Unit defender, BoardManager board){
-
-		CalculateTriangleBonus(attacker, defender);
+	public static void Battle(Unit atacker, Unit defender, BoardManager board){
 
 	}
 
@@ -18,11 +16,11 @@ public class Combat : MonoBehaviour {
 		else return 0f;
 	}
 
-	public static void DoubleHit(Unit attacker, Unit defender){
+	public static void DoubleHit(Unit atacker, Unit defender){
 
-		if(attacker.stats.spd >= defender.stats.spd+4)
-			attacker.doubleHit = true;
-		if(attacker.stats.spd+4 <= defender.stats.spd)
+		if(atacker.stats.spd >= defender.stats.spd+4)
+			atacker.doubleHit = true;
+		if(atacker.stats.spd+4 <= defender.stats.spd)
 			defender.doubleHit = true;
 	}
 
@@ -34,17 +32,64 @@ public class Combat : MonoBehaviour {
 		return AtkSpeed(u)*2 + u.stats.luck + board.types[board.board[u.posX, u.posY]].avoid;
 	}
 
-	public static float Accuracy(Unit attacker, Unit defender, BoardManager board){
-		return HitRate(attacker) - Evade(defender, board) + attacker.hitBonus;
+	public static float Accuracy(Unit atacker, Unit defender, BoardManager board){
+		return HitRate(atacker) - Evade(defender, board) + atacker.hitBonus;
 	}
 
-	public static float AttackPower(Unit u){
-		return u.stats.str + ((u.inventory[u.equipedItem] as Equipment).might + u.mtBonus)*u.effectiveness;
+	public static float AttackPower(Unit u, bool isMagical){
+		if(isMagical)
+			return u.stats.mag + ((u.inventory[u.equipedItem] as Equipment).might + u.mtBonus)*u.effectiveness;
+		else
+			return u.stats.str + ((u.inventory[u.equipedItem] as Equipment).might + u.mtBonus)*u.effectiveness;
+	}
+
+	public static float DefensePower(Unit u, BoardManager board, bool isMagical){
+		if(isMagical)
+			return board.types[board.board[u.posX, u.posY]].defense + u.stats.res;
+		else
+			return board.types[board.board[u.posX, u.posY]].defense + u.stats.def;
 	}
 	
+	public static float Damage(Unit atacker, Unit defender, BoardManager board){
+		
+		bool isMagical;
+		float dmg;
+		Equipment atkE;
+		atkE = (atacker.inventory[atacker.equipedItem] as Equipment);
 
+		isMagical = atkE.equipType == "Anima" || 
+					atkE.equipType == "Light" ||
+					atkE.equipType == "Dark" || 
+					atkE.Name == "Runesword" ||
+					atkE.Name == "Lightbrand";
+
+		dmg = AttackPower(atacker, isMagical) - 
+			DefensePower(defender, board, isMagical);
+
+		return ( (dmg < 0) ? 0 : dmg);
+	}
+
+	public static float CriticalRate(Unit u){
+
+		int bonus = 0;
+		Equipment e = (u.inventory[u.equipedItem] as Equipment);
+
+		if(u.cls.Name == "Swordmaster" || u.cls.Name == "Berserker")
+			bonus += 15;
+
+		return e.crit + u.stats.skill/2 + bonus;
+	}
+
+	public static float CriticalEvade(Unit u){
+		return u.stats.luck;
+	}
+
+	public static float CriticalChance(Unit atacker, Unit defender){
+		float chance = CriticalRate(atacker) - CriticalEvade(defender);
+		return ( (chance < 0) ? 0 : chance);
+	}
 	
-	private static void CalculateTriangleBonus(Unit u1, Unit u2){ 
+	public static void CalculateTriangleBonus(Unit u1, Unit u2){ 
 
 		Equipment e1, e2;
 
@@ -115,7 +160,7 @@ public class Combat : MonoBehaviour {
 		}
 	}
 
-	private static void CalculateEffectiveness(Unit u1, Unit u2){
+	public static void CalculateEffectiveness(Unit u1, Unit u2){
 
 		Equipment e1, e2;
 

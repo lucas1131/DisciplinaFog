@@ -19,6 +19,7 @@ public class Unit : MonoBehaviour {
     [System.Serializable]
     public struct Status {
         public int str;
+        public int mag;
         public int skill;
         public int spd;
         public int luck;
