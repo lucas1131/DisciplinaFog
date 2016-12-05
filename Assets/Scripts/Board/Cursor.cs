@@ -308,7 +308,7 @@ public class Cursor : MonoBehaviour {
 					selectedUnit.ChangeAnimationTo("idle");
 
 					// Move cursor back to player's unit
-					position = selectedUnit.pos;
+					position = new Position(selectedUnit.pos);
 					tgtPos = selectedUnit.pos.ToVector2();
 					
 					// Stop spawning arrows
@@ -362,8 +362,6 @@ public class Cursor : MonoBehaviour {
 						Position p = new Position(posX, posY);
 						// Check path if position is inside calculated movement area
 						if (possibleMoves != null && possibleMoves.Contains(p)){
-
-							// this.gameObject.SetActive(false);	
 
 							md.DestroyMovementDisplay();
 							selectedUnit.prevPosX = selectedUnit.posX;

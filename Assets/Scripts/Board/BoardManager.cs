@@ -124,15 +124,11 @@ public class BoardManager : MonoBehaviour {
 
 	public Unit GetUnit(int x, int y){
 
-		print("Getting unit at ("+x+", "+y+")");
-
 		// Iterate through Player's units list
 		foreach(Unit u in playerUnits){
 			// Unit found
-			if(u.posX == x && u.posY == y){
-				print("pu: " + u);
+			if(u.posX == x && u.posY == y)
 				return u;
-			}
 		}
 
 		// Iterate through Enemy's units list
@@ -152,7 +148,6 @@ public class BoardManager : MonoBehaviour {
 		}
 
 		// Not found
-		print("u: null");
 		return null;
 	}
 

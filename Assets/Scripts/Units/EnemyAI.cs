@@ -16,7 +16,6 @@ public static class EnemyAI : object {
 			u.UpdateColor();
 		}
 
-
 		if(board.allyUnits.Length > 0){
 			BoardManager.turn = BoardManager.Turn.Ally;
 			PhaseAnimator.PlayAnimation = true;
