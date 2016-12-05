@@ -143,7 +143,7 @@ public class Cursor : MonoBehaviour {
 				position = possibleAtks[(int)atkindex].pos;
 				tgtPos = possibleAtks[(int)atkindex].transform.position;
 				focusedUnit = board.GetUnit(position);
-				// cursorMoved = true;
+				cursorMoved = true;
 			}
 			if(pos.position == tgtPos &&
 				(Input.GetAxis("Horizontal") < 0 ||
@@ -153,7 +153,7 @@ public class Cursor : MonoBehaviour {
 				position = possibleAtks[(int)atkindex].pos;
 				tgtPos = possibleAtks[(int)atkindex].transform.position;
 				focusedUnit = board.GetUnit(position);
-				// cursorMoved = true;
+				cursorMoved = true;
 			}
 		}
 
@@ -583,6 +583,9 @@ public class Cursor : MonoBehaviour {
 			battleMenu.gameObject.SetActive(false);
 			BoardManager.turn = BoardManager.Turn.Enemy;	
 			PhaseAnimator.PlayAnimation = true;
+
+			// Deactivate Cursor object
+			this.gameObject.SetActive(false);
 			break;
 		}
 	}
