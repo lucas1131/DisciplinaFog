@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
-
 using System.Collections.Generic;
+
 
 public static class EnemyAI : object {
 
@@ -14,9 +14,9 @@ public static class EnemyAI : object {
         return board.playerUnits[0];
     }
 
-	public static IEnumerator UpdateEnemy(BoardManager board, Cursor cursor,
-		Unit[] playerUnits, Unit[] enemyUnits, Unit[] allyUnits) {
-		cursor.gameObject.SetActive(false);
+    public static IEnumerator UpdateEnemy(BoardManager board, Cursor cursor,
+        Unit[] playerUnits, Unit[] enemyUnits, Unit[] allyUnits) {
+        cursor.gameObject.SetActive(false);
 
         /* MoveUnits & attack */
         foreach (Unit u in enemyUnits) {
@@ -25,29 +25,19 @@ public static class EnemyAI : object {
             while (Unit.animationHappening)
                 yield return new WaitForEndOfFrame();
 
-            if (u.CalculateAttackArea().Contains(target.pos))
+            if (u.CalculateAttackArea().Contains(target.pos)) {
                 Combat.Battle(u, target, board);
+                while (Unit.animationHappening)
+                    yield return new WaitForEndOfFrame();
+            }
         }
 
         // Set all player units to move again
-        foreach (Unit u in playerUnits){
-			u.hasMoved = false;
-			u.UpdateColor();
-		}
+        foreach (Unit u in playerUnits) {
+            u.hasMoved = false;
+            u.UpdateColor();
+        }
+    }
 
-		if(board.allyUnits.Length > 0){
-			BoardManager.turn = BoardManager.Turn.Ally;
-			PhaseAnimator.PlayAnimation = true;
-		} else {
-
-			BoardManager.turn = BoardManager.Turn.Player;
-			PhaseAnimator.PlayAnimation = true;
-
-			// Activate Cursor object
-			cursor.gameObject.SetActive(true);
-
-			yield return new WaitForSeconds(1f);
-			PhaseAnimator.PlayAnimation = true;
-		}
-	}
 }
+
