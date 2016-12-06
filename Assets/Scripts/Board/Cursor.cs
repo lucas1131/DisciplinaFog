@@ -114,13 +114,13 @@ public class Cursor : MonoBehaviour {
 
 		if(BoardManager.turn == BoardManager.Turn.Player)
 			UpdatePlayer();
-		else BoardManager.turn = BoardManager.Turn.Player;
-		// else if(BoardManager.turn == BoardManager.Turn.Enemy)
-		// 	EnemyAI.UpdateEnemy(board, this, board.playerUnits, 
-		// 		board.enemyUnits, board.allyUnits);
+		// else BoardManager.turn = BoardManager.Turn.Player;
+		else if(BoardManager.turn == BoardManager.Turn.Enemy)
+			EnemyAI.UpdateEnemy(board, this, board.playerUnits, 
+				board.enemyUnits, board.allyUnits);
 
-		// else if(BoardManager.turn == BoardManager.Turn.Ally)
-		// 	AllyAI.UpdateAlly();
+		else if(BoardManager.turn == BoardManager.Turn.Ally)
+			AllyAI.UpdateAlly();
 	}
 
 	void UpdatePlayer(){
