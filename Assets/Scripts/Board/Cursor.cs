@@ -109,12 +109,20 @@ public class Cursor : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update(){
+        if (PhaseAnimator.animationIsPlaying) {
+            Debug.Log("hue");
+            return;
+        }
 
-		if(PhaseAnimator.animationIsPlaying) return;
-
-		if(BoardManager.turn == BoardManager.Turn.Player)
-			UpdatePlayer();
-
+        if (BoardManager.turn == BoardManager.Turn.Player)
+            UpdatePlayer();
+        else if (BoardManager.turn == BoardManager.Turn.Enemy) {
+            Debug.Log("oi");
+            if (!EnemyAI.running) {
+                Debug.Log("oi2");
+                StartCoroutine(EnemyAI.UpdateEnemy(board, this));
+            }
+        }
 		// else if(BoardManager.turn == BoardManager.Turn.Ally)
 		// 	AllyAI.UpdateAlly();
 	}
@@ -189,6 +197,10 @@ public class Cursor : MonoBehaviour {
 
 		focusedUnit = board.GetUnit(posX, posY);
 	}
+
+    void UpdateEnemy() {
+
+    }
 
 	void ProcessAxis(){
 
@@ -358,8 +370,6 @@ public class Cursor : MonoBehaviour {
 						Position p = new Position(posX, posY);
 						// Check path if position is inside calculated movement area
 						if (possibleMoves != null && possibleMoves.Contains(p)){
-
-							// this.gameObject.SetActive(false);	
 
 							md.DestroyMovementDisplay();
 							selectedUnit.prevPosX = selectedUnit.posX;
@@ -577,9 +587,6 @@ public class Cursor : MonoBehaviour {
 			battleMenu.gameObject.SetActive(false);
 			BoardManager.turn = BoardManager.Turn.Enemy;	
 			PhaseAnimator.PlayAnimation = true;
-
-			// Deactivate Cursor object
-			this.gameObject.SetActive(false);
 			break;
 		}
 	}
