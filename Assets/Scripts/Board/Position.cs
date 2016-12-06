@@ -70,21 +70,30 @@ public class Position {
     }
 
     public override bool Equals(object other) {
-        
+
         Position p = other as Position;
-        
+
         if (p == null)
             return false;
         return this.x == p.x && this.y == p.y;
     }
 
     public override int GetHashCode() {
-        
+
         int hash = 23;
-        hash = 17*hash + this.x;
-        hash = 17*hash + this.y;
-        
+        hash = 17 * hash + this.x;
+        hash = 17 * hash + this.y;
+
         return hash;
+    }
+
+    public int ManhattanDistance(Position p) {
+        p -= this;
+        if (p.x < 0)
+            p.x *= -1;
+        if (p.y < 0)
+            p.y *= -1;
+        return p.x + p.y;
     }
 
     public static bool operator == (Position p1, Position p2) {

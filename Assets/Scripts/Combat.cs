@@ -56,6 +56,19 @@ public class Combat : MonoBehaviour {
 		print("defCritRate: " + defCritRate);
 	}
 
+    public static int DamageAgainst(Unit attacker, Unit defender, BoardManager board) {
+        float atkDmg;
+        int dmg = 0;
+
+        DoubleHit(attacker, defender);
+        CalculateEffectiveness(attacker, defender);
+        CalculateTriangleBonus(attacker, defender);
+
+        atkDmg = Damage(attacker, defender, board);
+        
+        return (int)atkDmg;
+    }
+
 	public static float AtkSpeed(Unit u){
 
 		if((u.equipedItem >= 0) && (u.inventory[u.equipedItem] as Equipment).weight <= u.stats.con)

@@ -145,10 +145,9 @@ public class Unit : MonoBehaviour {
     }
 
     public List<Position> CalculateMovementArea() {
-
         HashSet<Position> visited = new HashSet<Position>();
         List<Position> moveArea = new List<Position>();
-        PriorityQueue<Pair<Position, int>> q = new PriorityQueue<Pair<Position, int>>();
+        Queue<Pair<Position, int>> q = new Queue<Pair<Position, int>>();
 
         Position[] deltas = new Position[] {
             new Position(0, 1),
@@ -157,12 +156,12 @@ public class Unit : MonoBehaviour {
             new Position(-1, 0),
         };
 
-        q.Add(new Pair<Position, int>(pos, stats.move), -stats.move);
+        q.Enqueue(new Pair<Position, int>(pos, stats.move));
         visited.Add(pos);
 
         while (q.Count > 0) {
 
-            Pair<Position, int> p = q.Pop();
+            Pair<Position, int> p = q.Dequeue();
             Position cur = p.first;
             int curMov = p.second;
 
@@ -179,13 +178,57 @@ public class Unit : MonoBehaviour {
                     int cost = cls.GetMovementCost(t);
 
                     if (cost <= curMov && this.CanMoveThrough(u))
-                        q.Add(new Pair<Position, int>(next, curMov - cost), cost - curMov);
+                        q.Enqueue(new Pair<Position, int>(next, curMov - cost));
                     visited.Add(next);
                 }
             }
         }
 
         return moveArea;
+    }
+
+    public List<Unit> EnemiesInMovementRange() {
+        List<Unit> units = new List<Unit>();
+        HashSet<Position> visited = new HashSet<Position>();
+        Queue<Pair<Position, int>> q = new Queue<Pair<Position, int>>();
+
+        Position[] deltas = new Position[] {
+            new Position(0, 1),
+            new Position(1, 0),
+            new Position(0, -1),
+            new Position(-1, 0),
+        };
+
+        q.Enqueue(new Pair<Position, int>(pos, stats.move));
+        visited.Add(pos);
+
+        while (q.Count > 0) {
+            Pair<Position, int> p = q.Dequeue();
+            Position cur = p.first;
+            int curMov = p.second;
+            
+            Unit u = board.GetUnit(cur);
+            if (CanMoveThrough(u)) {
+                foreach (Position del in deltas) {
+
+                    Position next = cur + del;
+                    if (next.IsValid(board) && !visited.Contains(next)) {
+
+                        u = board.GetUnit(next.x, next.y);
+                        Terrains t = board.GetTerrain(next.x, next.y);
+                        int cost = cls.GetMovementCost(t);
+
+                        if (cost <= curMov)
+                            q.Enqueue(new Pair<Position, int>(next, curMov - cost));
+                        visited.Add(next);
+                    }
+                }
+            } else {
+                units.Add(u);
+            }
+        }
+
+        return units;
     }
 
     public List<Position> CalculateAttackArea() {
@@ -252,18 +295,9 @@ public class Unit : MonoBehaviour {
 
 		return false;
 	}
-
-	// Manhattan distance
+    
 	private int AStarHeuristic(Position p1, Position p2) {
-		
-		Position d = p1 - p2;
-		
-		if (d.x < 0)
-			d.x *= -1;
-		if (d.y < 0)
-			d.y *= -1;
-		
-		return d.x + d.y;
+        return p1.ManhattanDistance(p2);
 	}
 
 	private int TileCost(Position p) {
