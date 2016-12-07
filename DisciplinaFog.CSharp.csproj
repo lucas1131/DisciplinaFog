@@ -85,12 +85,12 @@
     <Compile Include="Assets\Scripts\BattleMenuController.cs" />
     <Compile Include="Assets\Scripts\Board\BoardManager.cs" />
     <Compile Include="Assets\Scripts\Board\Cursor.cs" />
+    <Compile Include="Assets\Scripts\Board\MovementDisplay.cs" />
     <Compile Include="Assets\Scripts\Board\Pair.cs" />
     <Compile Include="Assets\Scripts\Board\Position.cs" />
     <Compile Include="Assets\Scripts\Board\PreBattleManager.cs" />
     <Compile Include="Assets\Scripts\Board\TerrainType.cs" />
     <Compile Include="Assets\Scripts\Combat.cs" />
-    <Compile Include="Assets\Scripts\Global.cs" />
     <Compile Include="Assets\Scripts\Items\Consumable.cs" />
     <Compile Include="Assets\Scripts\Items\Consumable\Vulnerary.cs" />
     <Compile Include="Assets\Scripts\Items\Equipment.cs" />
@@ -99,6 +99,7 @@
     <Compile Include="Assets\Scripts\Items\Misc.cs" />
     <Compile Include="Assets\Scripts\Items\Misc\Lockpick.cs" />
     <Compile Include="Assets\Scripts\MainMenu.cs" />
+    <Compile Include="Assets\Scripts\PhaseAnimator.cs" />
     <Compile Include="Assets\Scripts\Units\AllyAI.cs" />
     <Compile Include="Assets\Scripts\Units\ClassStats.cs" />
     <Compile Include="Assets\Scripts\Units\EnemyAI.cs" />

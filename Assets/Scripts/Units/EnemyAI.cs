@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-public static class EnemyAI : object {
+public static class EnemyAI {
 
     public static bool running = false;
 
@@ -18,29 +18,27 @@ public static class EnemyAI : object {
 
     public static IEnumerator UpdateEnemy(BoardManager board, Cursor cursor) {
         running = true;
-        Debug.Log(1);
 
         /* MoveUnits & attack */
         foreach (Unit u in board.enemyUnits) {
+            if (u == null)
+                continue;
             Unit target = FindTarget(board, u);
             u.MoveTowards(target.pos);
-            Debug.Log(2);
             while (Unit.animationHappening)
                 yield return new WaitForEndOfFrame();
-            Debug.Log(3);
 
             if (u.CalculateAttackArea().Contains(target.pos)) {
-                Debug.Log(4);
                 Combat.Battle(u, target, board);
-                Debug.Log(5);
                 while (Unit.animationHappening)
                     yield return new WaitForEndOfFrame();
-                Debug.Log(6);
             }
         }
 
         // Set all player units to move again
         foreach (Unit u in board.playerUnits) {
+            if (u == null)
+                continue;
             u.hasMoved = false;
             u.UpdateColor();
         }

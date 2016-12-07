@@ -331,6 +331,7 @@ public class Unit : MonoBehaviour {
 		
 		Dictionary<Position, int> gScore = new Dictionary<Position, int>();
 		Dictionary<Position, int> fScore = new Dictionary<Position, int>();
+        print(pos + " to " + target);
 
 		// Initialize and start
 		gScore[pos] = 0;
@@ -383,7 +384,7 @@ public class Unit : MonoBehaviour {
 				} 
 			}
 		}
-		return null;
+		return new List<Position>();
 	}
 
 	public void MoveTowards(Position target) {
@@ -394,13 +395,17 @@ public class Unit : MonoBehaviour {
 
         pathToTarget = new Queue<Position>();
         step = 0;
-		while(i < path.Count && curMove >= (cost = TileCost(path[i]))){
-            pathToTarget.Enqueue(path[i]);
-			curMove -= cost;
-			i++;
-		}
+        if (path != null)
+        {
+            while (i < path.Count && curMove >= (cost = TileCost(path[i])))
+            {
+                pathToTarget.Enqueue(path[i]);
+                curMove -= cost;
+                i++;
+            }
 
-        StartCoroutine(MoveFromTo(path, Time.fixedDeltaTime*10));
+            StartCoroutine(MoveFromTo(path, Time.fixedDeltaTime * 10));
+        }
     }
 
     IEnumerator MoveFromTo(List<Position> path, float step){

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -109,7 +110,8 @@ public class Cursor : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update(){
-
+        if (Input.GetButton("R"))
+            SceneManager.LoadScene(0);
 		if(PhaseAnimator.animationIsPlaying) return;
 
 		if(BoardManager.turn == BoardManager.Turn.Player)
@@ -123,12 +125,7 @@ public class Cursor : MonoBehaviour {
 
             // Start turn animation
             PhaseAnimator.PlayAnimation = true;
-
-            // Pass turn back to player
-            BoardManager.turn = BoardManager.Turn.Player;
-
-            // Start turn animation again
-            PhaseAnimator.PlayAnimation = true;
+            StartCoroutine(EnemyAI.UpdateEnemy(board, this));
 
         }
 		/* </end iron: "EU FIZ ISSO DE PLACEHOLDER"> */
@@ -154,7 +151,7 @@ public class Cursor : MonoBehaviour {
 				Input.GetAxis("Vertical") > 0) ){
 				
 				atkindex = ((uint) atkindex+1u)%( (uint) possibleAtks.Count);
-				position = possibleAtks[(int)atkindex].pos;
+                position = possibleAtks[(int)atkindex].pos;
 				tgtPos = possibleAtks[(int)atkindex].transform.position;
 				focusedUnit = board.GetUnit(position);
 				cursorMoved = true;
@@ -218,50 +215,56 @@ public class Cursor : MonoBehaviour {
 		cursorMoved = false;
 		float xAxis = Input.GetAxis("Horizontal");
 		float yAxis = Input.GetAxis("Vertical");
+        if (!atkCase)
+        {
+            // Move cursor right
+            if (xAxis > 0 && posX < board.cols - 1)
+            {
 
-		// Move cursor right
-		if(xAxis > 0 && posX < board.cols-1){
-			
-			// Camera Logic
-			if(posX - camX >= camWidth/2 && camX + camWidth/2 <= board.cols) 
-				camX++;
-			
-			posX++;
-			cursorMoved = true;
-		}
+                // Camera Logic
+                if (posX - camX >= camWidth / 2 && camX + camWidth / 2 <= board.cols)
+                    camX++;
 
-		// Mover cursor left
-		else if(xAxis < 0 && posX > 0){
-			
-			// Camera Logic
-			if(posX - camX <= -camWidth/2 && camX - camWidth/2 >= 0) 
-				camX--;
-			
-			posX--;
-			cursorMoved = true;
-		}
+                posX++;
+                cursorMoved = true;
+            }
 
-		// Move cursor up
-		if(yAxis > 0 && posY < board.rows-1){
-			
-			// Camera Logic
-			if(posY - camY >= camHeight/2-1 && camY + camHeight/2 <= board.rows) 
-				camY++;
-			
-			posY++;
-			cursorMoved = true;
-		}
+            // Mover cursor left
+            else if (xAxis < 0 && posX > 0)
+            {
 
-		// Move cursor down 
-		else if(yAxis < 0 && posY > 0){
-			
-			// Camera Logic
-			if(posY - camY <= -camHeight/2 && camY - camHeight/2 >= 0) 
-				camY--;
-			
-			posY--;
-			cursorMoved = true;
-		}
+                // Camera Logic
+                if (posX - camX <= -camWidth / 2 && camX - camWidth / 2 >= 0)
+                    camX--;
+
+                posX--;
+                cursorMoved = true;
+            }
+
+            // Move cursor up
+            if (yAxis > 0 && posY < board.rows - 1)
+            {
+
+                // Camera Logic
+                if (posY - camY >= camHeight / 2 - 1 && camY + camHeight / 2 <= board.rows)
+                    camY++;
+
+                posY++;
+                cursorMoved = true;
+            }
+
+            // Move cursor down 
+            else if (yAxis < 0 && posY > 0)
+            {
+
+                // Camera Logic
+                if (posY - camY <= -camHeight / 2 && camY - camHeight / 2 >= 0)
+                    camY--;
+
+                posY--;
+                cursorMoved = true;
+            }
+        }
 		
 		tgtPos = new Vector3(posX, posY, 0f);
 		tgtCamPos = new Vector3(camX, camY, -10f);
@@ -420,6 +423,7 @@ public class Cursor : MonoBehaviour {
 
 			// Cancel button
 			if (Input.GetButtonDown("Cancel")){
+                atkCase = false;
 
 				// If we selected a unit, return it to original position
 				if (selectedUnit != null){

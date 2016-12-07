@@ -1,7 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Combat : MonoBehaviour {
+
+    private static void Kill(ref Unit[] units, Unit ded)
+    {
+        List<Unit> list = new List<Unit>(units);
+        list.Remove(ded);
+        units = list.ToArray();
+    }
+
+    private static void Kill(BoardManager board, Unit u)
+    {
+        Unit[] v;
+        if (u.faction == Faction.PLAYER)
+            Kill(ref board.playerUnits, u);
+        else if (u.faction == Faction.ALLY)
+            Kill(ref board.allyUnits, u);
+        else
+            Kill(ref board.enemyUnits, u);
+
+        GameObject.Destroy(u.gameObject);
+    }
 
 	public static IEnumerator Battle(Unit attacker, Unit defender, BoardManager board){
 
@@ -57,11 +78,14 @@ public class Combat : MonoBehaviour {
 		// Atacker attack!
 		attacker.ChangeAnimationTo(atkAnimName);
 		if(Random.Range(0f, 100f) <= atkHitRate){
-			
-			// atkAnim.Play("attackLeft", -1, 0f);
+            print("oi1");
+            // atkAnim.Play("attackLeft", -1, 0f);
 			defender.curHealth -= (int) atkDmg;
-			if(defender.curHealth <= 0){
-				Object.Destroy(defender);
+            print("h: " + defender.curHealth);
+			if(defender.curHealth <= 0)
+            {
+                print("oi caralho");
+                Kill(board, defender);
 				attacker.ChangeAnimationTo("idle");
 				yield return null;
 			}
@@ -80,7 +104,7 @@ public class Combat : MonoBehaviour {
 			// atkAnim.Play("attackLeft", -1, 0f);
 			attacker.curHealth -= (int) defDmg;
 			if(attacker.curHealth <= 0){
-				Object.Destroy(attacker);
+				Kill(board, attacker);
 				defender.ChangeAnimationTo("idle");
 				yield return null;
 			}
@@ -98,8 +122,10 @@ public class Combat : MonoBehaviour {
 
 			// atkAnim.Play("attackLeft", -1, 0f);
 			defender.curHealth -= (int) atkDmg;
-			if(defender.curHealth <= 0){
-				Object.Destroy(defender);
+			if(defender.curHealth <= 0)
+            {
+                print("oi caralho2");
+                Kill(board, defender);
 				attacker.ChangeAnimationTo("idle");
 				yield return null;
 			}
@@ -118,7 +144,7 @@ public class Combat : MonoBehaviour {
 			// atkAnim.Play("attackLeft", -1, 0f);
 			attacker.curHealth -= (int) defDmg;
 			if(attacker.curHealth <= 0){
-				Object.Destroy(attacker);
+				Kill(board, attacker);
 				defender.ChangeAnimationTo("idle");
 				yield return null;
 			}
@@ -151,7 +177,6 @@ public class Combat : MonoBehaviour {
 
     public static int DamageAgainst(Unit attacker, Unit defender, BoardManager board) {
         float atkDmg;
-        int dmg = 0;
 
         DoubleHit(attacker, defender);
         CalculateEffectiveness(attacker, defender);
