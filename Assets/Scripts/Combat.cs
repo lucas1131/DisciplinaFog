@@ -67,7 +67,7 @@ public class Combat : MonoBehaviour {
 			}
 		}
 
-		yield return new WaitForSeconds(1f);
+		// yield return new WaitForSeconds(1f);
 		attacker.ChangeAnimationTo("idle");
 		// atkAnim.Stop();
 		// attacker.GetComponent<Animator>().playbackTime;
@@ -86,7 +86,7 @@ public class Combat : MonoBehaviour {
 			}
 		}
 
-		yield return new WaitForSeconds(1f);
+		// yield return new WaitForSeconds(1f);
 		defender.ChangeAnimationTo("idle");
 		// defAnim.Stop();
 		// defAnim.playbackTime = 0f;
@@ -105,7 +105,7 @@ public class Combat : MonoBehaviour {
 			}
 		}
 
-		yield return new WaitForSeconds(1f);
+		// yield return new WaitForSeconds(1f);
 		attacker.ChangeAnimationTo("idle");
 		// atkAnim.Stop();
 		// atkAnim.playbackTime = 0f;
@@ -124,7 +124,7 @@ public class Combat : MonoBehaviour {
 			}
 		}
 
-		yield return new WaitForSeconds(1f);
+		// yield return new WaitForSeconds(1f);
 		defender.ChangeAnimationTo("idle");
 		// defAnim.Stop();
 		// defAnim.playbackTime = 0f;
