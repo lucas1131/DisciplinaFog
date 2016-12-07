@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>O Grande Fogo Emblema</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Unity Player version 5.4.2f2 (59e972642c9d). (c) 2016 Unity Technologies ApS. All rights reserved.</string>
+	<string>Unity Player version 5.5.0xf3Linux (cd29cb466a66). (c) 2016 Unity Technologies ApS. All rights reserved.</string>
 	<key>CFBundleIconFile</key>
 	<string>PlayerIcon.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -19,16 +19,16 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>Unity Player version 5.4.2f2</string>
+	<string>Unity Player version 5.5.0xf3Linux</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>5.4.2f2</string>
+	<string>5.5.0xf3Linux</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>PlayerApplication</string>
 	<key>UnityBuildNumber</key>
-	<string>59e972642c9d</string>
+	<string>cd29cb466a66</string>
 </dict>
 </plist>
