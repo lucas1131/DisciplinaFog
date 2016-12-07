@@ -3,9 +3,7 @@ using System.Collections;
 
 public class Combat : MonoBehaviour {
 
-	public static void Battle(Unit atacker, Unit defender, BoardManager board){
-
-		// Random r = new Random();
+	public static IEnumerator Battle(Unit attacker, Unit defender, BoardManager board){
 
 		float atkDmg;
 		float atkHitRate;
@@ -15,33 +13,79 @@ public class Combat : MonoBehaviour {
 		float defHitRate;
 		float defCritRate;
 
-		DoubleHit(atacker, defender);
-		CalculateEffectiveness(atacker, defender);
-		CalculateTriangleBonus(atacker, defender);
+		// Discover their relative position to select apropriate animation
+		Position relative = attacker.pos - defender.pos;
 
-		atkDmg = Damage(atacker, defender, board);
-		atkHitRate = Accuracy(atacker, defender, board);
-		atkCritRate = CriticalChance(atacker, defender);
+		/* Placeholders */
+		Animator atkAnim = attacker.transform.GetChild(0).GetComponent<Animator>();
+		Animator defAnim = defender.transform.GetChild(0).GetComponent<Animator>();
+		attacker.ChangeAnimationTo("attackLeft");
+		defender.ChangeAnimationTo("attackRight");
+		// atkAnim.Stop();
+		// defAnim.Stop();
+		/* Placeholders */
 
-		defDmg = Damage(defender, atacker, board);
-		defHitRate = Accuracy(defender, atacker, board);
-		defCritRate = CriticalChance(defender, atacker);
+		DoubleHit(attacker, defender);
+		CalculateEffectiveness(attacker, defender);
+		CalculateTriangleBonus(attacker, defender);
 
-		// Atacker atack!
-		if(Random.Range(0f, 100f) <= atkHitRate)
+		atkDmg = Damage(attacker, defender, board);
+		atkHitRate = Accuracy(attacker, defender, board);
+		atkCritRate = CriticalChance(attacker, defender);
+
+		defDmg = Damage(defender, attacker, board);
+		defHitRate = Accuracy(defender, attacker, board);
+		defCritRate = CriticalChance(defender, attacker);
+
+		// Atacker attack!
+		if(Random.Range(0f, 100f) <= atkHitRate){
+			atkAnim.Play("attackLeft", -1, 0f);
 			defender.curHealth -= (int) atkDmg;
+		}
 
-		// Defender counteratack!
-		if(Random.Range(0f, 100f) <= defHitRate)
-			atacker.curHealth -= (int) defDmg;
+		yield return new WaitForSeconds(1f);
+		// atkAnim.Stop();
+		// attacker.GetComponent<Animator>().playbackTime;
 
-		// Atacker atack double!
-		if(atacker.doubleHit && Random.Range(0f, 100f) <= atkHitRate)
+
+		// Defender counterattack!
+		if(Random.Range(0f, 100f) <= defHitRate){
+			defAnim.Play("attackRight", -1, 0f);
+			attacker.curHealth -= (int) defDmg;
+		}
+
+		yield return new WaitForSeconds(1f);
+		// defAnim.Stop();
+		defAnim.playbackTime = 0f;
+		// attacker.GetComponent<Animator>().playbackTime;
+
+		// Atacker attack double!
+		if(attacker.doubleHit && Random.Range(0f, 100f) <= atkHitRate){
+			atkAnim.Play("attackLeft", -1, 0f);
 			defender.curHealth -= (int) atkDmg;
+		}
 
-		// Defender atack double!
-		if(defender.doubleHit && Random.Range(0f, 100f) <= defHitRate)
-			atacker.curHealth -= (int) defDmg;
+		yield return new WaitForSeconds(1f);
+		// atkAnim.Stop();
+		atkAnim.playbackTime = 0f;
+		// attacker.GetComponent<Animator>().playbackTime;
+
+		// Defender attack double!
+		if(defender.doubleHit && Random.Range(0f, 100f) <= defHitRate){
+			defAnim.Play("attackRight", -1, 0f);
+			attacker.curHealth -= (int) defDmg;
+		}
+
+		yield return new WaitForSeconds(1f);
+		// defAnim.Stop();
+		defAnim.playbackTime = 0f;
+		// attacker.GetComponent<Animator>().playbackTime;
+
+
+		// Restart idle animations
+		atkAnim.Play("idle", -1, 0f);
+		defAnim.Play("idle", -1, 0f);
+
 
 		// Print statistics
 		// BUG: it appears that the bonuses are not being applied
@@ -56,7 +100,20 @@ public class Combat : MonoBehaviour {
 		print("defCritRate: " + defCritRate);
 	}
 
-	public static float AtkSpeed(Unit u){
+    public static int DamageAgainst(Unit attacker, Unit defender, BoardManager board) {
+        float atkDmg;
+        int dmg = 0;
+
+        DoubleHit(attacker, defender);
+        CalculateEffectiveness(attacker, defender);
+        CalculateTriangleBonus(attacker, defender);
+
+        atkDmg = Damage(attacker, defender, board);
+        
+        return (int)atkDmg;
+    }
+
+	private static float AtkSpeed(Unit u){
 
 		if((u.equipedItem >= 0) && (u.inventory[u.equipedItem] as Equipment).weight <= u.stats.con)
 			return u.stats.spd;
@@ -66,20 +123,20 @@ public class Combat : MonoBehaviour {
 	}
 
 	
-	public static float HitRate(Unit u){
+	private static float HitRate(Unit u){
 		if(u.equipedItem < 0) return 0;
 		return (u.inventory[u.equipedItem] as Equipment).hit + u.stats.skill*2 + u.stats.luck/2;
 	}
 
-	public static float Evade(Unit u, BoardManager board){
+	private static float Evade(Unit u, BoardManager board){
 		return AtkSpeed(u)*2 + u.stats.luck + board.types[board.board[u.posX, u.posY]].avoid;
 	}
 
-	public static float Accuracy(Unit atacker, Unit defender, BoardManager board){
-		return HitRate(atacker) - Evade(defender, board) + atacker.hitBonus;
+	public static float Accuracy(Unit attacker, Unit defender, BoardManager board){
+		return HitRate(attacker) - Evade(defender, board) + attacker.hitBonus;
 	}
 
-	public static float AttackPower(Unit u, bool isMagical){
+	private static float AttackPower(Unit u, bool isMagical){
 		if(u.equipedItem < 0) return 0;
 		if(isMagical)
 			return u.stats.mag + ((u.inventory[u.equipedItem] as Equipment).might + u.mtBonus)*u.effectiveness;
@@ -87,23 +144,23 @@ public class Combat : MonoBehaviour {
 			return u.stats.str + ((u.inventory[u.equipedItem] as Equipment).might + u.mtBonus)*u.effectiveness;
 	}
 
-	public static float DefensePower(Unit u, BoardManager board, bool isMagical){
+	private static float DefensePower(Unit u, BoardManager board, bool isMagical){
 		if(isMagical)
 			return board.types[board.board[u.posX, u.posY]].defense + u.stats.res;
 		else
 			return board.types[board.board[u.posX, u.posY]].defense + u.stats.def;
 	}
 	
-	public static float Damage(Unit atacker, Unit defender, BoardManager board){
+	public static float Damage(Unit attacker, Unit defender, BoardManager board){
 
-		if(atacker.equipedItem < 0) return 0;
+		if(attacker.equipedItem < 0) return 0;
 		
 		bool isMagical;
 		float dmg;
 		Equipment atkE;
-		print("[DEBUG]: atacker: " + atacker);
-		// print("atacker.inventory["+atacker.equipedItem+"]: " + (atacker.inventory[atacker.equipedItem] as Equipment));
-		atkE = (atacker.inventory[atacker.equipedItem] as Equipment);
+		print("[DEBUG]: attacker: " + attacker);
+		// print("attacker.inventory["+attacker.equipedItem+"]: " + (attacker.inventory[attacker.equipedItem] as Equipment));
+		atkE = (attacker.inventory[attacker.equipedItem] as Equipment);
 		print("equiptype: " + atkE.equipType);
 
 		isMagical = atkE.equipType == "Anima" || 
@@ -112,13 +169,13 @@ public class Combat : MonoBehaviour {
 					atkE.Name == "Runesword" ||
 					atkE.Name == "Lightbrand";
 
-		dmg = AttackPower(atacker, isMagical) - 
+		dmg = AttackPower(attacker, isMagical) - 
 			DefensePower(defender, board, isMagical);
 
 		return ( (dmg < 0) ? 0 : dmg);
 	}
 
-	public static float CriticalRate(Unit u){
+	private static float CriticalRate(Unit u){
 
 		if(u.equipedItem < 0) return 0;
 
@@ -131,13 +188,13 @@ public class Combat : MonoBehaviour {
 		return e.crit + u.stats.skill/2 + bonus;
 	}
 
-	public static float CriticalEvade(Unit u){
+	private static float CriticalEvade(Unit u){
 		return u.stats.luck;
 	}
 
-	public static float CriticalChance(Unit atacker, Unit defender){
-		if(atacker.equipedItem < 0) return 0;
-		float chance = CriticalRate(atacker) - CriticalEvade(defender);
+	public static float CriticalChance(Unit attacker, Unit defender){
+		if(attacker.equipedItem < 0) return 0;
+		float chance = CriticalRate(attacker) - CriticalEvade(defender);
 		return ( (chance < 0) ? 0 : chance);
 	}
 	

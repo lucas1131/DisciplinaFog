@@ -36,7 +36,7 @@ public class PhaseAnimator : MonoBehaviour {
         }
 	}
 
-    void play(){
+    public void play(){
         this.GetComponent<RectTransform>().anchoredPosition = new Vector2(880, 0);
 
         StartCoroutine(movement(new Vector2(-5f, -5f)));

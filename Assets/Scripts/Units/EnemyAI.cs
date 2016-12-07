@@ -2,72 +2,52 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class EnemyAI : MonoBehaviour {
-	private List<Position> candidates;
-	private List<Position> area;
-	private int i;
-	
-	public BoardManager board;
-	public Unit[] playerUnits, enemyUnits;
-	public Cursor cursor;
-	public bool coroutine;
 
-	private void Awake() {
-		i = 0;
-		coroutine = false;
-		candidates = new List<Position>();
-	}
+public static class EnemyAI : object {
 
-	private void Update() {
-		if(!coroutine && (BoardManager.turn == BoardManager.Turn.Enemy)) StartCoroutine("AICoroutine");
-	}
+    public static bool running = false;
 
-	public IEnumerator AICoroutine() {
-	   coroutine = true;
-       Unit u = board.enemyUnits[i++];
-       
-       if(i >= board.enemyUnits.Length) {
-       		if(board.allyUnits.Length > 0){
-			BoardManager.turn = BoardManager.Turn.Ally;
-			PhaseAnimator.PlayAnimation = true;
-			} else {
-				BoardManager.turn = BoardManager.Turn.Player;
-				PhaseAnimator.PlayAnimation = true;
-				cursor.gameObject.SetActive(true);
-				board.tInfo.SetActive(true);
-			}
-       }
-       
-       else ProcessAI(u);
-       coroutine = false;
+    private static Unit FindTarget(BoardManager board, Unit cur) {
+        List<Unit> viableTargets = cur.EnemiesInMovementRange();
+        foreach (Unit candidate in viableTargets)
+            if (candidate.curHealth <= Combat.DamageAgainst(cur, candidate, board)) // Could kill candidate in 1 turn
+                return candidate;
 
-       yield return null;
-	}
+        return board.playerUnits[0];
+    }
 
-	public void ProcessAI(Unit u) {
-		if(!u) print("U EH NULO");
-		area = u.CalculateAttackArea();
-		if(area == null) print("FODEU");
-		//if(!area) print("AREA EH NULA");
+    public static IEnumerator UpdateEnemy(BoardManager board, Cursor cursor) {
+        running = true;
+        Debug.Log(1);
 
-		foreach(Position p in area) {
-			Unit v = board.GetUnit(p);
+        /* MoveUnits & attack */
+        foreach (Unit u in board.enemyUnits) {
+            Unit target = FindTarget(board, u);
+            u.MoveTowards(target.pos);
+            Debug.Log(2);
+            while (Unit.animationHappening)
+                yield return new WaitForEndOfFrame();
+            Debug.Log(3);
 
-			if((v != null) && (v.faction != u.faction))
-				candidates.Add(p);
-		}
+            if (u.CalculateAttackArea().Contains(target.pos)) {
+                Debug.Log(4);
+                Combat.Battle(u, target, board);
+                Debug.Log(5);
+                while (Unit.animationHappening)
+                    yield return new WaitForEndOfFrame();
+                Debug.Log(6);
+            }
+        }
 
-		area = u.CalculateMovementArea();
+        // Set all player units to move again
+        foreach (Unit u in board.playerUnits) {
+            u.hasMoved = false;
+            u.UpdateColor();
+        }
+        running = false;
+        BoardManager.turn = BoardManager.Turn.Player;
+        PhaseAnimator.animationIsPlaying = true;
+    }
 
-		foreach(Position p in candidates) {
-			if(area.Contains(p)) {
-				u.MoveTowards(p);
-				Combat.Battle(u, board.GetUnit(p), board);
-				u.hasMoved = true;
-				u.UpdateColor();
-				break;
-			}
-		}
-	}
 }
 

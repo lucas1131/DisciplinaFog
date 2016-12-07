@@ -115,9 +115,23 @@ public class Cursor : MonoBehaviour {
 		if(BoardManager.turn == BoardManager.Turn.Player)
 			UpdatePlayer();
 
-		// else if(BoardManager.turn == BoardManager.Turn.Enemy)
-		// 	EnemyAI.UpdateEnemy(board, this, board.playerUnits, 
-		// 		board.enemyUnits, board.allyUnits);
+		/* <begin iron: "EU FIZ ISSO DE PLACEHOLDER"> */
+        else if (BoardManager.turn == BoardManager.Turn.Enemy) {
+            // if (!EnemyAI.running){
+            //     StartCoroutine(EnemyAI.UpdateEnemy(board, this));
+            // }
+
+            // Start turn animation
+            PhaseAnimator.PlayAnimation = true;
+
+            // Pass turn back to player
+            BoardManager.turn = BoardManager.Turn.Player;
+
+            // Start turn animation again
+            PhaseAnimator.PlayAnimation = true;
+
+        }
+		/* </end iron: "EU FIZ ISSO DE PLACEHOLDER"> */
 
 		// else if(BoardManager.turn == BoardManager.Turn.Ally)
 		// 	AllyAI.UpdateAlly();
@@ -133,7 +147,7 @@ public class Cursor : MonoBehaviour {
 		if(pos.position != tgtPos)
 			MoveCursor();
 
-		// If we are in atack case
+		// If we are in attack case
 		if(atkCase){
 			if(pos.position == tgtPos &&
 				(Input.GetAxis("Horizontal") > 0 ||
@@ -193,6 +207,10 @@ public class Cursor : MonoBehaviour {
 
 		focusedUnit = board.GetUnit(posX, posY);
 	}
+
+    void UpdateEnemy() {
+
+    }
 
 	void ProcessAxis(){
 
@@ -296,19 +314,22 @@ public class Cursor : MonoBehaviour {
 			// Action button
 			if (Input.GetButtonDown("Action")){
 
-				// If we are atacking
+				// If we are attacking
 				if(atkCase){
 
-					Combat.Battle(selectedUnit, board.GetUnit(position), board);
+					StartCoroutine(Combat.Battle(selectedUnit, board.GetUnit(position), board));
+					// 
 
 					// Set unit action as done, so it cannot move again
 					selectedUnit.hasMoved = true;
 
 					// Revert animation back to idle
-					selectedUnit.ChangeAnimationTo("idle");
+					// selectedUnit.ChangeAnimationTo("idle");
+
+					this.gameObject.SetActive(false);
 
 					// Move cursor back to player's unit
-					position = selectedUnit.pos;
+					position = new Position(selectedUnit.pos);
 					tgtPos = selectedUnit.pos.ToVector2();
 					
 					// Stop spawning arrows
@@ -319,12 +340,14 @@ public class Cursor : MonoBehaviour {
 					selectedUnit.UpdateColor();
 					selectedUnit = null;
 					
-					// Desativate atack
+					// Desativate attack
 					atkCase = false;
 
 					// Update Unit and Terrain windows
 					UpdateUnitWindow(focusedUnit);
 					board.tInfo.SetActive(true);
+
+					this.gameObject.SetActive(true);
 
 				// Battle menu is open
 				} else if(battleMenu.isActiveAndEnabled){
@@ -363,15 +386,13 @@ public class Cursor : MonoBehaviour {
 						// Check path if position is inside calculated movement area
 						if (possibleMoves != null && possibleMoves.Contains(p)){
 
-							// this.gameObject.SetActive(false);	
-
 							md.DestroyMovementDisplay();
 							selectedUnit.prevPosX = selectedUnit.posX;
 							selectedUnit.prevPosY = selectedUnit.posY;
 							selectedUnit.MoveTowards(p);
 
-							// Used to check for trade/rescue/atack options
-							// This ignores weapons with atack range different
+							// Used to check for trade/rescue/attack options
+							// This ignores weapons with attack range different
 							// than 1
 							Unit[] adjacent = new Unit[4];
 
@@ -382,7 +403,7 @@ public class Cursor : MonoBehaviour {
 
 							StartCoroutine(WaitToOpenMenu(new bool[] {
 								((selectedUnit.equipedItem >= 0) &&
-								CanAttack(adjacent)),	// atack
+								CanAttack(adjacent)),	// attack
 
 								CanRescue(adjacent),	// rescue
 								true,					// item
@@ -559,6 +580,10 @@ public class Cursor : MonoBehaviour {
 			// RIP battle menu
 			battleMenu.gameObject.SetActive(false);
 				
+			// Update previous position
+			selectedUnit.prevPosX = selectedUnit.posX;
+			selectedUnit.prevPosY = selectedUnit.posY;
+
 			// Deselect unit
 			focusedUnit = selectedUnit;
 			selectedUnit.UpdateColor();
@@ -582,8 +607,12 @@ public class Cursor : MonoBehaviour {
 			BoardManager.turn = BoardManager.Turn.Enemy;	
 			PhaseAnimator.PlayAnimation = true;
 
-			// Deactivate Cursor object
-			this.gameObject.SetActive(false);
+			// Reset player's units hasMoved
+			foreach(Unit u in board.playerUnits){
+				u.hasMoved = false;
+				u.UpdateColor();
+			}
+
 			break;
 		}
 	}
@@ -661,7 +690,7 @@ public class Cursor : MonoBehaviour {
 
 			battleMenu.gameObject.SetActive(true);
 			battleMenu.OpenMenu( new bool[]{ 
-				false,					// atack
+				false,					// attack
 				false,					// rescue
 				false,					// item
 				false,					// trade
