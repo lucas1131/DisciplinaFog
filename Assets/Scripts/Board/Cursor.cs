@@ -193,8 +193,9 @@ public class Cursor : MonoBehaviour {
 						List<Position> path = selectedUnit.PathTo(position);
 						
 						md.u = selectedUnit;
-						if(selectedUnit.faction == Faction.PLAYER && path != null)
+						if(selectedUnit.faction == Faction.PLAYER && path != null){
 							md.CreateArrows(md.arrows, path);
+						}
 					}
 				}
 				cursorMoved = false;
@@ -318,7 +319,6 @@ public class Cursor : MonoBehaviour {
 				if(atkCase){
 
 					StartCoroutine(Combat.Battle(selectedUnit, board.GetUnit(position), board));
-					// 
 
 					// Set unit action as done, so it cannot move again
 					selectedUnit.hasMoved = true;
@@ -437,6 +437,7 @@ public class Cursor : MonoBehaviour {
 
 				atkCase = false;
 				possibleAtks = null;
+				selectedUnit = null;
 
 				// Deselect a unit
 				// TODO: check for menu nesting first (stack of "selections"?)
@@ -478,8 +479,11 @@ public class Cursor : MonoBehaviour {
 				}
 			}
 
-			if (Input.GetButtonUp("Cancel"))
+			if (Input.GetButtonUp("Cancel")){
+				atkCase = false;
+				possibleAtks = null;
 				ChangeCursorSpeed(cursorSpdDefault, delayDefault);
+			}
 
 			// Left trigger
 			if (Input.GetButtonDown("LeftTrigger")){
@@ -547,7 +551,7 @@ public class Cursor : MonoBehaviour {
 			
 			// Move cursor between possible atks
 			if(possibleAtks[0] != null){
-				position = possibleAtks[0].pos;
+				position = new Position(possibleAtks[0].pos);
 				tgtPos = possibleAtks[0].transform.position;
 			}
 

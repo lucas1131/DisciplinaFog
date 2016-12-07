@@ -13,14 +13,31 @@ public class Combat : MonoBehaviour {
 		float defHitRate;
 		float defCritRate;
 
+		string atkAnimName = null;
+		string defAnimName = null;
+
 		// Discover their relative position to select apropriate animation
 		Position relative = attacker.pos - defender.pos;
+
+		if(relative.x == 1){
+			atkAnimName = "attackLeft";
+			defAnimName = "attackRight";
+		} else if(relative.x == -1){
+			atkAnimName = "attackRight";
+			defAnimName = "attackLeft";
+		} else if(relative.y == 1){
+			atkAnimName = "attackDown";
+			defAnimName = "attackUp";
+		} else if(relative.y == -1){
+			atkAnimName = "attackUp";
+			defAnimName = "attackDown";
+		}
 
 		/* Placeholders */
 		Animator atkAnim = attacker.transform.GetChild(0).GetComponent<Animator>();
 		Animator defAnim = defender.transform.GetChild(0).GetComponent<Animator>();
-		attacker.ChangeAnimationTo("attackLeft");
-		defender.ChangeAnimationTo("attackRight");
+		// attacker.ChangeAnimationTo(atkAnimName);
+		// defender.ChangeAnimationTo(defAnimName);
 		// atkAnim.Stop();
 		// defAnim.Stop();
 		/* Placeholders */
@@ -38,47 +55,79 @@ public class Combat : MonoBehaviour {
 		defCritRate = CriticalChance(defender, attacker);
 
 		// Atacker attack!
+		attacker.ChangeAnimationTo(atkAnimName);
 		if(Random.Range(0f, 100f) <= atkHitRate){
-			atkAnim.Play("attackLeft", -1, 0f);
+			
+			// atkAnim.Play("attackLeft", -1, 0f);
 			defender.curHealth -= (int) atkDmg;
+			if(defender.curHealth <= 0){
+				Object.Destroy(defender);
+				attacker.ChangeAnimationTo("idle");
+				yield return null;
+			}
 		}
 
 		yield return new WaitForSeconds(1f);
+		attacker.ChangeAnimationTo("idle");
 		// atkAnim.Stop();
 		// attacker.GetComponent<Animator>().playbackTime;
 
 
 		// Defender counterattack!
+		defender.ChangeAnimationTo(defAnimName);
 		if(Random.Range(0f, 100f) <= defHitRate){
-			defAnim.Play("attackRight", -1, 0f);
+
+			// atkAnim.Play("attackLeft", -1, 0f);
 			attacker.curHealth -= (int) defDmg;
+			if(attacker.curHealth <= 0){
+				Object.Destroy(attacker);
+				defender.ChangeAnimationTo("idle");
+				yield return null;
+			}
 		}
 
 		yield return new WaitForSeconds(1f);
+		defender.ChangeAnimationTo("idle");
 		// defAnim.Stop();
-		defAnim.playbackTime = 0f;
+		// defAnim.playbackTime = 0f;
 		// attacker.GetComponent<Animator>().playbackTime;
 
 		// Atacker attack double!
+		attacker.ChangeAnimationTo(atkAnimName);
 		if(attacker.doubleHit && Random.Range(0f, 100f) <= atkHitRate){
-			atkAnim.Play("attackLeft", -1, 0f);
+
+			// atkAnim.Play("attackLeft", -1, 0f);
 			defender.curHealth -= (int) atkDmg;
+			if(defender.curHealth <= 0){
+				Object.Destroy(defender);
+				attacker.ChangeAnimationTo("idle");
+				yield return null;
+			}
 		}
 
 		yield return new WaitForSeconds(1f);
+		attacker.ChangeAnimationTo("idle");
 		// atkAnim.Stop();
-		atkAnim.playbackTime = 0f;
+		// atkAnim.playbackTime = 0f;
 		// attacker.GetComponent<Animator>().playbackTime;
 
 		// Defender attack double!
+		defender.ChangeAnimationTo(defAnimName);
 		if(defender.doubleHit && Random.Range(0f, 100f) <= defHitRate){
-			defAnim.Play("attackRight", -1, 0f);
+
+			// atkAnim.Play("attackLeft", -1, 0f);
 			attacker.curHealth -= (int) defDmg;
+			if(attacker.curHealth <= 0){
+				Object.Destroy(attacker);
+				defender.ChangeAnimationTo("idle");
+				yield return null;
+			}
 		}
 
 		yield return new WaitForSeconds(1f);
+		defender.ChangeAnimationTo("idle");
 		// defAnim.Stop();
-		defAnim.playbackTime = 0f;
+		// defAnim.playbackTime = 0f;
 		// attacker.GetComponent<Animator>().playbackTime;
 
 
@@ -91,13 +140,13 @@ public class Combat : MonoBehaviour {
 		// BUG: it appears that the bonuses are not being applied
 		// maybe some reference type problem? passing parameter to a function
 		// creates a local variable?
-		print("atkDmg: " + atkDmg);
-		print("atkHitRate: " + atkHitRate);
-		print("atkCritRate: " + atkCritRate);
+		// print("atkDmg: " + atkDmg);
+		// print("atkHitRate: " + atkHitRate);
+		// print("atkCritRate: " + atkCritRate);
 
-		print("defDmg: " + defDmg);
-		print("defHitRate: " + defHitRate);
-		print("defCritRate: " + defCritRate);
+		// print("defDmg: " + defDmg);
+		// print("defHitRate: " + defHitRate);
+		// print("defCritRate: " + defCritRate);
 	}
 
     public static int DamageAgainst(Unit attacker, Unit defender, BoardManager board) {
@@ -158,10 +207,10 @@ public class Combat : MonoBehaviour {
 		bool isMagical;
 		float dmg;
 		Equipment atkE;
-		print("[DEBUG]: attacker: " + attacker);
-		// print("attacker.inventory["+attacker.equipedItem+"]: " + (attacker.inventory[attacker.equipedItem] as Equipment));
+		// print("[DEBUG]: attacker: " + attacker);
+		print("attacker.inventory["+attacker.equipedItem+"]: " + (attacker.inventory[attacker.equipedItem] as Equipment));
 		atkE = (attacker.inventory[attacker.equipedItem] as Equipment);
-		print("equiptype: " + atkE.equipType);
+		// print("equiptype: " + atkE.equipType);
 
 		isMagical = atkE.equipType == "Anima" || 
 					atkE.equipType == "Light" ||

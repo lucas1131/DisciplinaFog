@@ -24,7 +24,7 @@ public class PhaseAnimator : MonoBehaviour {
 	// Update is called once per frame
 	void Update (){
         if(PlayAnimation){
-
+            // this.GetComponent<Image>().enabled = true;
             if(BoardManager.turn == BoardManager.Turn.Player)
                 this.GetComponent<Image>().sprite = playerPhase;
             else if(BoardManager.turn == BoardManager.Turn.Enemy)
@@ -33,7 +33,7 @@ public class PhaseAnimator : MonoBehaviour {
                 this.GetComponent<Image>().sprite = allyPhase;
 
             play();
-        }
+		}// else this.GetComponent<Image>().enabled = false;
 	}
 
     public void play(){

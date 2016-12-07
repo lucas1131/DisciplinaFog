@@ -205,9 +205,6 @@ public class BoardManager : MonoBehaviour {
 		board[14, 8] = (int) Terrains.Peak;
 		board[13, 8] = (int) Terrains.Peak;
 		
-		// DEBUG
-		board[12, 2] = (int) Terrains.Peak;
-
 	}
 
 	public void InitUnits(Unit[] units){
